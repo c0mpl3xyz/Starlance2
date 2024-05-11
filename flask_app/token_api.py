@@ -42,7 +42,6 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
 
     check_token = 'access_token' in JSON
     token_creation: bool = False
-    user_creation: bool = False
     user_exist: bool = False
 
     if check_token:
@@ -60,8 +59,8 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
             token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
 
     message = {
-            'success': user_creation and token_creation,
-            'user_creation': user_creation,
+            'success': user_exist and token_creation,
+            'user_exist': user_exist,
             'token_creation': token_creation,
             'access_token': check_token
         }
