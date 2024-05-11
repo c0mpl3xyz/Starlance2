@@ -10,7 +10,6 @@ APP_TOKEN = os.getenv('ADMIN_TOKEN')
 ADMIN_TOKEN = os.getenv('APP_TOKEN')
 
 def get_manual_link(username):
-    print(REDIRECT_URL)
     scope = 'instagram_basic,pages_show_list'
     url = f'https://www.facebook.com/dialog/oauth'
     data = {
