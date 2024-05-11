@@ -62,10 +62,9 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
 
     message = {
             'success': user_exist and token_creation,
-            'token_creation': token_creation,
+            'token_created': token_creation,
             'access_token': check_token,
-            'created': created,
-            'created2': created,
+            'user_created': created,
         }
         
     return message
