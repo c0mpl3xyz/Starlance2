@@ -53,7 +53,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         message: Dict = {}
 
         user_exist = User(cursor).get_user_by_id(user_id)
-        if not user_exist:
+        if not user_exist: 
             user_exist = User(cursor).create(user_id)
 
         if user_exist:

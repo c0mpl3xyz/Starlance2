@@ -7,11 +7,11 @@ class User:
         
     def get_user_by_id(self, discord_id):
         query = """
-            SELECT * FROM User WHERE discord_id = %s
+            SELECT * FROM User WHERE discord_id = %s LIMIT 1
         """
 
         self.cursor.execute(query, (discord_id,))
-        return self.cursor.fetchall()
+        return self.cursor.fetchone()
 
     def create(self, discord_id, fb_id=None, ig_id=None, tiktok_id=None, youtube_id=None) -> bool:
         user = self.get_user_by_id(discord_id)
