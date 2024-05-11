@@ -7,7 +7,7 @@ class User:
         
     def get_user_by_id(self, discord_id):
         query = """
-            SELECT * FROM User WHERE discord_id = %s
+            SELECT 1 FROM User WHERE discord_id = %s
         """
 
         self.cursor.execute(query, (discord_id,))
@@ -61,7 +61,7 @@ class User:
         return result
 
     def get(self, discord_id):
-        select_query = "SELECT * FROM User WHERE discord_id = %s"
+        select_query = "SELECT 1 FROM User WHERE discord_id = %s"
         self.cursor.execute(select_query, (discord_id,))
         result = self.cursor.fetchone()
         if result:
