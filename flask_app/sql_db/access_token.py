@@ -5,7 +5,7 @@ class AccessToken:
     def __init__(self, cursor):
         self.cursor = cursor
 
-    def create(self, access_token, user_id, duration_sec, token_type) -> bool:
+    def add(self, access_token, user_id, duration_sec, token_type) -> bool:
         expires_in_timedelta = timedelta(seconds=duration_sec)
         expiration_date = datetime.now() + expires_in_timedelta
 

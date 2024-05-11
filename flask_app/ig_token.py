@@ -10,7 +10,6 @@ PAGE_ID = os.getenv('PAGE_ID')
 
 URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
 
-
 class IGGraph():
     user_id: str
     username: str
