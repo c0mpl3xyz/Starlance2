@@ -7,7 +7,7 @@ class User:
         
     def get_user_by_id(self, discord_id):
         query = """
-            SELECT * FROM User WHERE discord_id = %s LIMIT 1
+            SELECT * FROM User WHERE discord_id = %s
         """
 
         self.cursor.execute(query, (discord_id,))
