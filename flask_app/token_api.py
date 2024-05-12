@@ -19,10 +19,12 @@ API_VERSION = os.getenv('API_VERSION')
 API_PREFIX = os.getenv('API_PREFIX')
 URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
 
-host = os.getenv('SQL_HOST')
-user = os.getenv('SQL_USER')
-password = os.getenv('SQL_PASSWORD')
-database = os.getenv('SQL_DATABASE')
+SQL_DICT = {
+    'host': os.getenv('SQL_HOST'),
+    'user': os.getenv('SQL_USER'),
+    'password': os.getenv('SQL_PASSWORD'),
+    'database': os.getenv('SQL_DATABASE')
+}
 
 token_bp = Blueprint('token_api', __name__)
 
@@ -74,7 +76,7 @@ def exchange_token_test():
     code = request.args.get('code')
     state = ast.literal_eval(request.args.get('state'))
 
-    connection = ConnectSQL(host, user, password, database).get_connection()
+    connection = ConnectSQL(SQL_DICT).get_connection()
     cursor = connection.cursor()
     try:
         result = exchange_code_for_token(cursor, APP_ID, APP_SECRET, REDIRECT_URL, code, state)
@@ -86,4 +88,4 @@ def exchange_token_test():
 
 @token_bp.route('/', methods=['GET'])
 def home_page():
-    return render_template('index.html') 
+    return render_template('index.html')

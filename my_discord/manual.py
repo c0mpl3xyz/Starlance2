@@ -5,11 +5,13 @@ from urllib.parse import urlencode
 load_dotenv()
 
 APP_ID = os.getenv('APP_ID')
-REDIRECT_URL = os.getenv('REDIRECT_URL')
+URL = os.getenv('URL')
 APP_TOKEN = os.getenv('ADMIN_TOKEN')
 ADMIN_TOKEN = os.getenv('APP_TOKEN')
+REDIRECT_URL = URL + 'exchange_token/'
 
-def get_manual_link(username):
+def get_manual_link(user_id, username):
+    print(REDIRECT_URL)
     scope = 'instagram_basic,pages_show_list'
     url = f'https://www.facebook.com/dialog/oauth'
     data = {
@@ -17,6 +19,7 @@ def get_manual_link(username):
         'redirect_uri': REDIRECT_URL,
         'scope': scope,
         'state': {
+            'user_id': user_id,
             'username': username
         },
         'response_type': 'code'
@@ -33,5 +36,5 @@ def get_manual_link(username):
 #     f'graph.facebook.com/debug_token?input_token={token}&access_token={app-token-or-admin-token}'
 
 if __name__ == '__main__':
-    link = get_manual_link()
+    link = get_manual_link(user_id='1', username='test')
     print(link)
