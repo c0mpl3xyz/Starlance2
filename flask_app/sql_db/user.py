@@ -22,7 +22,7 @@ class User:
         # TODO: fill fb id and, Ig id
         query = """
             INSERT INTO User (discord_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         self.cursor.execute(query, (discord_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register))
 
