@@ -3,7 +3,7 @@ import discord, requests
 from discord.ui import Modal, TextInput
 from discord import Interaction
 
-start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
+# start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
 class JobModal(Modal, title="Job registration"):    
     def __init__(self, roles):
         
