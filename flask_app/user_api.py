@@ -33,9 +33,8 @@ def bank_registration():
     user_id, _, _, _, _, bank_name, bank_number, register = extract_user_request(request)
     user_update = None
 
-    db = ConnectSQL()
     connection = ConnectSQL().get_connection()
-    cursor = db.get_cursor()
+    cursor = connection.cursot()
     updated: bool = False
 
     try:
