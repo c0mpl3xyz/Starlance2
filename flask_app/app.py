@@ -14,7 +14,7 @@ URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
 
 app = Flask(__name__)
 app.logger.info(REDIRECT_URL)
-app.register_blueprint(user_bp, url_prefix='/user')
+app.register_blueprint(user_bp)
 app.register_blueprint(token_bp)
 
 if __name__ == '__main__':

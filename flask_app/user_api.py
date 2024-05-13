@@ -14,7 +14,7 @@ SQL_DICT = {
     'database': os.getenv('SQL_DATABASE')
 }
 
-user_bp = Blueprint('user_api', __name__)
+user_bp = Blueprint('user_api', __name__, url_prefix='/user')
 
 def extract_user_request(request):
     user_id = request.args.get('discord_id')
@@ -28,7 +28,7 @@ def extract_user_request(request):
 
     return user_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register
 
-@user_bp.route('/user/bank_register', methods=['POST'])
+@user_bp.route('/bank_register', methods=['POST'])
 def bank_registration():
     user_id, _, _, _, _, bank_name, bank_number, register = extract_user_request(request)
     user_update = None

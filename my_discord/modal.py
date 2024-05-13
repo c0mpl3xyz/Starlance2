@@ -20,7 +20,6 @@ class JobModal(Modal, title="Job registration"):
 
 class BankRegistrationModal(Modal, title='Bank Registration'):
     def __init__(self, bank_name, url):
-        print(f'debug 1')
         self.url = url
         self.bank_name = bank_name
         self.bank_number = TextInput(label="Bank number", placeholder="Your bank number", required=True, min_length=2, max_length=100)
@@ -41,6 +40,7 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
             'register': str(self.register)
         }
 
+        print(self.url + '/user/bank_register')
         response = requests.post(self.url + '/user/bank_register', json=data)
         print(response.text)
         if response and 'success' in response.json():
