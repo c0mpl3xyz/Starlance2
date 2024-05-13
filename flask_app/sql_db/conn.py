@@ -1,7 +1,7 @@
 import mysql.connector
-from dotenv import loadenv
+from dotenv import load_dotenv
 import os
-loadenv()
+load_dotenv()
 
 SQL_DICT = {
     'host': os.getenv('SQL_HOST'),
