@@ -48,9 +48,10 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
 
         channel = discord.utils.get(interaction.guild.channels, name='┃guide')
         if success:
-            message = 'Bank registration succeeded'
+            message = f'User: {interaction.user.global_name}\nBank name: {self.bank_name}\nBank number: {self.bank_number}\nRegister: {self.register}'
             if channel:
-                await channel.send(f'Bank registered {interaction.user.global_name}')
+                await channel.send(message)
+                await interaction.message.delete()
         else:
             message = 'Bank registration failed'
 
