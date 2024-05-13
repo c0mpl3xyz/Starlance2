@@ -37,7 +37,7 @@ async def ping(interaction: discord.Interaction): # a slash command will be crea
 #     await message.channel.send(response)
 
 @client.tree.command(name='login')
-async def send_form(interaction: discord.Interaction):
+async def login(interaction: discord.Interaction):
     roles = [role.name for role in interaction.user.roles]
 
     if 'Influencer' in roles:
@@ -46,11 +46,11 @@ async def send_form(interaction: discord.Interaction):
         message = 'You are not influencer'
     await interaction.response.send_message(message)
 
-@client.tree.command()
+@client.tree.command(name='job_add')
 async def job_add(interaction: discord.Interaction):
     roles = interaction.user.roles
     role_names = [role.name for role in roles]
-    print(f'{role_names=}')
+
     # if 'Influencer' in role_names:
     #     message = 'You don\'t have permission'
     #     return await interaction.response.send_message(message)
@@ -61,8 +61,8 @@ async def job_add(interaction: discord.Interaction):
     response = await interaction.response.send_message('Select roles', view=view)
     print(response)
 
-@client.tree.command()
-async def bank_registration(interaction: discord.Interaction):
+@client.tree.command(name='bank_register')
+async def bank_register(interaction: discord.Interaction):
     roles = interaction.user.roles
     role_names = [role.name for role in roles]
 

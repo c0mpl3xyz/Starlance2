@@ -45,8 +45,12 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
         print(response.text)
         if response and 'success' in response.json():
             success = response.json()['success']
+
+        channel = discord.utils.get(interaction.guild.channels, name='┃guide')
         if success:
             message = 'Bank registration succeeded'
+            if channel:
+                await channel.send(f'Bank registered {interaction.user.global_name}')
         else:
             message = 'Bank registration failed'
 
