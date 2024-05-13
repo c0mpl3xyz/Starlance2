@@ -11,7 +11,6 @@ ADMIN_TOKEN = os.getenv('APP_TOKEN')
 REDIRECT_URL = URL + '/exchange_token/'
 
 def get_manual_link(user_id, username):
-    print(REDIRECT_URL)
     scope = 'instagram_basic,pages_show_list'
     url = f'https://www.facebook.com/dialog/oauth'
     data = {

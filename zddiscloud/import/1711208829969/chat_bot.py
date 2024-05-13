@@ -23,7 +23,6 @@ async def on_message(message):
         await bot.process_commands(message)
         return
 
-    print(message)
     response = 'Welcome'
     await message.channel.send(response)
 

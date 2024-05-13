@@ -5,16 +5,16 @@ class User:
     def __init__(self, cursor=None):
         self.cursor = cursor
         
-    def get_user_by_id(self, discord_id):
+    def get_by_id(self, discord_id):
         query = """
             SELECT 1 FROM User WHERE discord_id = %s
         """
 
-        self.cursor.execute(query, (discord_id,))
-        return self.cursor.fetchone()
+        self.cursor.execute(query, (discord_id,)) # type: ignore
+        return self.cursor.fetchone() # type: ignore
 
     def create(self, discord_id, fb_id=None, ig_id=None, tiktok_id=None, youtube_id=None, bank_name=None, bank_number=None, register=None) -> bool:
-        user = self.get_user_by_id(discord_id)
+        user = self.get_by_id(discord_id)
 
         if user:
             return False
@@ -24,7 +24,7 @@ class User:
             INSERT INTO User (discord_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
-        self.cursor.execute(query, (discord_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register))
+        self.cursor.execute(query, (discord_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register)) # type: ignore
 
         return True
     
@@ -62,23 +62,14 @@ class User:
 
         update_query = update_query.rstrip(", ") + " WHERE discord_id = %s"
         update_params.append(discord_id)
-        self.cursor.execute(update_query, tuple(update_params))
-        self.cursor.fetchall()
+        self.cursor.execute(update_query, tuple(update_params)) # type: ignore
+        self.cursor.fetchall() # type: ignore
         
         return True
     
     def delete(self, discord_id):
         delete_query = "DELETE FROM User WHERE discord_id = %s"
-        self.cursor.execute(delete_query, (discord_id,))
+        self.cursor.execute(delete_query, (discord_id,)) # type: ignore
 
-        result = self.cursor.fetchall()
+        result = self.cursor.fetchall() # type: ignore
         return result
-
-    def get(self, discord_id):
-        select_query = "SELECT 1 FROM User WHERE discord_id = %s"
-        self.cursor.execute(select_query, (discord_id,))
-        result = self.cursor.fetchone()
-        if result:
-            return self(*result)
-        else:
-            return None

@@ -3,10 +3,18 @@ import discord, requests
 from discord.ui import Modal, TextInput
 from discord import Interaction
 
+start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
 class JobModal(Modal, title="Job registration"):    
     def __init__(self, roles):
+        
         self.name = TextInput(label="Job Name", placeholder="Your job name here", required=True, min_length=2, max_length=100)
         self.age = TextInput(label="Age", placeholder="Your age here", required=True, style=discord.TextStyle.short)
+        self.date = TextInput(label="Birth Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
+        self.date = TextInput(label="Birth Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
+        self.date = TextInput(label="Birth Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
+        self.date = TextInput(label="Birth Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
+        self.date = TextInput(label="Birth Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
+        self.date = TextInput(label="Birth Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
         self.date = TextInput(label="Birth Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
         self.roles = roles
 
@@ -40,15 +48,14 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
             'register': str(self.register)
         }
 
-        print(self.url + '/user/bank_register')
         response = requests.post(self.url + '/user/bank_register', json=data)
-        print(response.text)
         if response and 'success' in response.json():
             success = response.json()['success']
 
-        channel = discord.utils.get(interaction.guild.channels, name='┃guide')
+        channel_name = '' #TODO: CHANGE IT
+        channel = discord.utils.get(interaction.guild.channels, name=channel_name)
         if success:
-            message = f'User: {interaction.user.global_name}\nBank name: {self.bank_name}\nBank number: {self.bank_number}\nRegister: {self.register}'
+            message = f'Bank Registration\nUser: {interaction.user.global_name}\nBank name: {self.bank_name}\nBank number: {self.bank_number}\nRegister: {self.register}'
             if channel:
                 await channel.send(message)
                 await interaction.message.delete()

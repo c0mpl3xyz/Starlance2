@@ -66,7 +66,6 @@ async def bank_register(interaction: discord.Interaction):
     roles = interaction.user.roles
     role_names = [role.name for role in roles]
 
-    print(f'roles: {roles}')
     if 'Influencer' not in role_names:
         message = 'You don\'t have permission'
         return await interaction.response.send_message(message)
@@ -75,8 +74,7 @@ async def bank_register(interaction: discord.Interaction):
     view = discord.ui.View()
     view.add_item(SelectBankNames(url))
 
-    response = await interaction.response.send_message('Bank registration', view=view)
-    print(response)
+    await interaction.response.send_message('Bank registration', view=view)
 
 client.run(TOKEN)
 # if __name__ == '__main__':

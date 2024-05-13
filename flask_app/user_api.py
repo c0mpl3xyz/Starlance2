@@ -38,7 +38,7 @@ def bank_registration():
 
     try:
         user = User(cursor)
-        user_exist = user.get_user_by_id(user_id)
+        user_exist = user.get_by_id(user_id)
         
         if not user_exist:
             updated = user.create(discord_id=user_id, bank_name=bank_name, bank_number=bank_number, register=register)
