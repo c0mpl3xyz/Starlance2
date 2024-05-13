@@ -17,14 +17,14 @@ SQL_DICT = {
 user_bp = Blueprint('user_api', __name__, url_prefix='/user')
 
 def extract_user_request(request):
-    user_id = request.args.get('user_id')
-    fb_id = request.args.get('fb_id')
-    ig_id = request.args.get('ig_id')
-    tiktok_id = request.args.get('tiktok_id')
-    youtube_id = request.args.get('youtube_id')
-    bank_name = request.args.get('bank_name')
-    bank_number = request.args.get('bank_number')
-    register = request.args.get('register')
+    user_id = request.json.get('user_id')
+    fb_id = request.json.get('fb_id')
+    ig_id = request.json.get('ig_id')
+    tiktok_id = request.json.get('tiktok_id')
+    youtube_id = request.json.get('youtube_id')
+    bank_name = request.json.get('bank_name')
+    bank_number = request.json.get('bank_number')
+    register = request.json.get('register')
 
     return user_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register
 
