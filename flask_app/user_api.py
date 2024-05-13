@@ -36,25 +36,24 @@ def bank_registration():
     db = ConnectSQL()
     connection = ConnectSQL().get_connection()
     cursor = db.get_cursor()
-    user_creation: bool = False
+    updated: bool = False
 
     try:
         user = User(cursor)
         user_exist = user.get_user_by_id(user_id)
         
         if not user_exist:
-            user_creation = user.create(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
+            updated = user.create(discord_id=user_id, bank_name=bank_name, bank_number=bank_number, register=register)
         
-        if user_creation:
+        if not updated:
             user_update = user.update(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
+            updated = True
+
+        if updated:
             connection.commit()
 
         result = {
-            'success': user_update is not None,
-            'user_exist': user_exist,
-            'user_exist_check': not user_exist,
-            'user_creation': not user_exist,
-            'user_update': user_update
+            'success': updated
         }
         return jsonify(result)
     finally:
