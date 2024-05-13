@@ -65,7 +65,7 @@ class User:
         self.cursor.execute(update_query, tuple(update_params))
         result = self.cursor.fetchall()
         
-        return result
+        return True
     
     def delete(self, discord_id):
         delete_query = "DELETE FROM User WHERE discord_id = %s"
