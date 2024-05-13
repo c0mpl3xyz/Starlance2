@@ -49,7 +49,13 @@ def bank_registration():
             user_update = user.update(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
             connection.commit()
 
-        result = {'success': user_update is not None}
+        result = {
+            'success': user_update is not None,
+            'user_exist': user_exist,
+            'user_exist_check': not user_exist,
+            'user_creation': not user_exist,
+            'user_update': user_update
+        }
         return jsonify(result)
     finally:
         connection.close()
