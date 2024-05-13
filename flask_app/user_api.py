@@ -34,7 +34,7 @@ def bank_registration():
     user_update = None
 
     connection = ConnectSQL().get_connection()
-    cursor = connection.cursot()
+    cursor = connection.cursor()
     updated: bool = False
 
     try:
@@ -46,7 +46,8 @@ def bank_registration():
         
         if not updated:
             user_update = user.update(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
-            updated = True
+            if user_update:
+                updated = True
 
         if updated:
             connection.commit()
