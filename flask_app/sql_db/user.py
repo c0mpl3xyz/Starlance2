@@ -63,7 +63,7 @@ class User:
         update_query = update_query.rstrip(", ") + " WHERE discord_id = %s"
         update_params.append(discord_id)
         self.cursor.execute(update_query, tuple(update_params))
-        result = self.cursor.fetchall()
+        self.cursor.fetchall()
         
         return True
     

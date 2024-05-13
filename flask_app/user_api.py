@@ -46,7 +46,7 @@ def bank_registration():
         else:
             updated = user.update(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
 
-        if updated is not None:
+        if updated:
             connection.commit()
 
         result = {
