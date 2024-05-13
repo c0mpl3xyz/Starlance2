@@ -27,7 +27,7 @@ class User:
         self.cursor.execute(query, (discord_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register))
 
         result = self.cursor.fetchall()
-        return bool(result)
+        return len(result) > 0
     
     def update(self, discord_id, fb_id=None, ig_id=None, tiktok_id=None, youtube_id=None, bank_name=None, bank_number=None, register=None) -> bool:
         update_query = "UPDATE User SET "
@@ -66,7 +66,7 @@ class User:
         self.cursor.execute(update_query, tuple(update_params))
         result = self.cursor.fetchall()
 
-        return bool(result)
+        return len(result) > 0
     
     def delete(self, discord_id):
         delete_query = "DELETE FROM User WHERE discord_id = %s"
