@@ -17,7 +17,7 @@ SQL_DICT = {
 user_bp = Blueprint('user_api', __name__, url_prefix='/user')
 
 def extract_user_request(request):
-    user_id = request.args.get('discord_id')
+    user_id = request.args.get('user_id')
     fb_id = request.args.get('fb_id')
     ig_id = request.args.get('ig_id')
     tiktok_id = request.args.get('tiktok_id')
