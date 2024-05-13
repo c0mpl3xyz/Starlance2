@@ -31,7 +31,8 @@ def extract_user_request(request):
 @user_bp.route('/bank_register', methods=['POST'])
 def bank_registration():
     user_id, _, _, _, _, bank_name, bank_number, register = extract_user_request(request)
-    user_update = None
+    updated = False
+    created = False
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -42,19 +43,19 @@ def bank_registration():
         user_exist = user.get_user_by_id(user_id)
         
         if not user_exist:
-            updated = user.create(discord_id=user_id, bank_name=bank_name, bank_number=bank_number, register=register)
+            created = user.create(discord_id=user_id, bank_name=bank_name, bank_number=bank_number, register=register)
         
-        if not updated:
-            user_update = user.update(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
-            if user_update:
-                updated = True
+        else:
+            updated = user.update(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
 
         if updated:
             connection.commit()
 
         result = {
-            'success': updated
+            'success': updated,
+            'created': created
         }
+
         return jsonify(result)
     finally:
         connection.close()
