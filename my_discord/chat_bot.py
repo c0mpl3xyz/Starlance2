@@ -10,6 +10,7 @@ from discord.ui import View
 load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
+URL = os.getenv('URL')
 intents = discord.Intents.all()
 
 client = commands.Bot(command_prefix='!', intents=intents)
@@ -38,12 +39,6 @@ async def ping(interaction: discord.Interaction): # a slash command will be crea
 @client.tree.command(name='login')
 async def send_form(interaction: discord.Interaction):
     roles = [role.name for role in interaction.user.roles]
-
-    print(roles)
-    print('NO ROLE' in roles)
-    print(f"Influencer: {'Influencer' in roles}")
-    print(f'guild id: {interaction.guild.id}')
-    print(f'guild name: {interaction.guild.name}')
 
     if 'Influencer' in roles:
         message = get_manual_link(interaction.user.id, interaction.user.name)
@@ -76,8 +71,9 @@ async def bank_registration(interaction: discord.Interaction):
         message = 'You don\'t have permission'
         return await interaction.response.send_message(message)
 
+    url = URL
     view = discord.ui.View()
-    view.add_item(SelectBankNames())
+    view.add_item(SelectBankNames(url))
 
     response = await interaction.response.send_message('Bank registration', view=view)
     print(response)

@@ -6,7 +6,7 @@ load_dotenv()
 
 APP_ID = os.getenv('APP_ID')
 URL = os.getenv('URL')
-REDIRECT_URL = URL + 'exchange_token/'
+REDIRECT_URL = URL + '/exchange_token/'
 APP_TOKEN = os.getenv('ADMIN_TOKEN')
 ADMIN_TOKEN = os.getenv('APP_TOKEN')
 

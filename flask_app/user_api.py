@@ -29,7 +29,7 @@ def extract_user_request(request):
     return user_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register
 
 @user_bp.route('/user/bank_register', methods=['POST'])
-def register_bank_name():
+def bank_registration():
     user_id, _, _, _, _, bank_name, bank_number, register = extract_user_request(request)
     user_update = None
 

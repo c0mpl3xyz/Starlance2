@@ -8,7 +8,7 @@ APP_ID = os.getenv('APP_ID')
 URL = os.getenv('URL')
 APP_TOKEN = os.getenv('ADMIN_TOKEN')
 ADMIN_TOKEN = os.getenv('APP_TOKEN')
-REDIRECT_URL = URL + 'exchange_token/'
+REDIRECT_URL = URL + '/exchange_token/'
 
 def get_manual_link(user_id, username):
     print(REDIRECT_URL)

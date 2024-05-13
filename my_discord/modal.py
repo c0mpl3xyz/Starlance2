@@ -20,6 +20,7 @@ class JobModal(Modal, title="Job registration"):
 
 class BankRegistrationModal(Modal, title='Bank Registration'):
     def __init__(self, bank_name, url):
+        print(f'debug 1')
         self.url = url
         self.bank_name = bank_name
         self.bank_number = TextInput(label="Bank number", placeholder="Your bank number", required=True, min_length=2, max_length=100)
@@ -35,19 +36,20 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
 
         data = {
             'user_id': interaction.user.id,
-            'bank_name': self.bank_name,
-            'bank_number': self.bank_number,
-            'register': self.register
+            'bank_name': str(self.bank_name.replace('Bank', '').strip()),
+            'bank_number': str(self.bank_number),
+            'register': str(self.register)
         }
-        
-        response = requests.put(self.url + 'user/bank_registration', json=data)
-        if response and 'success' in response.data:
-            success = response.data['success']
 
+        response = requests.post(self.url + '/user/bank_register', json=data)
+        print(response.text)
+        if response and 'success' in response.json():
+            success = response.json()['success']
         if success:
             message = 'Bank registration succeeded'
         else:
             message = 'Bank registration failed'
 
         await interaction.response.send_message(message)
+
 
