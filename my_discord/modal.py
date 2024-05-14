@@ -2,6 +2,7 @@ from typing import List
 import discord, requests
 from discord.ui import Modal, TextInput
 from discord import Interaction
+from utils.channel_enums import ChannelEnum
 
 # start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
 class JobModal(Modal, title="Job registration"):    
@@ -52,7 +53,7 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
         if response and 'success' in response.json():
             success = response.json()['success']
 
-        channel_name = '' #TODO: CHANGE IT
+        channel_name =  ChannelEnum.GUILD.value #TODO: CHANGE IT
         channel = discord.utils.get(interaction.guild.channels, name=channel_name)
         if success:
             message = f'Bank Registration\nUser: {interaction.user.global_name}\nBank name: {self.bank_name}\nBank number: {self.bank_number}\nRegister: {self.register}'

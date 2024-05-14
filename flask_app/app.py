@@ -1,6 +1,6 @@
 import os
-from user_api import user_bp
-from token_api import token_bp
+from flask_app.apis.user_api import user_bp
+from flask_app.apis.token_api import token_bp
 from flask import Flask
 from dotenv import load_dotenv
 load_dotenv()
