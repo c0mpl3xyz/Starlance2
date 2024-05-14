@@ -21,17 +21,17 @@ class Job:
         self.cursor.execute(query, (id,)) # type: ignore
         return self.cursor.fetchone() is not None# type: ignore
 
-    def create(self, start_date, duration: int, end_date, participation_date, description, upload_link, requirements) -> bool:
+    def create(self, name, roles, start_date, duration: int, end_date, participation_date, description, upload_link, requirements) -> bool:
         # TODO: fill fb id and, Ig id
         query = """
-            INSERT INTO Job (start_date, duration, end_date, participation_date, description, upload_link, requirements)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Job (name, roles, start_date, duration, end_date, participation_date, description, upload_link, requirements)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        self.cursor.execute(query, (start_date, duration, end_date, participation_date, description, upload_link, requirements)) # type: ignore
+        self.cursor.execute(query, (name, ','.join(roles), start_date, duration, end_date, participation_date, description, upload_link, requirements)) # type: ignore
 
         return True
     
-    def update(self, id, start_date, duration: int, end_date, participation_date, description, upload_link, requirements) -> bool:
+    def update(self, id, name, roles, start_date, duration: int, end_date, participation_date, description, upload_link, requirements) -> bool:
         if not self.exist_by_id(id):
             return False
 
@@ -41,6 +41,14 @@ class Job:
         if id is not None:
             update_query += "id = %s, "
             update_params.append(id)
+
+        if name is not None:
+            update_query += "name = %s, "
+            update_params.append(name)
+
+        if roles is not None:
+            update_query += "roles = %s, "
+            update_params.append(','.join(roles))
 
         if start_date is not None:
             update_query += "start_date = %s, "
