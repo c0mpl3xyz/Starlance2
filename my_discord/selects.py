@@ -9,7 +9,8 @@ class SelectRoles(Select):
         roles = [role for role in roles if '[job]' in role.lower()]
         return roles
 
-    def __init__(self, roles):
+    def __init__(self, roles, url):
+        self.url = url
         roles = self.clean_roles(roles)
         options = [discord.SelectOption(label=role, value=role, description='') for role in roles[:25]]
         print('test3')
@@ -18,7 +19,7 @@ class SelectRoles(Select):
     async def callback(self, interaction: discord.Interaction) -> Any:
         roles = self.values
         print('test2')
-        return await interaction.response.send_modal(JobModal(roles))
+        return await interaction.response.send_modal(JobModal(roles, self.url))
     
 class SelectBankNames(Select):
     def __init__(self, url):

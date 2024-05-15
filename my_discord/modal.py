@@ -9,7 +9,8 @@ import re
 
 # start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
 class JobModal(Modal, title="Job registration"):
-    def __init__(self, roles):
+    def __init__(self, roles, url):
+        self.url = url
         self.roles = roles
         self.name = TextInput(label="Job Name", placeholder="Your job name here", required=True)
         self.start_date = TextInput(label="Start Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
@@ -26,7 +27,7 @@ class JobModal(Modal, title="Job registration"):
         self.add_item(self.duration)
         self.add_item(self.participation_date)
         self.add_item(self.description)
-        self.add_item(self.requirements)
+        # self.add_item(self.requirements)
         # self.add_item(self.upload_link)
 
     # def validate(self, data, interaction):
@@ -35,17 +36,38 @@ class JobModal(Modal, title="Job registration"):
     #         pass
 
     async def on_submit(self, interaction: Interaction):
+        end_date: datetime = datetime.strptime(str(self.start_date), '%Y/%m/%d') + timedelta(int(str(self.duration)))
+
+        print(f'start_date: {str(self.start_date)}')
+        #TODO: subcription logic into end_date
         data = {
             'discord_server_id': interaction.guild.id,
             'name': str(self.name),
             'start_date': str(self.start_date),
+            'end_date': end_date.strftime('%Y%m%d'),
             'participation_date': str(self.participation_date),
-            'duration': int(self.duration),
+            'duration': int(str(self.duration)),
             'description': str(self.description),
             'upload_link': str(self.upload_link),
             'requirements': str(self.requirements)
         }
 
+        response = requests.post(self.url + '/job', json=data)
+
+        if response and 'success' in response.json():
+            success = response.json()['success']
+
+        # channel_name =  ChannelEnum.GUILD.value #TODO: CHANGE IT
+        # channel = discord.utils.get(interaction.guild.channels, name=channel_name)
+        if success:
+            message = f'Bank Registration\nUser: {interaction.user.global_name}\nBank name: {self.bank_name}\nBank number: {self.bank_number}\nRegister: {self.register}'
+            await interaction.response.send_message(message)
+            await interaction.message.delete()
+            # if channel:
+            #     await channel.send(message)
+        else:
+            message = 'Bank registration failed'
+            await interaction.response.send_message(message)
         await interaction.response.send_message(f'Roles: {self.roles}, Hello **{self.name}**')
 
 class BankRegistrationModal(Modal, title='Bank Registration'):
