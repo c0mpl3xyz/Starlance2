@@ -10,50 +10,43 @@ import re
 # start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
 class JobModal(Modal, title="Job registration"):
     def __init__(self, roles):
-        self.roles = Select(placeholder="Choose an option", custom_id="select_menu", options=[
-                SelectOption(label="Option 1", value="option_1"),
-                SelectOption(label="Option 2", value="option_2"),
-            ])
-        
+        self.roles = roles
         self.name = TextInput(label="Job Name", placeholder="Your job name here", required=True)
         self.start_date = TextInput(label="Start Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
         # TODO make it number
         self.duration = TextInput(label="Duration", placeholder="days", required=True, style=discord.TextStyle.short)
-        self.particification_date = TextInput(label="Particification Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
+        self.participation_date = TextInput(label="Participation Date", placeholder="DD/MM/YYYY", required=True, style=discord.TextStyle.short)
         self.description = TextInput(label="Description", placeholder='', required=True, style=discord.TextStyle.short)
-        self.upload_link = TextInput(label="Upload link", placeholder="We transfer link here", required=True, style=discord.TextStyle.short)
         self.requirements = TextInput(label="Requirements", placeholder='', required=True, style=discord.TextStyle.short)
+        self.upload_link = TextInput(label="Upload link", placeholder="We transfer link here", required=True, style=discord.TextStyle.short)
 
         super().__init__()
         self.add_item(self.name)
         self.add_item(self.start_date)
         self.add_item(self.duration)
-        self.add_item(self.particification_date)
+        self.add_item(self.participation_date)
         self.add_item(self.description)
-        self.add_item(self.upload_link)
         self.add_item(self.requirements)
-        # self.add_item(self.roles)
+        # self.add_item(self.upload_link)
 
-
-    def validate(self, data, interaction):
-        validator = Validator()
-        if not validator.date_validator(self.start_date):
-            pass
+    # def validate(self, data, interaction):
+    #     validator = Validator()
+    #     if not validator.date_validator(self.start_date):
+    #         pass
 
     async def on_submit(self, interaction: Interaction):
-        self.roles
         data = {
             'discord_server_id': interaction.guild.id,
             'name': str(self.name),
-            'start_date': (self.start_date),
-            'particification_date': str(self.particification_date),
+            'start_date': str(self.start_date),
+            'participation_date': str(self.participation_date),
             'duration': int(self.duration),
             'description': str(self.description),
             'upload_link': str(self.upload_link),
             'requirements': str(self.requirements)
         }
 
-        await interaction.response.send_message(f'roles {self.roles} Hello **{self.name}**')
+        await interaction.response.send_message(f'Roles: {self.roles}, Hello **{self.name}**')
 
 class BankRegistrationModal(Modal, title='Bank Registration'):
     def __init__(self, bank_name, url):

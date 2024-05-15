@@ -58,6 +58,7 @@ async def job_add(interaction: discord.Interaction):
     view = View()
     view.add_item(SelectRoles(roles=role_names))
 
+    print('test1')
     response = await interaction.response.send_message('Select roles', view=view)
     print(response)
 

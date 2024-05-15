@@ -11,11 +11,13 @@ class SelectRoles(Select):
 
     def __init__(self, roles):
         roles = self.clean_roles(roles)
-        options = [discord.SelectOption(label=role, description='') for role in roles[:25]]
-        super().__init__(options = options, placeholder='Please select roles', min_values=1)
+        options = [discord.SelectOption(label=role, value=role, description='') for role in roles[:25]]
+        print('test3')
+        super().__init__(options = options, placeholder='Please select roles')
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         roles = self.values
+        print('test2')
         return await interaction.response.send_modal(JobModal(roles))
     
 class SelectBankNames(Select):
