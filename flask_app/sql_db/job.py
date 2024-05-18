@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 class Job:
     def __init__(self, cursor=None):
         self.cursor = cursor
+        self.date_format = '%Y/%m/%d'
         
     def get_by_id(self, id):
         query = """
@@ -24,9 +25,9 @@ class Job:
     def create(self, name, roles, start_date, duration: int, participation_date, description, upload_link, requirements) -> bool:
         # TODO: default values
         # TODO: fill fb id and, Ig id
-        start_date = datetime.strptime(start_date, '%Y/%m/%d')
-        end_date = (start_date + timedelta(days=30)).strftime('%Y%m%d')
-        participation_date = datetime.strptime(participation_date, '%Y%m%d')
+        start_date = datetime.strptime(start_date, self.date_format)
+        end_date = (start_date + timedelta(days=duration)).strftime(self.date_format)
+        participation_date = datetime.strptime(participation_date, self.date_format)
         query = """
             INSERT INTO Job (name, roles, start_date, duration, end_date, participation_date, description, upload_link, requirements)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -36,9 +37,13 @@ class Job:
 
         return True
     
-    def update(self, id, name, roles, start_date, duration: int, end_date, participation_date, description, upload_link, requirements) -> bool:
+    def update(self, id, name, roles, start_date, duration: int, participation_date, description, upload_link, requirements) -> bool:
         if not self.exist_by_id(id):
             return False
+        
+        start_date = datetime.strptime(start_date, self.date_format)
+        end_date = (start_date + timedelta(days=duration)).strftime(self.date_format)
+        participation_date = datetime.strptime(participation_date, self.date_format)
 
         update_query = "UPDATE Job SET "
         update_params = []
