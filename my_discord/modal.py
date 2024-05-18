@@ -40,9 +40,6 @@ class JobModal(Modal, title="Job registration"):
     async def on_submit(self, interaction: Interaction):
         end_date_obj: datetime = datetime.strptime(str(self.start_date), '%Y/%m/%d') + timedelta(int(str(self.duration)))
         end_date: str = end_date_obj.strftime('%Y/%m/%d')
-        print(f'start_date: {str(self.start_date)}')
-
-        print(f'company id: {interaction.guild.id}')
         data = {
             'discord_server_id': interaction.guild.id,
             'name': str(self.name),
@@ -56,13 +53,12 @@ class JobModal(Modal, title="Job registration"):
             'requirements': str(self.requirements)
         }
 
-        print(f'roles {str(",".join(self.roles))}')
+        response = requests.post(self.url + '/job', json=data).json()
+        if response and 'success' in response:
+            success = ['success']
+            data['job_id'] = response['job_id']
 
-        response = requests.post(self.url + '/job', json=data)
-        print(f'response {response.json()}')
-        if response and 'success' in response.json():
-            success = response.json()['success']
-
+        print(f'{data=}')
         # channel_name =  ChannelEnum.GUILD.value #TODO: CHANGE IT
         # channel = discord.utils.get(interaction.guild.channels, name=channel_name)
         # if channel:
@@ -77,13 +73,11 @@ class JobModal(Modal, title="Job registration"):
             user = await self.bot.fetch_user(537848640140476436)
             guild = await self.bot.fetch_guild(data['discord_server_id'])
             if user and guild:
-                print('user found')
                 data['company name'] = guild.name
                 job_view = JobView(data)
                 await user.send(job_view.description, view=job_view)
         else:
-            message = 'Job registration failed'
-            await interaction.response.send_message(message)
+            await interaction.response.send_message(response['message'])
         return success
 
 class BankRegistrationModal(Modal, title='Bank Registration'):

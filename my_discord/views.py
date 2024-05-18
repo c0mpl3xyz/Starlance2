@@ -20,10 +20,10 @@ class JobView(discord.ui.View):
         reject_button.disabled = True
 
         register_job = RegisterJob()
-        job_registered = register_job.register(interaction.user.id, self.job_data['discord_server_id'])
+        response = register_job.register(interaction.user.id, self.job_data['job_id'])
 
-        if job_registered:
-            await interaction.response.send_message("Job regitered!")
+        if response['success']:
             await interaction.response.edit_message(view=self)
+            await interaction.response.send_message("Job regitered!")
         else:
-            await interaction.response.send_message("You already registered this job!")
+            await interaction.response.send_message(response['message'])

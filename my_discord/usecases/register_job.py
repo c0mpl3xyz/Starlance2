@@ -9,4 +9,6 @@ class RegisterJob():
         }
 
         response = requests.post(URL + '/job_register', json=data)
-        return 'success' in response.json()
+        if 'success' not in response.json():
+            return False
+        return response.json()

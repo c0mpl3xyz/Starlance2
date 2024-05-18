@@ -24,19 +24,28 @@ def extract_job_request(request):
 
 @job_bp.route('/', methods=['POST'])
 def create_job():
-    company_id, name, roles, start_date, end_date, participation_date, duration, description, upload_link, requirements = extract_job_request(request)
+    discord_id, name, roles, start_date, end_date, participation_date, duration, description, upload_link, requirements = extract_job_request(request)
 
     connection = ConnectSQL().get_connection()
+    cursor = connection.cursor()
     created: bool = False
+    job_id = None
+    message: str = ''
 
     try:
-        job = Job(connection.cursor())
-        created = job.create(company_id, name, roles, start_date, end_date, duration, participation_date, description, upload_link, requirements)
+        job = Job(cursor)
+        created = job.create(discord_id, name, roles, start_date, end_date, duration, participation_date, description, upload_link, requirements)
         if created:
             connection.commit()
-
+            job_id = cursor.lastrowid
+            message = 'Job created'
+        else:
+            message = 'Job not created'
+            
         result = {
-            'success': created
+            'success': created,
+            'job_id': job_id,
+            'message': message
         }
 
         return jsonify(result)
