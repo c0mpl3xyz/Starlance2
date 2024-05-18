@@ -6,6 +6,7 @@ from sql_db.job import Job
 from sql_db.user import User
 from sql_db.job_register import JobRegister
 from sql_db.job import Job
+from usecases.get_all_jobs_by_user_id import GetAllJobsByUser
 
 job_register_bp = Blueprint('job_register', __name__, url_prefix='/job_register')
 
@@ -16,8 +17,8 @@ def job_register():
     message: str = ''
     success: bool = False
     connection = ConnectSQL().get_connection()
-
     job_register = JobRegister(connection.cursor())
+    
     success = job_register.create(user_id, job_id)
 
     if success:
@@ -36,9 +37,7 @@ def job_register():
 @job_register_bp.route('/user', methods=['GET'])
 def get_user_jobs():
     user_id = request.json.get('user_id')
-    connection = ConnectSQL().get_connection()
-    job_register = JobRegister(connection.cursor())
-    data = job_register.get_by_user_id(user_id)
+    data = GetAllJobsByUser().execute(user_id)
     return jsonify(data)
 
 @job_register_bp.route('/job', methods=['GET'])

@@ -58,7 +58,6 @@ class JobModal(Modal, title="Job registration"):
             success = ['success']
             data['job_id'] = response['job_id']
 
-        print(f'{data=}')
         # channel_name =  ChannelEnum.GUILD.value #TODO: CHANGE IT
         # channel = discord.utils.get(interaction.guild.channels, name=channel_name)
         # if channel:
@@ -69,7 +68,7 @@ class JobModal(Modal, title="Job registration"):
             await interaction.response.send_message(message)
             await interaction.message.delete()
 
-            # change user id to job registered users
+            # TODO: change user id to job registered users
             user = await self.bot.fetch_user(537848640140476436)
             guild = await self.bot.fetch_guild(data['discord_server_id'])
             if user and guild:

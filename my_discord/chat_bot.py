@@ -64,11 +64,11 @@ async def bank_register(interaction: discord.Interaction):
 
 @client.tree.command(name='jobs')
 async def jobs(interaction: discord.Interaction):
-    influencer = is_influencer()
-    if influencer:
-        job_views = GetUserJobs()
-        for view in job_views:
-            interaction.user.send(view.description, view=view)
+    # influencer = is_influencer(interaction)
+    # if influencer:
+    job_views = GetUserJobs().execute(interaction.user.id)
+    for view in job_views:
+        interaction.user.send(view.description, view=view)
 
 client.run(TOKEN)
 # if __name__ == '__main__':
