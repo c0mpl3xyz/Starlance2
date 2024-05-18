@@ -8,7 +8,7 @@ class User:
     def get_by_id(self, discord_id):
         query = """
             SELECT 1 FROM User WHERE discord_id = %s
-        """
+        """ 
 
         self.cursor.execute(query, (discord_id,)) # type: ignore
         return self.cursor.fetchone() # type: ignore

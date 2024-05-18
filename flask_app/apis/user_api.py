@@ -33,11 +33,10 @@ def bank_registration():
     user_id, _, _, _, _, bank_name, bank_number, register = extract_user_request(request)
 
     connection = ConnectSQL().get_connection()
-    cursor = connection.cursor()
     updated: bool = False
 
     try:
-        user = User(cursor)
+        user = User(connection.cursor())
         user_exist = user.get_by_id(user_id)
         
         if not user_exist:
@@ -57,6 +56,32 @@ def bank_registration():
     finally:
         connection.close()
 
+@user_bp.route('/', methods=['GET'])
+def get_user():
+    user_id = request.args.get('user_id')
+
+    connection = ConnectSQL().get_connection()
+    user = User(connection.cursor())
+
+    data = user.get_by_id(user_id)
+    return jsonify(data)
+
+@user_bp.route('/get_users', methods=['GET'])
+def get_users():
+    user_ids = request.args.get('user_ids')
+
+    connection = ConnectSQL().get_connection()
+    user = User(connection.cursor())
+
+    users = []
+    for id in user_ids:
+        found = user.get_by_id(id)
+        if found is not None:
+            users.append(found)
+
+    return jsonify(users)
+
+
 # @user_bp.route('/user', methods=['PUT'])
 # def edit():
 #     user_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register = extract_user_request(request)
@@ -68,10 +93,4 @@ def bank_registration():
 # def delete():
 #     discord_id = request.args.get('discord_id')
 #     result = user.delete(discord_id)
-#     return jsonify({'result': result})
-
-# @user_bp.route('/user', methods=['GET'])
-# def get():
-#     discord_id = request.args.get('discord_id')
-#     result = user.get(discord_id)
 #     return jsonify({'result': result})

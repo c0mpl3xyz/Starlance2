@@ -77,9 +77,8 @@ def exchange_token_test():
     state = ast.literal_eval(request.args.get('state'))
 
     connection = ConnectSQL(SQL_DICT).get_connection()
-    cursor = connection.cursor()
     try:
-        result = exchange_code_for_token(cursor, APP_ID, APP_SECRET, REDIRECT_URL, code, state)
+        result = exchange_code_for_token(connection.cursor(), APP_ID, APP_SECRET, REDIRECT_URL, code, state)
         if result['success']:
             connection.commit()
     finally:

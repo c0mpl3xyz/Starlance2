@@ -22,7 +22,7 @@ class Job:
         self.cursor.execute(query, (id,)) # type: ignore
         return self.cursor.fetchone() is not None# type: ignore
 
-    def create(self, name, roles, start_date, end_date, duration: int, participation_date, description, upload_link, requirements) -> bool:
+    def create(self, company_id, name, roles, start_date, end_date, duration: int, participation_date, description, upload_link, requirements) -> bool:
         # TODO: default values
         # TODO: fill fb id and, Ig id
         start_date = datetime.strptime(start_date, self.date_format)
@@ -30,11 +30,11 @@ class Job:
         participation_date = datetime.strptime(participation_date, self.date_format)
         
         query = """
-            INSERT INTO Job (name, roles, start_date, end_date, duration, participation_date, description, upload_link, requirements)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Job (company_id, name, roles, start_date, end_date, duration, participation_date, description, upload_link, requirements)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
-        self.cursor.execute(query, (name, roles, start_date, end_date, duration, participation_date, description, upload_link, requirements)) # type: ignore
+        self.cursor.execute(query, (company_id, name, roles, start_date, end_date, duration, participation_date, description, upload_link, requirements)) # type: ignore
 
         return True
     

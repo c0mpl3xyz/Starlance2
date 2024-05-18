@@ -6,7 +6,8 @@ from manual import get_manual_link
 from modal import JobModal, BankRegistrationModal
 from selects import SelectRoles, SelectBankNames
 from discord.ui import View
-
+from usecases.get_user_jobs import GetUserJobs
+from usecases.get_company_jobs import GetCompanyJobs
 load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -14,6 +15,10 @@ URL = os.getenv('URL')
 intents = discord.Intents.all()
 
 client = commands.Bot(command_prefix='!', intents=intents)
+
+def is_influencer(interaction):
+    roles = [role.name for role in interaction.user.roles]
+    return 'Influencer' in roles
 
 @client.event
 async def on_ready():
@@ -24,23 +29,9 @@ async def on_ready():
 async def ping(interaction: discord.Interaction): # a slash command will be created with the name "ping"
     await interaction.response.send_message(f"Pong! Latency is {client.latency}")
 
-# @client.event
-# async def on_message(message):
-#     if message.author == client.user:
-#         return
-    
-#     if message.content.startswith('!'):
-#         await client.process_commands(message)
-#         return
-
-#     response = 'Welcome'
-#     await message.channel.send(response)
-
 @client.tree.command(name='login')
 async def login(interaction: discord.Interaction):
-    roles = [role.name for role in interaction.user.roles]
-
-    if 'Influencer' in roles:
+    if is_influencer(interaction):
         message = get_manual_link(interaction.user.id, interaction.user.name)
     else:
         message = 'You are not influencer'
@@ -49,16 +40,14 @@ async def login(interaction: discord.Interaction):
 @client.tree.command(name='job_add')
 async def job_add(interaction: discord.Interaction):
     roles = [role.name for role in interaction.user.roles]
-    print(f'{roles=}')
-
-    # if 'Influencer' in role_names:
-    #     message = 'You don\'t have permission'
-    #     return await interaction.response.send_message(message)
+    if is_influencer(interaction):
+        message = 'You don\'t have permission'
+        return await interaction.response.send_message(message)
 
     view = View()
-    view.add_item(SelectRoles(roles, URL))
-    response = await interaction.response.send_message('Select roles', view=view)
-    print(response)
+    view.add_item(SelectRoles(client, roles, URL))
+    success = await interaction.response.send_message('Select roles', view=view)
+    print(f'result: {success}')
 
 @client.tree.command(name='bank_register')
 async def bank_register(interaction: discord.Interaction):
@@ -74,5 +63,25 @@ async def bank_register(interaction: discord.Interaction):
     view.add_item(SelectBankNames(url))
     await interaction.response.send_message('Bank registration', view=view)
 
+@client.tree.command(name='jobs')
+async def jobs(interaction: discord.Interaction):
+    influencer = is_influencer()
+    if influencer:
+        job_views = GetUserJobs()
+        for view in job_views:
+            interaction.user.send(view.description, view=view)
+
 client.run(TOKEN)
 # if __name__ == '__main__':
+
+# @client.event
+# async def on_message(message):
+#     if message.author == client.user:
+#         return
+    
+#     if message.content.startswith('!'):
+#         await client.process_commands(message)
+#         return
+
+#     response = 'Welcome'
+#     await message.channel.send(response)
