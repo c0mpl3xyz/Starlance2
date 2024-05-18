@@ -8,6 +8,7 @@ job_bp = Blueprint('job', __name__, url_prefix='/job')
 
 def extract_job_request(request):
     discord_server_id = request.json.get('discord_server_id')
+    roles = request.json.get('roles')
     name = request.json.get('name')
     start_date = request.json.get('start_date')
     end_date = request.json.get('end_date')
@@ -17,7 +18,7 @@ def extract_job_request(request):
     upload_link = request.json.get('upload_link')
     requirements = request.json.get('requirements')
 
-    return discord_server_id, name, start_date, end_date, participation_date, duration, description, upload_link, requirements
+    return discord_server_id, name, roles, start_date, end_date, participation_date, duration, description, upload_link, requirements
 
 @job_bp.route('/', methods=['POST'])
 def bank_registration():
