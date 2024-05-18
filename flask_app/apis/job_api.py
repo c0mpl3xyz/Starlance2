@@ -33,7 +33,7 @@ def bank_registration():
         job_exist = job.get_by_id(discord_server_id)
         
         if not job_exist:
-            updated = job.create(name, roles, start_date, duration, end_date, participation_date, description, upload_link, requirements)
+            updated = job.create(name, roles, start_date, duration, participation_date, description, upload_link, requirements)
         
         else:
             updated = job.update(name, roles, start_date, duration, end_date, participation_date, description, upload_link, requirements)
