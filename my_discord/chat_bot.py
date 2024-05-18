@@ -54,13 +54,12 @@ async def bank_register(interaction: discord.Interaction):
     roles = interaction.user.roles
     role_names = [role.name for role in roles]
 
-    if 'Influencer' not in role_names:
-        message = 'You don\'t have permission'
-        return await interaction.response.send_message(message)
+    # if 'Influencer' not in role_names:
+    #     message = 'You don\'t have permission'
+    #     return await interaction.response.send_message(message)
 
-    url = URL
     view = discord.ui.View()
-    view.add_item(SelectBankNames(url))
+    view.add_item(SelectBankNames(URL))
     await interaction.response.send_message('Bank registration', view=view)
 
 @client.tree.command(name='jobs')

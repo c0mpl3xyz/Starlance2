@@ -28,7 +28,7 @@ class SelectBankNames(Select):
         self.url = url
         bank_names = Enums.BANK_NAMES.value
         options = [discord.SelectOption(label=bank + ' Bank', description='') for bank in bank_names]
-        super().__init__(options=options, placeholder='Please Bank name', min_values=1,  max_values=len(bank_names))
+        super().__init__(options=options, placeholder='Please Bank name', min_values=1)
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         bank_name = self.values[0]
