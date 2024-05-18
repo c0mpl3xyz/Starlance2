@@ -8,7 +8,7 @@ class Job:
         
     def get_by_id(self, id):
         query = """
-            SELECT 1 FROM Job WHERE id = %s
+            SELECT 1 FROM Job WHERE discord_server_id = %s
         """
 
         self.cursor.execute(query, (id,)) # type: ignore
@@ -16,7 +16,7 @@ class Job:
 
     def exist_by_id(self, id) -> bool:
         query = """
-            SELECT 1 FROM Job WHERE id = %s
+            SELECT 1 FROM Job WHERE discord_server_id = %s
         """
 
         self.cursor.execute(query, (id,)) # type: ignore
@@ -50,7 +50,7 @@ class Job:
         update_params = []
 
         if id is not None:
-            update_query += "id = %s, "
+            update_query += "discord_server_id = %s, "
             update_params.append(id)
 
         if name is not None:
