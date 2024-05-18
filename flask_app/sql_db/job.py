@@ -34,7 +34,7 @@ class Job:
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
-        self.cursor.execute(query, (name, roles, start_date, end_date, duration: int, participation_date, description, upload_link, requirements)) # type: ignore
+        self.cursor.execute(query, (name, roles, start_date, end_date, duration, participation_date, description, upload_link, requirements)) # type: ignore
 
         return True
     
