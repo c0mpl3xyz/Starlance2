@@ -38,7 +38,7 @@ def get_user_jobs():
     user_id = request.json.get('user_id')
     connection = ConnectSQL().get_connection()
     job_register = JobRegister(connection.cursor())
-    data = job_register.get_by_user_id(31321)
+    data = job_register.get_by_user_id(user_id)
     return jsonify(data)
 
 @job_register_bp.route('/job', methods=['GET'])
