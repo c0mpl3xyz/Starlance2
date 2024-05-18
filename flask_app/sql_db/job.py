@@ -6,7 +6,7 @@ class Job:
         self.cursor = cursor
         self.date_format = '%Y/%m/%d'
         
-    def get_by_id(self, id):
+    def get_by_discord_id(self, id):
         query = """
             SELECT 1 FROM Job WHERE discord_server_id = %s
         """
