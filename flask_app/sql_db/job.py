@@ -34,11 +34,11 @@ class Job:
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
-        self.cursor.execute(query, (name, ','.join(roles), start_date, duration, end_date, participation_date, description, upload_link, requirements)) # type: ignore
+        self.cursor.execute(query, (name, ','.join(roles), start_date, end_date, duration: int, participation_date, description, upload_link, requirements)) # type: ignore
 
         return True
     
-    def update(self, id, name, roles, start_date, duration: int, end_date, participation_date, description, upload_link, requirements) -> bool:
+    def update(self, id, name, roles, start_date, end_date, duration: int, participation_date, description, upload_link, requirements) -> bool:
         if not self.exist_by_id(id):
             return False
         
