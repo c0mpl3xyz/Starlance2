@@ -30,7 +30,7 @@ class Job:
         participation_date = datetime.strptime(participation_date, self.date_format)
         
         query = """
-            INSERT INTO Job (company_id, name, roles, start_date, end_date, duration, participation_date, description, upload_link, requirements)
+            INSERT INTO Job (discord_server_id, name, roles, start_date, end_date, duration, participation_date, description, upload_link, requirements)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
