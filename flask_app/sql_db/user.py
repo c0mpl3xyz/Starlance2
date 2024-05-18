@@ -7,7 +7,7 @@ class User:
         
     def get_by_id(self, id):
         query = """
-            SELECT 1 FROM User WHERE id = %s
+            SELECT * FROM User WHERE id = %s
         """ 
 
         self.cursor.execute(query, (id,)) # type: ignore

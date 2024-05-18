@@ -8,7 +8,7 @@ class Job:
     
     def get_by_id(self, id):
         query = """
-            SELECT 1 FROM Job WHERE id = %s
+            SELECT * FROM Job WHERE id = %s
         """
 
         self.cursor.execute(query, (id,)) # type: ignore
@@ -16,7 +16,7 @@ class Job:
     
     def get_by_discord_id(self, discord_id):
         query = """
-            SELECT 1 FROM Job WHERE discord_server_id = %s
+            SELECT * FROM Job WHERE discord_server_id = %s
         """
 
         self.cursor.execute(query, (discord_id,)) # type: ignore
