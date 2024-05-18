@@ -11,12 +11,12 @@ class Content:
         self.last_collected_date = last_collected_date
     
     @classmethod
-    def create(cls, cursor, content_id, content_link, code, user_discord_id, start_date, deadline):
+    def create(cls, user_id, cursor, content_link, code, start_date, deadline):
         insert_query = """
-            INSERT INTO Content (content_id, content_link, code, user_discord_id, start_date, deadline)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO Content (user_id, content_link, code, start_date, deadline)
+            VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(insert_query, (content_id, content_link, code, user_discord_id, start_date, deadline))
+        cursor.execute(insert_query, (user_id, content_link, code, start_date, deadline))
     
     @classmethod
     def delete(cls, cursor, content_id):

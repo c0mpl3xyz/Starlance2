@@ -5,6 +5,7 @@ from usecases.register_job import RegisterJob
 
 class JobView(discord.ui.View):
     def __init__(self, job_data):
+        self.job_data = job_data
         super().__init__(timeout=350)
         self.description = '\n'.join([f'{k}: {v}' for (k, v) in job_data.items() if k != 'discord_server_id'])
 
@@ -19,7 +20,7 @@ class JobView(discord.ui.View):
         reject_button.disabled = True
 
         register_job = RegisterJob()
-        job_registered = register_job.register(interaction.user.id, self.job_data['job_id'])
+        job_registered = register_job.register(interaction.user.id, self.job_data['discord_server_id'])
 
         if job_registered:
             await interaction.response.send_message("Job regitered!")

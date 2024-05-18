@@ -10,8 +10,8 @@ class AccessToken:
         expiration_date = datetime.now() + expires_in_timedelta
 
         insert_query = """
-            INSERT INTO AccessToken (id, user_id, token, token_type, expiration_date, active)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO AccessToken (user_id, token, token_type, expiration_date, active)
+            VALUES (%s, %s, %s, %s, %s)
         """
 
         update_query = """
@@ -29,9 +29,7 @@ class AccessToken:
                 update_values = (access_token, token_type, expiration_date, True, user_id)
                 self.cursor.execute(update_query, update_values)
             else:
-                #TODO: fill id with uuid
-                new_uuid = str(uuid.uuid4())
-                self.cursor.execute(insert_query, (new_uuid, user_id, access_token, token_type, expiration_date, True))
+                self.cursor.execute(insert_query, (user_id, access_token, token_type, expiration_date, True))
             return True
         except Exception:
             return False

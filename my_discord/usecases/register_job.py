@@ -8,5 +8,5 @@ class RegisterJob():
             'job_id': job_id
         }
 
-        response = requests.post(URL + '/job/register', json=data)
+        response = requests.post(URL + '/job_register', json=data)
         return 'success' in response.json()
