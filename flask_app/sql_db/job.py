@@ -24,8 +24,8 @@ class Job:
     def create(self, name, roles, start_date, duration: int, end_date, participation_date, description, upload_link, requirements) -> bool:
         # TODO: default values
         # TODO: fill fb id and, Ig id
-        start_date = datetime.strptime(start_date, '%Y%m%d')
-        end_date = datetime.strptime(end_date, '%Y%m%d')
+        start_date = datetime.strptime(start_date, '%Y/%m/%d')
+        end_date = datetime.strptime(end_date, '%Y/%m/%d')
         participation_date = datetime.strptime(participation_date, '%Y%m%d')
         query = """
             INSERT INTO Job (name, roles, start_date, duration, end_date, participation_date, description, upload_link, requirements)
