@@ -48,17 +48,15 @@ async def login(interaction: discord.Interaction):
 
 @client.tree.command(name='job_add')
 async def job_add(interaction: discord.Interaction):
-    roles = interaction.user.roles
-    role_names = [role.name for role in roles]
+    roles = [role.name for role in interaction.user.roles]
+    print(f'{roles=}')
 
     # if 'Influencer' in role_names:
     #     message = 'You don\'t have permission'
     #     return await interaction.response.send_message(message)
 
     view = View()
-    view.add_item(SelectRoles(role_names, URL))
-
-    print('test1')
+    view.add_item(SelectRoles(roles, URL))
     response = await interaction.response.send_message('Select roles', view=view)
     print(response)
 
@@ -74,7 +72,6 @@ async def bank_register(interaction: discord.Interaction):
     url = URL
     view = discord.ui.View()
     view.add_item(SelectBankNames(url))
-
     await interaction.response.send_message('Bank registration', view=view)
 
 client.run(TOKEN)

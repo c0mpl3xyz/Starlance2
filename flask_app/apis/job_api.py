@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from sql_db.job import Job
 
-user_bp = Blueprint('job', __name__, url_prefix='/job')
+job_bp = Blueprint('job', __name__, url_prefix='/job')
 
 def extract_job_request(request):
     discord_server_id = request.json.get('discord_server_id')
@@ -19,7 +19,7 @@ def extract_job_request(request):
 
     return discord_server_id, name, start_date, end_date, participation_date, duration, description, upload_link, requirements
 
-@user_bp.route('/', methods=['POST'])
+@job_bp.route('/', methods=['POST'])
 def bank_registration():
     discord_server_id, name, roles, start_date, end_date, participation_date, duration, description, upload_link, requirements = extract_job_request(request)
 

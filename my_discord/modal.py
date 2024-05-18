@@ -53,7 +53,7 @@ class JobModal(Modal, title="Job registration"):
         }
 
         response = requests.post(self.url + '/job', json=data)
-
+        print(f'response {response.json()}')
         if response and 'success' in response.json():
             success = response.json()['success']
 
