@@ -12,26 +12,19 @@ job_register_bp = Blueprint('job_register', __name__, url_prefix='/job_register'
 @job_register_bp.route('/', methods=['POST'])
 def job_register():
     user_id = request.json.get('user_id')
-    job_discord_id = request.json.get('job_id')
+    job_id = request.json.get('job_id')
     message: str = ''
     success: bool = False
     connection = ConnectSQL().get_connection()
-    job = Job(connection.cursor())
 
-    job_result = job.get_by_discord_id(job_discord_id)
+    job_register = JobRegister(connection.cursor())
+    success = job_register.create(user_id, job_id)
 
-    if job_result:
-        message = 'Job not exists'
-    else:    
-        job_register = JobRegister(connection.cursor())
-        job_id = job_result[0]
-        success = job_register.create(user_id, job_id)
-
-        if success:
-            connection.commit()
-            message = 'Job registered to user'
-        else:
-            message = 'Job already registered'
+    if success:
+        connection.commit()
+        message = 'Job registered to user'
+    else:
+        message = 'Job already registered'
 
     result = {
         'success': success,
