@@ -17,4 +17,4 @@ class GetAllJobsByUser:
                 job = list(raw_job)
                 job.append(type)
                 jobs.append(job)
-        return registered_jobs
+        return jobs

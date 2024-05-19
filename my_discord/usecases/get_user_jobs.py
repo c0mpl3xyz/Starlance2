@@ -9,8 +9,8 @@ class GetUserJobs:
             }
 
         response = requests.get(URL + '/job_register/user', json=data)
-        print(f'{response}')
         JSON = response.json()
+        print(f'{JSON}')
 
         jobs = [JobView(job_mapping(job)) for job in JSON]
 
