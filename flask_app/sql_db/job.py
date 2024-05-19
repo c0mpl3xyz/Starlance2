@@ -29,11 +29,17 @@ class Job:
                 SELECT j.*
                 FROM Job j
                 WHERE j.start_date > %s
-                AND (LOWER(j.roles) LIKE %s OR LOWER(j.roles) LIKE %s OR LOWER(j.roles) LIKE %s OR LOWER(j.roles) = %s)
-                AND j.id NOT IN (
-                    SELECT jr.job_id
+                AND (
+                    LOWER(j.roles) LIKE %s 
+                    OR LOWER(j.roles) LIKE %s 
+                    OR LOWER(j.roles) LIKE %s 
+                    OR LOWER(j.roles) = %s
+                )
+                AND NOT EXISTS (
+                    SELECT 1
                     FROM JobRegister jr
-                    WHERE jr.user_id = %s
+                    WHERE jr.job_id = j.id
+                    AND jr.user_id = %s
                 );
             """
         # Execute the query with parameters
