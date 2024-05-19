@@ -8,11 +8,12 @@ class GetAllJobsByUser:
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
         job_register = JobRegister(cursor)
-        job_ids = [j[1] for j in job_register.get_by_user_id(user_id)]
+        registered_jobs = [(j[1], j[2]) for j in job_register.get_by_user_id(user_id)]
 
         jobs = []
-        for job_id in job_ids:
+        for job_id, type in registered_jobs:
             job = Job(cursor).get_by_id(job_id)
+            job.append(type)
             if job is not None:
                 jobs.append(job)
         return jobs

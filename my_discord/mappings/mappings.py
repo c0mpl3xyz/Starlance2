@@ -17,7 +17,8 @@ def job_mapping(data: list) -> dict:
         'participation_date': convert_date(data[7]),
         'description': data[8],
         'upload_link': data[9],
-        'requirements': data[10]
+        'requirements': data[10],
+        'type': data[11]
     }
 
     return job_dict

@@ -4,7 +4,7 @@ import requests
 from usecases.register_job import RegisterJob
 
 class JobView(discord.ui.View):
-    def __init__(self, job_data, type=None):
+    def __init__(self, job_data):
         self.job_data = job_data
         super().__init__(timeout=350)
         self.description = '\n'.join([f'{k}: {v}' for (k, v) in job_data.items() if k != 'discord_server_id'])
@@ -18,14 +18,14 @@ class JobView(discord.ui.View):
         self.pending_button = discord.ui.button(label="Pending", style=discord.ButtonStyle.primary, custom_id='pending')
         self.pending_button.disabled = True
 
-        if type is None:
+        if job_data.type is None:
             self.add_item(self.reject_button)
             self.add_item(self.accept_button)
         
-        if type == 'Pending':
+        if job_data.type == 'Pending':
             self.add_item(self.pending_button)
         
-        if type == 'Rejected':
+        if job_data.type == 'Rejected':
             self.reject_button.label = 'Rejected'
             self.reject_button.disabled = True
             self.add_item(self.reject_button)
