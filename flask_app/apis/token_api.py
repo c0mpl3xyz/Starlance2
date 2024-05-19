@@ -70,7 +70,8 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
             'token_created': token_creation,
             'access_token': check_token,
             'user_created': created,
-            'debug': debug
+            'debug': debug,
+            'data': data
         }
         
     return message
