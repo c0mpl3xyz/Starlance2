@@ -11,5 +11,5 @@ class GetCompanyJobs:
 
         response = requests.get(URL + '/job/company', json=data)
         JSON = response.json()
-        jobs = [JobView(job_mapping(job)) for job in JSON]
+        jobs = [JobView(job_mapping(job), company=True) for job in JSON]
         return jobs

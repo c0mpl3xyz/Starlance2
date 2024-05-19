@@ -4,7 +4,7 @@ import requests
 from usecases.register_job import RegisterJob
 
 class JobView(discord.ui.View):
-    def __init__(self, job_data):
+    def __init__(self, job_data, company=False):
         self.job_data = job_data
         super().__init__(timeout=350)
         self.description = '\n'.join([f'{k}: {v}' for (k, v) in job_data.items() if k != 'discord_server_id'])
@@ -18,17 +18,18 @@ class JobView(discord.ui.View):
         self.pending_button = discord.ui.Button(label="Pending", style=discord.ButtonStyle.primary, custom_id='pending')
         self.pending_button.disabled = True
 
-        if 'type' not in job_data or job_data['type'] is None:
-            self.add_item(self.reject_button)
-            self.add_item(self.accept_button)
-        
-        elif job_data['type'] == 'Pending':
-            self.add_item(self.pending_button)
-        
-        elif job_data['type'] == 'Rejected':
-            self.reject_button.label = 'Rejected'
-            self.reject_button.disabled = True
-            self.add_item(self.reject_button)
+        if not company:
+            if 'type' not in job_data or job_data['type'] is None:
+                self.add_item(self.reject_button)
+                self.add_item(self.accept_button)
+            
+            elif job_data['type'] == 'Pending':
+                self.add_item(self.pending_button)
+            
+            elif job_data['type'] == 'Rejected':
+                self.reject_button.label = 'Rejected'
+                self.reject_button.disabled = True
+                self.add_item(self.reject_button)
 
     async def reject_button_callback(self, interaction: discord.Interaction):
         register_job = RegisterJob()

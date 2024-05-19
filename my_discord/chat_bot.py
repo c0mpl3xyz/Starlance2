@@ -68,9 +68,9 @@ async def bank_register(interaction: discord.Interaction):
 
 @client.tree.command(name='my_jobs')
 async def my_jobs(interaction: discord.Interaction):
-    if interaction.user.roles is None:
-        await interaction.user.send(ErrorMessageEnum.NOT_DM.value)
-        return
+    # if 'roles' not in interaction.user is None:
+    #     await interaction.user.send(ErrorMessageEnum.NOT_DM.value)
+    #     return
     influencer = is_influencer(interaction)
     if influencer:
         job_views = GetUserJobs().execute(interaction.user.id)
