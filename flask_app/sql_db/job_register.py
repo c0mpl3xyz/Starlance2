@@ -30,7 +30,7 @@ class JobRegister:
         self.cursor.execute(query, (user_id, job_id)) # type: ignore
         return self.cursor.fetchone() is not None# type: ignore
 
-    def create(self, user_id, job_id, job_type=None) -> bool:
+    def create(self, user_id, job_id, job_type='Pending') -> bool:
         if self.exist_by_id(user_id, job_id):
             return False
         
@@ -42,7 +42,7 @@ class JobRegister:
         self.cursor.execute(query, (user_id, job_id, job_type)) # type: ignore
         return True
     
-    def update(self, user_id, job_id, job_type=None) -> bool:
+    def update(self, user_id, job_id, job_type) -> bool:
         if not self.exist_by_id(user_id, job_id):
             return False
         
