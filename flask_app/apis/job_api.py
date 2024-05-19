@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from sql_db.job import Job
 from sql_db.user import User
 from sql_db.job_register import JobRegister
+from usecases.get_all_company_jobs import GetCompanyJobs
 
 job_bp = Blueprint('job', __name__, url_prefix='/job')
 
@@ -51,3 +52,9 @@ def create_job():
         return jsonify(result)
     finally:
         connection.close()
+
+@job_bp.route('/company', methods=['GET'])
+def get_company_jobs():
+    company_id = request.json.get('company_id')
+    data = GetCompanyJobs().execute(company_id)
+    return jsonify(data)

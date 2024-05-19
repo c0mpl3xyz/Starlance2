@@ -5,6 +5,7 @@ class Job:
     def __init__(self, cursor=None):
         self.cursor = cursor
         self.date_format = '%Y/%m/%d'
+        self.current = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
     def get_by_id(self, id):
         query = """
@@ -13,6 +14,14 @@ class Job:
 
         self.cursor.execute(query, (id,)) # type: ignore
         return self.cursor.fetchone() # type: ignore
+    
+    def get_all_by_company_id(self, discord_server_id):
+        query = """
+            SELECT * FROM Job WHERE discord_server_id = %s AND start_date > %s
+        """
+
+        self.cursor.execute(query, (discord_server_id, self.current))
+        return self.cursor.fetchall()
     
     def get_by_discord_id(self, discord_id):
         query = """
@@ -24,8 +33,6 @@ class Job:
     
     def get_all_by_roles(self, user_id, roles: list):
         data = []
-        current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
         for role in roles:
             query = """
                 SELECT j.*
@@ -45,7 +52,7 @@ class Job:
                 );
             """
             # Execute the query with parameters
-            self.cursor.execute(query, (current_datetime, f'%{role},%', f'%,{role},%', f'%,{role}', role, user_id))
+            self.cursor.execute(query, (self.current, f'%{role},%', f'%,{role},%', f'%,{role}', role, user_id))
             data = self.cursor.fetchall()
         return data
 
