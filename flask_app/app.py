@@ -10,7 +10,8 @@ load_dotenv()
 
 APP_ID = os.getenv('APP_ID')
 APP_SECRET = os.getenv('APP_SECRET')
-REDIRECT_URL = os.getenv('REDIRECT_URL')
+URL = os.getenv('URL')
+REDIRECT_URL = URL + '/exchange_token/'
 API_VERSION = os.getenv('API_VERSION')
 API_PREFIX = os.getenv('API_PREFIX')
 URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
