@@ -12,8 +12,9 @@ class GetAllJobsByUser:
 
         jobs = []
         for job_id, type in registered_jobs:
-            job = Job(cursor).get_by_id(job_id)
-            job.append(type)
-            if job is not None:
+            raw_job = Job(cursor).get_by_id(job_id)
+            if raw_job is not None:
+                job = list(raw_job)
+                job.append(type)
                 jobs.append(job)
         return jobs

@@ -22,10 +22,10 @@ class JobView(discord.ui.View):
             self.add_item(self.reject_button)
             self.add_item(self.accept_button)
         
-        if job_data.type == 'Pending':
+        elif job_data.type == 'Pending':
             self.add_item(self.pending_button)
         
-        if job_data.type == 'Rejected':
+        elif job_data.type == 'Rejected':
             self.reject_button.label = 'Rejected'
             self.reject_button.disabled = True
             self.add_item(self.reject_button)
