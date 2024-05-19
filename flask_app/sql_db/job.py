@@ -21,6 +21,24 @@ class Job:
 
         self.cursor.execute(query, (discord_id,)) # type: ignore
         return self.cursor.fetchone() # type: ignore
+    
+    def get_all_by_roles(self, user_id, roles: list):
+        data = []
+        for role in roles:
+            query = """
+                SELECT j.*
+                FROM Job j
+                WHERE j.start_date > %s
+                AND (LOWER(j.roles) LIKE %s OR LOWER(j.roles) LIKE %s OR LOWER(j.roles) LIKE %s OR LOWER(j.roles) = %s)
+                AND j.job_id NOT IN (
+                    SELECT jr.job_id
+                    FROM JobRegister jr
+                    WHERE jr.user_id = %s
+                );
+            """
+        # Execute the query with parameters
+            data += self.cursor.execute(query, (datetime.now(), f'%{role},%', f'%,{role},%', f'%,{role}', role, user_id))
+        return data
 
     def exist_by_id(self, id) -> bool:
         query = """

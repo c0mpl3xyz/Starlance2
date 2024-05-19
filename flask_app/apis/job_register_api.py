@@ -42,6 +42,17 @@ def get_user_jobs():
     data = GetAllJobsByUser().execute(user_id)
     return jsonify(data)
 
+@job_register_bp.route('/roles', methods=['GET'])
+def get_job_roles():
+    roles = request.json.get('roles')
+    user_id = request.json.get('user_id')
+    
+    connection = ConnectSQL().get_connection()
+    job = Job(connection.cursor())
+
+    data = job.get_all_by_roles(user_id, roles)
+    return jsonify(data)
+
 @job_register_bp.route('/job', methods=['GET'])
 def get_job_users():
     job_id = request.json.get('job_id')

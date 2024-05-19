@@ -7,7 +7,8 @@ from modal import JobModal, BankRegistrationModal
 from selects import SelectRoles, SelectBankNames
 from discord.ui import View
 from usecases.get_user_jobs import GetUserJobs
-from usecases.get_company_jobs import GetCompanyJobs
+from usecases.get_jobs_by_user_roles import GetJobsByUserRoles
+# from usecases.get_company_jobs import GetCompanyJobs
 load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -62,13 +63,29 @@ async def bank_register(interaction: discord.Interaction):
     view.add_item(SelectBankNames(URL))
     await interaction.response.send_message('Bank registration', view=view)
 
-@client.tree.command(name='jobs')
-async def jobs(interaction: discord.Interaction):
+@client.tree.command(name='my_jobs')
+async def my_jobs(interaction: discord.Interaction):
     # influencer = is_influencer(interaction)
     # if influencer:
+    print('test')
     job_views = GetUserJobs().execute(interaction.user.id)
-    for view in job_views:
-        await interaction.user.send(view.description, view=view)
+    if job_views is None or len(job_views) == 0:
+        await interaction.user.send('You don\'t have jobs yet')
+    else:
+        for view in job_views:
+            await interaction.user.send(view.description, view=view)
+
+@client.tree.command(name='job_list')
+async def job_list(interaction: discord.Interaction):
+    # influencer = is_influencer(interaction)
+    # if influencer:
+    roles = [role.name for role in interaction.user.roles]
+    job_views = GetJobsByUserRoles().execute(interaction.user.id, roles)
+    if job_views is None or len(job_views) == 0:
+        await interaction.user.send('You don\'t have jobs yet')
+    else:
+        for view in job_views:
+            await interaction.user.send(view.description, view=view)
 
 @client.event
 async def on_message(message):
