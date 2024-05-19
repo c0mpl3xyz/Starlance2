@@ -24,6 +24,8 @@ class Job:
     
     def get_all_by_roles(self, user_id, roles: list):
         data = []
+        current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
         for role in roles:
             query = """
                 SELECT j.*
@@ -42,8 +44,8 @@ class Job:
                     AND jr.user_id = %s
                 );
             """
-        # Execute the query with parameters
-            data += self.cursor.execute(query, (datetime.now(), f'%{role},%', f'%,{role},%', f'%,{role}', role, user_id))
+            # Execute the query with parameters
+            data += self.cursor.execute(query, (current_datetime, f'%{role},%', f'%,{role},%', f'%,{role}', role, user_id))
         return data
 
     def exist_by_id(self, id) -> bool:
