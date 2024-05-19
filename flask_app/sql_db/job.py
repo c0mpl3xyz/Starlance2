@@ -30,7 +30,7 @@ class Job:
                 FROM Job j
                 WHERE j.start_date > %s
                 AND (LOWER(j.roles) LIKE %s OR LOWER(j.roles) LIKE %s OR LOWER(j.roles) LIKE %s OR LOWER(j.roles) = %s)
-                AND j.job_id NOT IN (
+                AND j.id NOT IN (
                     SELECT jr.job_id
                     FROM JobRegister jr
                     WHERE jr.user_id = %s
