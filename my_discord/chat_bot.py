@@ -70,18 +70,18 @@ async def jobs(interaction: discord.Interaction):
     for view in job_views:
         await interaction.user.send(view.description, view=view)
 
-# @client.event
-# async def on_message(message):
-#     if message.author == client.user:
-#         return
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
     
-#     print(message.author.id)
-#     if message.content.startswith('!'):
-#         await client.process_commands(message)
-#         return
+    print(message.author.id)
+    if message.content.startswith('!'):
+        await client.process_commands(message)
+        return
 
-#     response = 'Welcome'
-#     await message.channel.send(response)
+    response = 'Welcome'
+    await message.channel.send(response)
 
 
 client.run(TOKEN)

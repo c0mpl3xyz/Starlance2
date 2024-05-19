@@ -7,7 +7,6 @@ def convert_date(date: str) -> str:
     return date_time.strftime('%Y/%m/%d')
 
 def job_mapping(data: list) -> dict:
-    
     job_dict = {
         'name': data[2],
         'roles': data[3],

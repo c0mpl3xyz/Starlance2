@@ -9,16 +9,16 @@ class JobView(discord.ui.View):
         super().__init__(timeout=350)
         self.description = '\n'.join([f'{k}: {v}' for (k, v) in job_data.items() if k != 'discord_server_id'])
         
-        self.reject_button = discord.ui.button(label="Reject", style=discord.ButtonStyle.danger, custom_id='reject', emoji='✖')
+        self.reject_button = discord.ui.Button(label="Reject", style=discord.ButtonStyle.danger, custom_id='reject', emoji='✖')
         self.reject_button.callback = self.reject_button_callback
         
-        self.accept_button = discord.ui.button(label="Accept", style=discord.ButtonStyle.green, custom_id='accept', emoji='✔')
+        self.accept_button = discord.ui.Button(label="Accept", style=discord.ButtonStyle.green, custom_id='accept', emoji='✔')
         self.accept_button.callback = self.accept_button_callback
 
-        self.pending_button = discord.ui.button(label="Pending", style=discord.ButtonStyle.primary, custom_id='pending')
+        self.pending_button = discord.ui.Button(label="Pending", style=discord.ButtonStyle.primary, custom_id='pending')
         self.pending_button.disabled = True
 
-        if job_data.type is None:
+        if 'type' not in job_data or job_data.type is None:
             self.add_item(self.reject_button)
             self.add_item(self.accept_button)
         
