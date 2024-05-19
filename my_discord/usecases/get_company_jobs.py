@@ -1,6 +1,6 @@
 import requests, os
 from views import JobView
-from mappings.mappings import job_mapping_with_type 
+from mappings.mappings import job_mapping
 URL = os.getenv('URL')
 
 class GetCompanyJobs:
@@ -9,7 +9,7 @@ class GetCompanyJobs:
                 'company_id': id,
             }
 
-        response = requests.get(URL + '/job_register/user', json=data)
+        response = requests.get(URL + '/job/company', json=data)
         JSON = response.json()
-        jobs = [JobView(job_mapping_with_type(job)) for job in JSON]
+        jobs = [JobView(job_mapping(job)) for job in JSON]
         return jobs

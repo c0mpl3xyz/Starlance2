@@ -8,6 +8,7 @@ from selects import SelectRoles, SelectBankNames
 from discord.ui import View
 from usecases.get_user_jobs import GetUserJobs
 from usecases.get_jobs_by_user_roles import GetJobsByUserRoles
+from usecases.get_company_jobs import GetCompanyJobs
 from utils.error_message_enums import ErrorMessageEnum
 # from usecases.get_company_jobs import GetCompanyJobs
 load_dotenv()
@@ -80,7 +81,7 @@ async def my_jobs(interaction: discord.Interaction):
                 await interaction.user.send(view.description, view=view)
 
     else:
-        job_views = s().execute(interaction.user.guild.id)
+        job_views = GetCompanyJobs().execute(interaction.user.guild.id)
         if job_views is None or len(job_views) == 0:
             await interaction.user.send(ErrorMessageEnum.NO_JOB.value)
         else:
@@ -116,7 +117,6 @@ async def all_jobs(interaction: discord.Interaction):
 
 #     response = 'Welcome'
 #     await message.channel.send(response)
-
 
 client.run(TOKEN)
 # if __name__ == '__main__':
