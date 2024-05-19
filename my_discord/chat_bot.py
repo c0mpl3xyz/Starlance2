@@ -68,19 +68,21 @@ async def jobs(interaction: discord.Interaction):
     # if influencer:
     job_views = GetUserJobs().execute(interaction.user.id)
     for view in job_views:
-        interaction.user.send(view.description, view=view)
+        await interaction.user.send(view.description, view=view)
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    
+    print(message.author.id)
+    if message.content.startswith('!'):
+        await client.process_commands(message)
+        return
+
+    response = 'Welcome'
+    await message.channel.send(response)
+
 
 client.run(TOKEN)
 # if __name__ == '__main__':
-
-# @client.event
-# async def on_message(message):
-#     if message.author == client.user:
-#         return
-    
-#     if message.content.startswith('!'):
-#         await client.process_commands(message)
-#         return
-
-#     response = 'Welcome'
-#     await message.channel.send(response)

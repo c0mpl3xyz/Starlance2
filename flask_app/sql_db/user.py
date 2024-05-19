@@ -12,6 +12,14 @@ class User:
 
         self.cursor.execute(query, (id,)) # type: ignore
         return self.cursor.fetchone() # type: ignore
+    
+    def exists(self, id):
+        query = """
+            SELECT 1 FROM User WHERE id = %s
+        """ 
+
+        self.cursor.execute(query, (id,)) # type: ignore
+        return self.cursor.fetchone() # type: ignore
 
     def create(self, id, fb_id=None, ig_id=None, tiktok_id=None, youtube_id=None, bank_name=None, bank_number=None, register=None) -> bool:
         user = self.get_by_id(id)

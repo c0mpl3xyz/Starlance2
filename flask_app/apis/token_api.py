@@ -55,18 +55,22 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         message: Dict = {}
 
         user_exist = User(cursor).get_by_id(user_id)
-        if not user_exist: 
+        debug = 'user exists'
+        if not user_exist:
             created = True
+            debug = 'user not exists'
             user_exist = User(cursor).create(user_id)
 
         if user_exist:
             token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
+
 
     message = {
             'success': user_exist and token_creation,
             'token_created': token_creation,
             'access_token': check_token,
             'user_created': created,
+            'debug': debug
         }
         
     return message

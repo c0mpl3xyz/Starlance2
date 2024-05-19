@@ -17,7 +17,7 @@ class JobView(discord.ui.View):
     @discord.ui.button(label="Accept", style=discord.ButtonStyle.green, custom_id='accept', emoji='✔')
     async def accept_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         reject_button = [x for x in self.children if x.custom_id == 'reject'][0]
-        self.remove_item(reject_button)
+        reject_button.disabled = False
         button.disabled = True
         button.label = 'Pending'
         button.style = discord.ButtonStyle.primary

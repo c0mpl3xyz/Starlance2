@@ -69,7 +69,7 @@ class JobModal(Modal, title="Job registration"):
             await interaction.message.delete()
 
             # TODO: change user id to job registered users
-            user = await self.bot.fetch_user(537848640140476436)
+            user = await self.bot.fetch_user(757819867586887702)
             guild = await self.bot.fetch_guild(data['discord_server_id'])
             if user and guild:
                 data['company name'] = guild.name
