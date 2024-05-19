@@ -18,6 +18,7 @@ class JobView(discord.ui.View):
         self.pending_button = discord.ui.Button(label="Pending", style=discord.ButtonStyle.primary, custom_id='pending')
         self.pending_button.disabled = True
 
+        print(job_data)
         if 'type' not in job_data or job_data.type is None:
             self.add_item(self.reject_button)
             self.add_item(self.accept_button)

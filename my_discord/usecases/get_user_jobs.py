@@ -13,4 +13,6 @@ class GetUserJobs:
         JSON = response.json()
 
         jobs = [JobView(job_mapping(job)) for job in JSON]
+
+        print(f'{JSON=}')
         return jobs
