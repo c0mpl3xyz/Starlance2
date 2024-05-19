@@ -46,14 +46,14 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
     token_creation: bool = False
     user_exist: bool = False
     created: bool = False
-
+    debug = 'token not genearated'
     if check_token:
         access_token = JSON['access_token']
         duration = JSON['expires_in']
         token_type = JSON['token_type']
         user_id = state['user_id']
         message: Dict = {}
-
+        debug = ''
         user_exist = User(cursor).get_by_id(user_id)
         debug = 'user exists'
         if not user_exist:
