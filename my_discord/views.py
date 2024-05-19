@@ -18,26 +18,28 @@ class JobView(discord.ui.View):
         self.pending_button = discord.ui.Button(label="Pending", style=discord.ButtonStyle.primary, custom_id='pending')
         self.pending_button.disabled = True
 
-        print(f'{job_data=}')
-        if 'type' not in job_data or job_data.type is None:
+        if 'type' not in job_data or job_data['type'] is None:
             self.add_item(self.reject_button)
             self.add_item(self.accept_button)
         
-        elif job_data.type == 'Pending':
+        elif job_data['type'] == 'Pending':
             self.add_item(self.pending_button)
         
-        elif job_data.type == 'Rejected':
+        elif job_data['type'] == 'Rejected':
             self.reject_button.label = 'Rejected'
             self.reject_button.disabled = True
             self.add_item(self.reject_button)
 
     async def reject_button_callback(self, interaction: discord.Interaction):
-        await interaction.message.delete()
+        register_job = RegisterJob()
+        response = register_job.register(interaction.user.id, self.job_data['job_id'], 'Rejected')
+        if response['success']:
+            await interaction.message.delete()
         self.stop()
 
     async def accept_button_callback(self, interaction: discord.Interaction):
         register_job = RegisterJob()
-        response = register_job.register(interaction.user.id, self.job_data['job_id'])
+        response = register_job.register(interaction.user.id, self.job_data['job_id'], 'Pending')
 
         if response['success']:
             self.remove_item(self.reject_button)

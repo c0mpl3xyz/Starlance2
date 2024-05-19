@@ -8,6 +8,8 @@ def convert_date(date: str) -> str:
 
 def job_mapping(data: list) -> dict:
     job_dict = {
+        'job_id': data[0],
+        'server_id': data[1],
         'name': data[2],
         'roles': data[3],
         'start_date': convert_date(data[4]),

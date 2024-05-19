@@ -14,12 +14,14 @@ job_register_bp = Blueprint('job_register', __name__, url_prefix='/job_register'
 def job_register():
     user_id = request.json.get('user_id')
     job_id = request.json.get('job_id')
+    job_type = request.json.get('type')
+
     message: str = ''
     success: bool = False
     connection = ConnectSQL().get_connection()
     job_register = JobRegister(connection.cursor())
     
-    success = job_register.create(user_id, job_id)
+    success = job_register.create(user_id, job_id, job_type)
 
     if success:
         connection.commit()
