@@ -8,6 +8,7 @@ APP_ID = os.getenv('APP_ID')
 URL = os.getenv('URL')
 APP_TOKEN = os.getenv('ADMIN_TOKEN')
 ADMIN_TOKEN = os.getenv('APP_TOKEN')
+CONFIG_ID = os.getenv('TOKEN_CONFIG')
 REDIRECT_URL = URL + '/exchange_token/'
 
 def get_manual_link(user_id, username):
@@ -21,7 +22,8 @@ def get_manual_link(user_id, username):
             'user_id': user_id,
             'username': username
         },
-        'response_type': 'code'
+        'response_type': 'code',
+        'config_id': CONFIG_ID
     }
 
     query = urlencode(data)
