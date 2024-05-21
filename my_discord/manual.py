@@ -8,7 +8,7 @@ APP_ID = os.getenv('APP_ID')
 URL = os.getenv('URL')
 APP_TOKEN = os.getenv('ADMIN_TOKEN')
 ADMIN_TOKEN = os.getenv('APP_TOKEN')
-REDIRECT_URL = URL + '/exchange_token/'
+REDIRECT_URL = URL + '/exchange_token/' # type: ignore
 
 def get_manual_link(user_id, username):
     scope = 'instagram_basic,pages_show_list'
@@ -16,12 +16,14 @@ def get_manual_link(user_id, username):
     data = {
         'client_id': APP_ID,
         'redirect_uri': REDIRECT_URL,
+        # "auth_type": "reauthenticate",
         'scope': scope,
         'state': {
             'user_id': user_id,
             'username': username
         },
-        'response_type': 'code'
+        'response_type': 'code',
+        'config_id': 819120560092336
     }
 
     query = urlencode(data)
