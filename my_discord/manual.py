@@ -17,6 +17,7 @@ def get_manual_link(user_id, username):
     data = {
         'client_id': APP_ID,
         'redirect_uri': REDIRECT_URL,
+        # "auth_type": "reauthenticate",
         'scope': scope,
         'state': {
             'user_id': user_id,
