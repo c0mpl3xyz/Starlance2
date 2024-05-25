@@ -32,7 +32,7 @@ class SelectBudget(Select):
         self.url = url
 
         cashes = list(range(250000, 10250000, 250000))
-        options = [discord.SelectOption(label=cash + 'tugrik', description='') for cash in cashes]
+        options = [discord.SelectOption(label=str(cash) + 'tugrik', description='') for cash in cashes]
         super().__init__(options=options, placeholder='Please select Budget', min_values=1)
 
     async def callback(self, interaction: discord.Interaction) -> Any:
