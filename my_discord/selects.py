@@ -1,10 +1,10 @@
 from typing import Any
 import discord
-from discord.ui import Select
+from discord.ui import Select, View
 from modal import JobModal, BankRegistrationModal
 from utils.enums import Enums
 
-class SelectRoles(Select):
+class SelectRoles(Select):  
     def __init__(self, bot, roles, url):
         self.bot = bot
         self.url = url
@@ -14,7 +14,9 @@ class SelectRoles(Select):
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         roles = self.values
-        success = await interaction.response.send_modal(JobModal(self.bot, roles, self.url))
+        view = View()
+        view.add_item(SelectBudget(self.bot, roles, self.url))
+        success = await interaction.response.send_message('Select budget', view=view)
 
         print(f'{success=}')
         return success
@@ -22,6 +24,21 @@ class SelectRoles(Select):
     def clean_roles(self, roles):
         roles = [role.lower().replace('job', '') for role in roles if '[job]' in role.lower()]
         return roles[:25]
+    
+class SelectBudget(Select):
+    def __init__(self, bot, roles, url):
+        self.bot = bot
+        self.roles = roles
+        self.url = url
+
+        cashes = list(range(250000, 10250000, 250000))
+        options = [discord.SelectOption(label=cash + 'tugrik', description='') for cash in cashes]
+        super().__init__(options=options, placeholder='Please select Budget', min_values=1)
+
+    async def callback(self, interaction: discord.Interaction) -> Any:
+        budget = self.values[0]
+        await interaction.response.send_modal(JobModal(self.bot, self.roles, int(budget)), self.url)
+
     
 class SelectBankNames(Select):
     def __init__(self, url):

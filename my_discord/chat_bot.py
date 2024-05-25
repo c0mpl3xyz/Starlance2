@@ -3,13 +3,13 @@ import os
 from dotenv import load_dotenv
 from discord.ext import commands
 from manual import get_manual_link
-from modal import JobModal, BankRegistrationModal
 from selects import SelectRoles, SelectBankNames
 from discord.ui import View
 from usecases.get_user_jobs import GetUserJobs
 from usecases.get_jobs_by_user_roles import GetJobsByUserRoles
 from usecases.get_company_jobs import GetCompanyJobs
 from utils.error_message_enums import ErrorMessageEnum, MessageEnum
+from datetime import datetime
 # from usecases.get_company_jobs import GetCompanyJobs
 load_dotenv()
 
@@ -46,7 +46,7 @@ async def ping(interaction: discord.Interaction): # a slash command will be crea
 
 @client.tree.command(name='login')
 async def login(interaction: discord.Interaction):
-    if is_dm(interaction):
+    if await is_dm(interaction):
         return 
     
     if is_influencer(interaction):
@@ -58,7 +58,7 @@ async def login(interaction: discord.Interaction):
 
 @client.tree.command(name='bank_register')
 async def bank_register(interaction: discord.Interaction):
-    if is_dm(interaction):
+    if await is_dm(interaction):
         return
     
     if not is_influencer(interaction):
@@ -66,12 +66,12 @@ async def bank_register(interaction: discord.Interaction):
     
     view = discord.ui.View()
     view.add_item(SelectBankNames(URL))
-    await interaction.user.send('Bank registration', view=view)
+    await interaction.user.send(view=view)
     await interaction.response.send_message(f'Bank registration form sent to <@{interaction.user.id}>', ephemeral=True)
 
 @client.tree.command(name='my_jobs')
 async def my_jobs(interaction: discord.Interaction):
-    if is_dm(interaction):
+    if await is_dm(interaction):
         return
 
     if is_influencer(interaction):
@@ -80,7 +80,7 @@ async def my_jobs(interaction: discord.Interaction):
             return await interaction.response.send_message(ErrorMessageEnum.NO_JOB.value + f'<@{interaction.user.id}>', ephemeral=True)
         else:
             for view in job_views:
-                await interaction.user.send(view.description, view=view)
+                await interaction.user.send(embed=view.embed, view=view)
         return await interaction.response.send_message(f'Job list sent to <@{interaction.user.id}>', ephemeral=True)
     
     else:
@@ -88,7 +88,7 @@ async def my_jobs(interaction: discord.Interaction):
 
 @client.tree.command(name='all_jobs')
 async def all_jobs(interaction: discord.Interaction):
-    if is_dm(interaction):
+    if await is_dm(interaction):
         return
 
     if is_influencer(interaction):
@@ -98,14 +98,14 @@ async def all_jobs(interaction: discord.Interaction):
             await interaction.user.send(ErrorMessageEnum.NO_JOB_ROLES.value)
         else:
             for view in job_views:
-                await interaction.user.send(view.description, view=view)
+                await interaction.user.send(embed=view.embed, view=view)
         return await interaction.response.send_message(f'Job list sent to <@{interaction.user.id}>', ephemeral=True)
     else:
         return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
 
 @client.tree.command(name='company_job_list')
 async def company_job_list(interaction: discord.Interaction):
-    if is_dm(interaction):
+    if await is_dm(interaction):
         return
 
     if not is_influencer(interaction):
@@ -114,14 +114,14 @@ async def company_job_list(interaction: discord.Interaction):
             return await interaction.response.send_message(ErrorMessageEnum.NO_JOB.value)
         else:
             for view in job_views:
-                await interaction.channel.send(view.description, view=view)
+                await interaction.channel.send(embed=view.embed, view=view)
         return await interaction.response.send_message(MessageEnum.SUCCESS.value)
     else:
         return await interaction.response.send_message(ErrorMessageEnum.NOT_COMPANY.value + f' <@{interaction.user.id}>', ephemeral=True)
 
 @client.tree.command(name='company_job_add')
 async def company_job_add(interaction: discord.Interaction):
-    if is_dm(interaction):
+    if await is_dm(interaction):
         return
     
     if is_influencer(interaction):
@@ -131,6 +131,27 @@ async def company_job_add(interaction: discord.Interaction):
     roles = [role.name for role in interaction.user.roles]
     view.add_item(SelectRoles(client, roles, URL))
     return await interaction.response.send_message('Select roles', view=view)
+
+@client.tree.command(name='test_embed')
+async def test_embed(interaction: discord.Interaction):
+    some_url = "https://fallendeity.github.io/discord.py-masterclass/"
+    embed = discord.Embed(
+        title="Title",
+        description="Description",
+        url=some_url,
+        color=discord.Color.random(),
+        timestamp=datetime.utcnow()
+    )
+    embed.add_field(name="Field name", value="Color sets that <")
+    embed.add_field(name="Field name", value="Color should be an integer or discord.Colour object")
+    embed.add_field(name="Field name", value="You can't set image width/height")
+    embed.add_field(name="Non-inline field name", value="The number of inline fields that can shown on the same row is limited to 3", inline=False)
+    embed.set_author(name="Author", url=some_url,
+                     icon_url="https://cdn.discordapp.com/attachments/1112418314581442650/1124820259384332319/fd0daad3d291ea1d.png")
+    embed.set_image(url="https://cdn.discordapp.com/attachments/1028706344158634084/1124822236801544324/ea14e81636cb2f1c.png")
+    embed.set_thumbnail(url="https://media.discordapp.net/attachments/1112418314581442650/1124819948317986926/db28bfb9bfcdd1f6.png")
+    embed.set_footer(text="Footer", icon_url="https://cdn.discordapp.com/attachments/1112418314581442650/1124820375587528797/dc4b182a87ecee3d.png")
+    await interaction.response.send_message(embed=embed)
 
 # @client.event
 # async def on_message(message):

@@ -1,4 +1,5 @@
 from discord.ui import View
+from embeds import JobEmbed
 import discord
 import requests
 from usecases.register_job import RegisterJob
@@ -6,6 +7,8 @@ from usecases.register_job import RegisterJob
 class JobView(discord.ui.View):
     def __init__(self, job_data, company=False):
         self.job_data = job_data
+        self.embed = JobEmbed(job_data)
+
         super().__init__(timeout=350)
         self.description = '\n'.join([f'{k}: {v}' for (k, v) in job_data.items() if k != 'discord_server_id'])
         

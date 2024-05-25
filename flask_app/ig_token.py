@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 API_VERSION = os.getenv('API_VERSION')
+APP_ID = os.getenv('APP_ID')
 API_PREFIX = os.getenv('API_PREFIX')
 PAGE_ID = os.getenv('PAGE_ID')
 
@@ -15,29 +16,41 @@ class IGGraph():
     username: str
     access_token: str
     base_url: str
-
-    def __init__(self, user_id, username, access_token):
+    permissions: list = [
+        'email,instagram_basic',
+        # 'read_insights',
+        # # 'pages_show_list',
+        # 'instagram_basic',
+        # 'instagram_manage_insights',
+    ]
+    def __init__(self, access_token):
         self.access_token = access_token
-        self.username = username
         self.base_url = URL_PREFIX
         self.url_suffix = f'access_token={self.access_token}'
-        self.user_id = self.__find_user_id()
+        self.user_id = '17841407620688258'
 
+    def get_user_id(self):
+        return self.user_id
+    
     def __permission_list(self):
         url = f'{self.base_url}/me/permissions?status=granted&access_token={self.access_token}'
         response = requests.get(url)
-        permissions = [data['permission'] for data in response.json()['data']]
-        return permissions
+        print(url)
+        # permissions = [data['permission'] for data in response.json()['data']]
+        return response.json()
     
     def test(self):
         url = f'{self.base_url}/me/accounts?fields=name,id,instagram_business_account'
         response = requests.get(url)
         return response.json()
 
-    def check_permissions(self, permissions):
+    def get_permissions(self):
+        return self.__permission_list()
+    
+    def check_permissions(self):
         token_permissions = self.__permission_list()
-        missing_permissions = [permission for permission in permissions if permission not in token_permissions]
 
+        missing_permissions = [permission for permission in self.permissions if permission not in token_permissions]
         result = {
             'valid': len(missing_permissions) == 0,
             'missing_permissions': missing_permissions
@@ -49,22 +62,27 @@ class IGGraph():
         url = f'{self.base_url}/me/accounts?fields=name,instagram_business_account&access_token={self.access_token}'
         response = requests.get(url)
         JSON = response.json()
-
         for data in JSON['data']:
-            if data['id'] == PAGE_ID:
-                return data['instagram_business_account']['id']
+            print(data['instagram_business_account']['id'])
+            return data['instagram_business_account']['id']
             
         return None
         
 
     def get_media_list(self):
         url = f'{self.base_url}/{self.user_id}/media'
+        print(url)
         data = {
             'fields': 'comments_count,shortcode,caption,like_count,media_product_type,media_type,owner,permalink,username,insights.metric(ig_reels_aggregated_all_plays_count)',
             'limit': 200,
             'access_token': self.access_token
+            # 'client_id': APP_ID
         }
 
+        params_str = '&'.join([f'{key}={value}' for key, value in data.items()])
+        full_url = f'{url}?{params_str}'
+
+        print(full_url)
         response = requests.get(url, data=data)
         return response.json()
     
@@ -83,7 +101,7 @@ class IGGraph():
         return None
     
 if __name__ == '__main__':
-    access_token = 'EAAVXXqU1qYUBOxZCMBOzqEBr7dhkQOhpZCpPGLdVgeN80T7oBq8jEqrUQW6ZAtW7rOJWU9bAtpZAKUpQjcZBk2R14yOLZAmDvdMHp2QBjRUF9ObeFO8vECNpeojs0QmcbVIlRR7BDlrvQRcs6ZBtvaFFrYl1akiZA4xFZCrOrBZAUYqFF62Ewh1ImR6PiicF9MCCXPiFNQQcoeUOENofxcjZCuf9D5AI5J3I3F72sCkONbmaBWWFrS0tcXjCC9U40Ryj5zmVgZDZD'
-    ig_graph = IGGraph('17841407620688258', 'altn_bgn', access_token)
-
-    print(ig_graph.find_media_by_shortcode(''))
+    ig_graph = IGGraph('EAANeVorcn0QBOZCh9WRPZAKyOZBcQVzJdiA0aqiSBn884BWuI1xMVDWBPgCnGP36E282aZAQqibZBrvZAgZChg6t7BkulzN05RfXXqp5Sl07CDw2wb8iwAminZCwBHzepNNMHOCZAxPs1zFSFV2D3LIt3k5ZAs3c1iKZC5y7ZAJU9zZAEcjo8CcHqYV6c8ln8eAuCuKpBWf4Fzb3vfZAYeiRdu23dZBJxyoUJTT6tF2H4aIXqTEV3lWDCR2xQ0eIE1mJxfGZAV4U7wZDZD')
+    print(ig_graph.get_user_id())
+    print(ig_graph.get_media_list())
+    # print(ig_graph.get_media_list())
