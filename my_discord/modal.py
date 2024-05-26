@@ -92,7 +92,7 @@ class JobModal(Modal, title="Job registration"):
         #     await channel.send(message)
         
         if success:
-            job_view = JobView(data)
+            job_view = JobView(data, self.bot)
             message = '\n'.join(f'{k}: {v}' for (k, v) in data.items())
             await interaction.response.send_message(message)
             await interaction.message.delete()

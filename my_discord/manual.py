@@ -18,13 +18,13 @@ def get_manual_link(user_id, username):
         'client_id': APP_ID,
         'redirect_uri': REDIRECT_URL,
         # "auth_type": "reauthenticate",
-        # 'scope': scope,
+        'scope': scope,
         'state': {
             'user_id': user_id,
             'username': 'username'
         },
         'response_type': 'code',
-        'config_id': 1236333087335825
+        'config_id': 2424001511135484
     }
 
     query = urlencode(data)

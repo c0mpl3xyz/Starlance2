@@ -2,4 +2,5 @@ from enum import Enum
 
 class Enums(Enum):
     BANK_NAMES = ['Golomt', 'Khaan', 'Turiin', 'TDB', 'Khas']
-    GUILD_ID = 617630064653238272
+    APPROVE_GUILD = 'approve-influencer'
+    GUILD_ID = 1212987222400307280
