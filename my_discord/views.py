@@ -43,8 +43,8 @@ class JobView(discord.ui.View):
                 self.reject_button.disabled = True
                 self.add_item(self.reject_button)
             
-            elif job_data['type'] == 'Accepted':
-                self.accept_button.label = 'Accepted'
+            elif job_data['type'] == 'Approved':
+                self.accept_button.label = 'Approved'
                 self.accept_button.style = discord.ButtonStyle.primary
                 self.accept_button.disabled = True
 
@@ -85,7 +85,8 @@ class JobView(discord.ui.View):
                 'type': 'Pending'
             }
 
-            job_approve_view = ApprovementJobView(embed_data)
+            self.job_data['type'] = 'Approved'
+            job_approve_view = ApprovementJobView(embed_data, self.job_data, self.bot)
             guild = discord.utils.get(self.bot.guilds, id=self.job_data['discord_server_id'])
             channel_name =  Enums.APPROVE_GUILD.value
             channel = discord.utils.get(guild.channels, name=channel_name)
@@ -96,7 +97,9 @@ class JobView(discord.ui.View):
         self.stop()
 
 class ApprovementJobView(discord.ui.View):
-        def __init__(self, embed_data):
+        def __init__(self, embed_data, job_data, bot):
+            self.job_data = job_data
+            self.bot = bot
             self.embed = ApproveEmbed(embed_data)
             super().__init__(timeout=350)
             self.user_id = embed_data['user_id']
@@ -118,6 +121,7 @@ class ApprovementJobView(discord.ui.View):
             elif embed_data['type'] == 'Approved':
                 self.add_item(self.approve_button)
 
+        #TODO: add rejected message to influencer
         async def reject_button_callback(self, interaction: discord.Interaction):
             register_job = RegisterJob()
             response = register_job.update(self.user_id, self.server_id, 'Rejected')
@@ -128,10 +132,19 @@ class ApprovementJobView(discord.ui.View):
         async def accept_button_callback(self, interaction: discord.Interaction):
             register_job = RegisterJob()
             response = register_job.update(self.user_id, self.server_id, 'Approved')
+            print(f'{response=}')
             if response['success']:
                 self.remove_item(self.reject_button)
                 self.remove_item(self.accept_button)
                 self.add_item(self.approve_button)
+
+                guild_id = Enums.GUILD_ID.value  # The guild (server) where the command was called
+                guild = self.bot.get_guild(guild_id)
+                user = discord.utils.get(guild.members, id=self.user_id)  # Fetch the user by ID
+
+                print(f'JOB DATA: {self.job_data}')
+                job_view = JobView(self.job_data, self.bot)
+                await user.send(embed=job_view.embed, view=job_view)
                 await interaction.response.edit_message(view=self)
             else:
                 await interaction.response.send_message(response['message'])

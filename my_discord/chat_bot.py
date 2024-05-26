@@ -82,7 +82,7 @@ async def my_jobs(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
 
-    if is_influencer(interaction):
+    if not is_influencer(interaction):
         job_views = GetUserJobs().execute(interaction.user.id, client)
         if job_views is None or len(job_views) == 0:
             return await interaction.response.send_message(ErrorMessageEnum.NO_JOB.value + f'<@{interaction.user.id}>', ephemeral=True)
@@ -92,7 +92,7 @@ async def my_jobs(interaction: discord.Interaction):
         return await interaction.response.send_message(f'Job list sent to <@{interaction.user.id}>', ephemeral=True)
     
     else:
-        await interaction.response.send_message(ErrorMessageEnum.NOT_COMPANY.value, ephemeral=True)
+        await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
 
 @client.tree.command(name='all_jobs')
 async def all_jobs(interaction: discord.Interaction):

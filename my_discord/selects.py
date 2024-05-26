@@ -48,7 +48,7 @@ class UploadLinkSelect(Select):
 
         socials = ['Facebook', 'Instagram', 'TikTok', 'Youtube']
         options = [discord.SelectOption(label=social, description='') for social in socials]
-        super().__init__(options=options, placeholder='Please select Your Social account', min_values=1, max_value=4)
+        super().__init__(options=options, placeholder='Please select Your Social account', min_values=1, max_values=4)
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         socials = self.values

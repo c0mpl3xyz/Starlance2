@@ -18,6 +18,7 @@ class UserEmbed(Embed):
 
 class JobEmbed(Embed):
     def __init__(self, job_data):
+        color = None
         if 'type' not in job_data:
             color = discord.Color.green()
         elif job_data['type'] == 'Pending':
