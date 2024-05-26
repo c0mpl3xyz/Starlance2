@@ -58,7 +58,7 @@ class JobRegister:
             update_params.append(job_id)
 
         if job_type is not None:
-            update_query += "job_type = %s, "
+            update_query += "type = %s, "
             update_params.append(','.join(job_type))
         
         if instagram_link is not None:
