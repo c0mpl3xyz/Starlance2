@@ -31,13 +31,13 @@ class SelectBudget(Select):
         self.roles = roles
         self.url = url
 
-        cashes = list(range(250000, 10250000, 250000))
-        options = [discord.SelectOption(label=str(cash) + 'tugrik', description='') for cash in cashes]
+        cashes = list(range(500000, 10250000, 250000))
+        options = [discord.SelectOption(label=str(cash) + ' tugrik', description='') for cash in cashes[:25]]
         super().__init__(options=options, placeholder='Please select Budget', min_values=1)
 
     async def callback(self, interaction: discord.Interaction) -> Any:
-        budget = self.values[0]
-        await interaction.response.send_modal(JobModal(self.bot, self.roles, int(budget)), self.url)
+        budget = self.values[0].split(' ')[0]
+        await interaction.response.send_modal(JobModal(self.bot, self.roles, int(budget), self.url))
 
     
 class SelectBankNames(Select):

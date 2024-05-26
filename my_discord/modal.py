@@ -70,17 +70,18 @@ class JobModal(Modal, title="Job registration"):
             'discord_server_id': interaction.guild.id,
             'name': str(self.name),
             'roles': str(','.join(self.roles)),
+            'budget': int(self.budget),
             'start_date': str(self.start_date),
             'end_date': end_date,
             'participation_date': str(participation_date),
             'duration': int(str(self.duration)),
             'description': str(self.description),
             'upload_link': str(self.upload_link),
-            'budget': int(self.budget),
             'requirements': "str(self.requirements)"
         }
 
         response = requests.post(self.url + '/job', json=data).json()
+        print(response)
         if response and 'success' in response:
             success = ['success']
             data['job_id'] = response['job_id']

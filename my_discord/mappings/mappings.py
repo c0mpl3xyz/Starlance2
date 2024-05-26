@@ -12,14 +12,15 @@ def job_mapping_with_type(data: list) -> dict:
         'server_id': data[1],
         'name': data[2],
         'roles': data[3],
-        'start_date': convert_date(data[4]),
-        'duration': data[5],
-        'end_date': convert_date(data[6]),
-        'participation_date': convert_date(data[7]),
-        'description': data[8],
-        'upload_link': data[9],
-        'requirements': data[10],
-        'type': data[11]
+        'budget': data[4],
+        'start_date': convert_date(data[5]),
+        'duration': data[6],
+        'end_date': convert_date(data[7]),
+        'participation_date': convert_date(data[8]),
+        'description': data[9],
+        'upload_link': data[10],
+        'requirements': data[11],
+        'type': data[12]
     }
 
     return job_dict
@@ -30,13 +31,14 @@ def job_mapping(data: list) -> dict:
         'server_id': data[1],
         'name': data[2],
         'roles': data[3],
-        'start_date': convert_date(data[4]),
-        'duration': data[5],
-        'end_date': convert_date(data[6]),
-        'participation_date': convert_date(data[7]),
-        'description': data[8],
-        'upload_link': data[9],
-        'requirements': data[10]
+        'budget': data[4],
+        'start_date': convert_date(data[5]),
+        'duration': data[6],
+        'end_date': convert_date(data[7]),
+        'participation_date': convert_date(data[8]),
+        'description': data[9],
+        'upload_link': data[10],
+        'requirements': data[11]
     }
 
     return job_dict

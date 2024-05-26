@@ -25,4 +25,4 @@ class JobEmbed(Embed):
             self.add_field(name="End date", value=job_data['end_date'])
             self.add_field(name="Participation date", value=job_data['participation_date'])
             self.add_field(name="Job files", value=f"[Click Here]({job_data['upload_link']})")
-            self.add_field(name="Roles", value=','.join(job_data['roles'].replace(',', ' ')), inline=False)
+            self.add_field(name="Roles", value=job_data['roles'].replace(',', ' '), inline=False)
