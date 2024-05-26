@@ -27,6 +27,9 @@ class JobView(discord.ui.View):
         self.pending_button = discord.ui.Button(label="Pending", style=discord.ButtonStyle.primary, custom_id='pending')
         self.pending_button.disabled = True
 
+        self.upload_button = discord.ui.Button(label='Upload link', style=discord.ButtonStyle.green, custom_id='upload', emoji='➕')
+        self.upload_button.callback = self.upload_button_callback
+
         if not company:
             if 'type' not in job_data or job_data['type'] is None:
                 self.add_item(self.reject_button)
@@ -39,12 +42,27 @@ class JobView(discord.ui.View):
                 self.reject_button.label = 'Rejected'
                 self.reject_button.disabled = True
                 self.add_item(self.reject_button)
+            
+            elif job_data['type'] == 'Accepted':
+                self.accept_button.label = 'Accepted'
+                self.accept_button.style = discord.ButtonStyle.primary
+                self.accept_button.disabled = True
+
+                self.add_item(self.accept_button)
+                self.add_item(self.upload_button)
 
     async def reject_button_callback(self, interaction: discord.Interaction):
         register_job = RegisterJob()
         response = register_job.register(interaction.user.id, self.job_data['job_id'], 'Rejected')
         if response['success']:
             await interaction.message.delete()
+        self.stop()
+
+    async def upload_button_callback(self, interaction: discord.Interaction):
+        from selects import UploadLinkSelect
+        view = View()
+        view.add_item(UploadLinkSelect(self.bot, interaction.user.id, self.job_data['job_id'], self.job_data['discord_server_id']))
+        await interaction.send_response('Upload social links', view=view)
         self.stop()
 
     async def accept_button_callback(self, interaction: discord.Interaction):
@@ -68,14 +86,10 @@ class JobView(discord.ui.View):
             }
 
             job_approve_view = ApprovementJobView(embed_data)
-            print(f'{self.job_data=}')
             guild = discord.utils.get(self.bot.guilds, id=self.job_data['discord_server_id'])
-            channel_name =  Enums.APPROVE_GUILD.value #TODO: CHANGE IT
+            channel_name =  Enums.APPROVE_GUILD.value
             channel = discord.utils.get(guild.channels, name=channel_name)
-            if channel:
-                await channel.send(embed=job_approve_view.embed, view=job_approve_view)
-
-            await interaction.general_guild.send(embed=job_approve_view.embed, view=job_approve_view)
+            await channel.send(embed=job_approve_view.embed, view=job_approve_view)
             await interaction.response.edit_message(view=self)
         else:
             await interaction.response.send_message(response['message'])
@@ -106,14 +120,14 @@ class ApprovementJobView(discord.ui.View):
 
         async def reject_button_callback(self, interaction: discord.Interaction):
             register_job = RegisterJob()
-            response = register_job.register(self.user_id, self.server_id, 'Rejected')
+            response = register_job.update(self.user_id, self.server_id, 'Rejected')
             if response['success']:
                 await interaction.message.delete()
             self.stop()
 
         async def accept_button_callback(self, interaction: discord.Interaction):
             register_job = RegisterJob()
-            response = register_job.register(self.user_id, self.server_id, 'Approved')
+            response = register_job.update(self.user_id, self.server_id, 'Approved')
             if response['success']:
                 self.remove_item(self.reject_button)
                 self.remove_item(self.accept_button)

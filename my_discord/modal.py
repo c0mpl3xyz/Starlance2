@@ -1,13 +1,14 @@
 from typing import List
 from views import JobView
 import discord, requests
-from discord.ui import Modal, TextInput, Select
-from discord import Interaction, SelectOption
-from utils.channel_enums import ChannelEnum
+from discord.ui import Modal, TextInput
+from discord import Interaction
+from utils.enums import Enums
 from datetime import datetime, timedelta
 from validator.validator import Validator
-import re
+import re, os
 
+URL = os.getenv('URL')
 # start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
 class JobModal(Modal, title="Job registration"):
     def __init__(self, bot, roles, budget, url, name=None, start_date=None, duration=7, upload_link=None):
@@ -163,3 +164,60 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
         else:
             message = 'Bank registration failed'
             await interaction.response.send_message(message)
+
+class SocialRegisterModal(Modal, title='Social account link upload'):
+    def __init__(self, user_id, job_id, socials, server_id):
+        self.user_id = user_id
+        self.job_id = job_id
+        self.server_id = server_id
+
+        super().__init__()
+        if 'Instagram' in socials:
+            self.instagram = TextInput(label="Instagram link", placeholder="https://www.instagram.com/reel/C7YasAEtest/", required=False, min_length=1, max_length=100)
+            self.add_item(self.instagram)
+        if 'Youtube' in socials:
+            self.youtube = TextInput(label="Youtube link", placeholder="https://www.youtube.com/shorts/VsbIaKctest", required=False, min_length=1, max_length=100)
+            self.add_item(self.youtube)
+        if 'TikTok' in socials:
+            self.tiktok = TextInput(label="TikTok link", placeholder="https://www.youtube.com/shorts/VsbIaKctest", required=False, min_length=1, max_length=100)
+            self.add_item(self.tiktok)
+        if 'Facebook' in socials:
+            self.facebook = TextInput(label="Facebook link", placeholder="https://www.facebook.com/100010907134752/videos/42146212077test/", required=False, min_length=1, max_length=100)
+            self.add_item(self.facebook)
+
+    async def on_submit(self, interaction: Interaction):
+        success = False
+        data = {
+            'user_id': self.user_id,
+            'job_id': self.job_id
+        }
+
+        socials = []
+        if self.instagram is not None and str(self.instagram) != '':
+            data['instagram'] = str(self.instagram)
+            socials.append( str(self.instagram))
+        if self.facebook is not None and str(self.facebook) != '':
+            data['facebook'] = str(self.facebook)
+            socials.append( str(self.facebook))
+        if self.tiktok is not None and str(self.tiktok) != '':
+            data['tiktok'] = str(self.tiktok)
+            socials.append( str(self.tiktok))
+        if self.youtube is not None and str(self.youtube) != '':
+            data['youtube'] = str(self.youtube)
+            socials.append( str(self.youtube))
+
+        response = requests.put(URL + '/job_register/link', json=data)
+        if response and 'success' in response.json():
+            success = response.json()['success']
+
+            if success:
+                message = f'<@{self.user_id}>: Social links succesfully uploaded {", ".join(socials)}'
+
+                guild = discord.utils.get(self.bot.guilds, id=self.server_id)
+                channel_name =  Enums.NOTIFICATION.value
+                channel = discord.utils.get(guild.channels, name=channel_name)
+                await channel.send(message)
+                await interaction.response.send_message(message)
+            else:
+                message = 'Social link upload failed, pease try again'
+                await interaction.response.send_message(message)

@@ -36,6 +36,58 @@ def job_register():
 
     return jsonify(result)
 
+@job_register_bp.route('/', methods=['PUT'])
+def job_update():
+    user_id = request.json.get('user_id')
+    job_id = request.json.get('job_id')
+    job_type = request.json.get('type')
+
+    message: str = ''
+    success: bool = False
+    connection = ConnectSQL().get_connection()
+    job_register = JobRegister(connection.cursor())
+    
+    success = job_register.update(user_id, job_id, job_type=job_type)
+
+    if success:
+        connection.commit()
+        message = 'Job updated to user'
+
+    result = {
+        'success': success,
+        'message': message
+    }
+
+    return jsonify(result)
+
+@job_register_bp.route('/link', methods=['PUT'])
+def job_update_link():
+    user_id = request.json.get('user_id')
+    job_id = request.json.get('job_id')
+
+    instagram_link = request.json.get('instagram_link')
+    facebook_link = request.json.get('facebook_link')
+    youtube_link = request.json.get('youtube_link')
+    tiktok_link = request.json.get('tiktok_link')
+
+    message: str = ''
+    success: bool = False
+    connection = ConnectSQL().get_connection()
+    job_register = JobRegister(connection.cursor())
+    
+    success = job_register.update(user_id, job_id, instagram_link=instagram_link, facebook_link=facebook_link, youtube_link=youtube_link, tiktok_link=tiktok_link)
+
+    if success:
+        connection.commit()
+        message = 'Job Link updated to user'
+
+    result = {
+        'success': success,
+        'message': message
+    }
+
+    return jsonify(result)
+
 @job_register_bp.route('/user', methods=['GET'])
 def get_user_jobs():
     user_id = request.json.get('user_id')
