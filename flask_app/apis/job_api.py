@@ -84,6 +84,18 @@ def create_job():
     finally:
         connection.close()
 
+@job_bp.route('/', methods=['GET'])
+def get_job_by_id():
+    job_id = request.json.get('job_id')
+    connection = ConnectSQL().get_connection()
+    cursor = connection.cursor()
+    try:
+        job = Job(cursor)
+        data = job.get_by_id(job_id)
+        return jsonify(data)
+    finally:
+        connection.close()
+
 @job_bp.route('/company', methods=['GET'])
 def get_company_jobs():
     company_id = request.json.get('company_id')
