@@ -62,7 +62,7 @@ class JobView(discord.ui.View):
         from selects import UploadLinkSelect
         view = View()
         view.add_item(UploadLinkSelect(self.bot, interaction.user.id, self.job_data['job_id'], self.job_data['discord_server_id']))
-        await interaction.send_response('Upload social links', view=view)
+        await interaction.response.send_message('Upload social links', view=view)
         self.stop()
 
     async def accept_button_callback(self, interaction: discord.Interaction):

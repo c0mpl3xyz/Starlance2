@@ -2,3 +2,5 @@ discord.py
 python-dotenv
 flask
 mysql-connector-python
+wget
+selenium

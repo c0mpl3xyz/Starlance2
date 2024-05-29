@@ -166,8 +166,9 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
             await interaction.response.send_message(message)
 
 class SocialRegisterModal(Modal, title='Social account link upload'):
-    def __init__(self, user_id, job_id, socials, server_id):
+    def __init__(self, user_id, job_id, socials, server_id, bot):
         self.user_id = user_id
+        self.bot = bot
         self.job_id = job_id
         self.server_id = server_id
 
@@ -186,6 +187,10 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             self.add_item(self.facebook)
 
     async def on_submit(self, interaction: Interaction):
+        self.instagram = None
+        self.facebook = None
+        self.tiktok = None
+        self.youtube = None
         success = False
         data = {
             'user_id': self.user_id,

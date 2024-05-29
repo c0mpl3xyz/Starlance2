@@ -10,21 +10,24 @@ APP_TOKEN = os.getenv('ADMIN_TOKEN')
 ADMIN_TOKEN = os.getenv('APP_TOKEN')
 CONFIG_ID = os.getenv('CONFIG_ID')
 REDIRECT_URL = URL + '/exchange_token/'
+CLIENT_SECRET = os.getenv('APP_SECRET')
+API_VERSION = os.getenv('API_VERSION')
 
 def get_manual_link(user_id, username):
-    scope = 'email,instagram_basic'
-    url = f'https://www.facebook.com/dialog/oauth'
+    # scope = ''
+    url = f'https://www.facebook.com/{API_VERSION}/dialog/oauth'
     data = {
         'client_id': APP_ID,
+        # 'client_secret': CLIENT_SECRET,
         'redirect_uri': REDIRECT_URL,
         # "auth_type": "reauthenticate",
-        'scope': scope,
+        'scope': 'instagram_basic',
         'state': {
             'user_id': user_id,
             'username': 'username'
         },
         'response_type': 'code',
-        'config_id': 2424001511135484
+        'config_id': 985148693320820
     }
 
     query = urlencode(data)

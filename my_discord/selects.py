@@ -52,7 +52,7 @@ class UploadLinkSelect(Select):
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         socials = self.values
-        await interaction.response.send_modal(SocialRegisterModal(self.user_id, self.job_id, socials, self.server_id))
+        await interaction.response.send_modal(SocialRegisterModal(self.user_id, self.job_id, socials, self.server_id, self.bot))
 
 class SelectBankNames(Select):
     def __init__(self, url):
