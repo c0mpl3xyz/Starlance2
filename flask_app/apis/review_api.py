@@ -47,33 +47,34 @@ def upate_review():
 
 @review_bp.route('/', methods=['POST'])
 def create_review():
-    _, job_register_id, job_id, user_id, link, review_type = extract_review_request(request)
+    return request
+    # _, job_register_id, job_id, user_id, link, review_type = extract_review_request(request)
 
-    connection = ConnectSQL().get_connection()
-    cursor = connection.cursor()
-    created: bool = False
-    review_id = None
-    message: str = ''
+    # connection = ConnectSQL().get_connection()
+    # cursor = connection.cursor()
+    # created: bool = False
+    # review_id = None
+    # message: str = ''
 
-    try:
-        review = Review(cursor)
-        created = review.create(job_register_id, job_id, user_id, link, review_type)
-        if created:
-            connection.commit()
-            review_id = cursor.lastrowid
-            message = 'review created'
-        else:
-            message = 'review not created'
+    # try:
+    #     review = Review(cursor)
+    #     created = review.create(job_register_id, job_id, user_id, link, review_type)
+    #     if created:
+    #         connection.commit()
+    #         review_id = cursor.lastrowid
+    #         message = 'review created'
+    #     else:
+    #         message = 'review not created'
             
-        result = {
-            'success': created,
-            'review_id': review_id,
-            'message': message
-        }
+    #     result = {
+    #         'success': created,
+    #         'review_id': review_id,
+    #         'message': message
+    #     }
 
-        return jsonify(result)
-    finally:
-        connection.close()
+    #     return jsonify(result)
+    # finally:
+    #     connection.close()
 
 @review_bp.route('/', methods=['GET'])
 def get_review_by_id():
