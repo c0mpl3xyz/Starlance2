@@ -47,7 +47,7 @@ def upate_review():
 
 @review_bp.route('/', methods=['POST'])
 def create_review():
-    return request
+    return request.json
     # _, job_register_id, job_id, user_id, link, review_type = extract_review_request(request)
 
     # connection = ConnectSQL().get_connection()
