@@ -10,6 +10,7 @@ from usecases.get_all_company_jobs import GetCompanyJobs
 job_bp = Blueprint('job', __name__, url_prefix='/job')
 
 def extract_job_request(request):
+    job_id = request.json.get('discord_server_id')
     discord_server_id = request.json.get('discord_server_id')
     roles = request.json.get('roles')
     budget = request.json.get('budget')
@@ -21,12 +22,14 @@ def extract_job_request(request):
     description = request.json.get('description')
     upload_link = request.json.get('upload_link')
     requirements = request.json.get('requirements')
+    job_type = request.json.get('type')
+    user_count = request.json.get('user_count')
 
-    return discord_server_id, name, roles, budget, start_date, end_date, participation_date, duration, description, upload_link, requirements
+    return job_id, discord_server_id, name, roles, budget, start_date, end_date, participation_date, duration, description, upload_link, requirements, job_type, user_count
 
 @job_bp.route('/', methods=['PUT'])
 def upate_job():
-    discord_id, name, roles, budget, start_date, end_date, participation_date, duration, description, upload_link, requirements = extract_job_request(request)
+    job_id, discord_id, name, roles, budget, start_date, end_date, participation_date, duration, description, upload_link, requirements, job_type, user_count = extract_job_request(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -36,7 +39,7 @@ def upate_job():
 
     try:
         job = Job(cursor)
-        updated = job.update(discord_id, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements)
+        updated = job.update(job_id, discord_id, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, job_type, user_count)
         if updated:
             connection.commit()
             job_id = cursor.lastrowid
@@ -56,7 +59,7 @@ def upate_job():
 
 @job_bp.route('/', methods=['POST'])
 def create_job():
-    discord_id, name, roles, budget, start_date, end_date, participation_date, duration, description, upload_link, requirements = extract_job_request(request)
+    _, discord_id, name, roles, budget, start_date, end_date, participation_date, duration, description, upload_link, requirements, job_type, user_count = extract_job_request(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -66,7 +69,7 @@ def create_job():
 
     try:
         job = Job(cursor)
-        created = job.create(discord_id, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements)
+        created = job.create(discord_id, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, job_type, user_count)
         if created:
             connection.commit()
             job_id = cursor.lastrowid
