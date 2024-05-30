@@ -5,7 +5,7 @@ class Review:
     
     def get_by_id(self, id):
         query = """
-            SELECT * FROM Content WHERE id = %s
+            SELECT * FROM Review WHERE id = %s
         """
 
         self.cursor.execute(query, (id,)) # type: ignore
@@ -13,7 +13,7 @@ class Review:
     
     def get_by_job_id(self, job_id):
         query = """
-            SELECT * FROM Content WHERE job_id = %s
+            SELECT * FROM Review WHERE job_id = %s
         """
 
         self.cursor.execute(query, (job_id,)) # type: ignore
@@ -21,7 +21,7 @@ class Review:
     
     def get_by_user_id(self, user_id):
         query = """
-            SELECT * FROM Content WHERE user_id = %s
+            SELECT * FROM Review WHERE user_id = %s
         """
 
         self.cursor.execute(query, (user_id,)) # type: ignore
@@ -29,7 +29,7 @@ class Review:
     
     def get_by_job_register_id(self, job_register_id):
         query = """
-            SELECT * FROM Content WHERE job_register_id = %s
+            SELECT * FROM Review WHERE job_register_id = %s
         """
 
         self.cursor.execute(query, (job_register_id)) # type: ignore
@@ -37,7 +37,7 @@ class Review:
 
     def create(self, job_register_id, job_id, user_id, link, review_type) -> bool:
         query = """
-            INSERT INTO Content (job_register_id, job_id, user_id, link, review_type)
+            INSERT INTO Review (job_register_id, job_id, user_id, link, type)
             VALUES (%s, %s, %s, %s, %s)
         """
 
@@ -45,7 +45,7 @@ class Review:
         return True
     
     def update(self, id, job_register_id, job_id, user_id, link, review_type) -> bool:
-        update_query = "UPDATE Content SET "
+        update_query = "UPDATE Review SET "
         update_params = []
 
         if job_register_id is not None:
@@ -65,7 +65,7 @@ class Review:
             update_params.append(','.join(link))
         
         if review_type is not None:
-            update_query += "review_type = %s, "
+            update_query += "type = %s, "
             update_params.append(review_type)
 
         update_query = update_query.rstrip(", ") + " WHERE id = %s"
@@ -76,5 +76,5 @@ class Review:
         return True
 
     def delete_by_job_register_id(self, job_register_id):
-        delete_query = "DELETE FROM Content WHERE job_register_id = %s"
+        delete_query = "DELETE FROM Review WHERE job_register_id = %s"
         self.cursor.execute(delete_query, (job_register_id)) # type: ignore
