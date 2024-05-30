@@ -31,6 +31,14 @@ class JobRegister:
         self.cursor.execute(query, (job_id,)) # type: ignore
         return self.cursor.fetchall() # type: ignore
 
+    def get_by_user_job_id(self, user_id, job_id):
+        query = """
+            SELECT * FROM JobRegister WHERE job_id = %s and user_id = %s
+        """
+
+        self.cursor.execute(query, (job_id, user_id)) # type: ignore
+        return self.cursor.fetchall() # type: ignore
+
     def exist_by_ids(self, user_id, job_id) -> bool:
         query = """
             SELECT 1 FROM JobRegister WHERE user_id = %s AND job_id = %s
@@ -68,7 +76,7 @@ class JobRegister:
 
         if job_type is not None:
             update_query += "type = %s, "
-            update_params.append(','.join(job_type))
+            update_params.append(job_type)
 
         update_query = update_query.rstrip(", ") + " WHERE user_id = %s and job_id = %s"
         update_params.append(user_id)

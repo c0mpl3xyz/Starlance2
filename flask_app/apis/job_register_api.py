@@ -84,3 +84,12 @@ def get_job_users():
     job_register = JobRegister(connection.cursor())
     data = job_register.get_by_job_id(job_id)
     return jsonify(data)
+
+@job_register_bp.route('/user_job', methods=['GET'])
+def get_job_users():
+    job_id = request.json.get('job_id')
+    user_id = request.json.get('user_id')
+    connection = ConnectSQL().get_connection()
+    job_register = JobRegister(connection.cursor())
+    data = job_register.get_by_user_job_id(user_id, job_id)
+    return jsonify(data)
