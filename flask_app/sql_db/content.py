@@ -67,16 +67,16 @@ class Content:
         self.cursor.execute(query, (job_register_id, social_type)) # type: ignore
         return self.cursor.fetchone() is not None# type: ignore
 
-    def create(self, job_register_id, job_id, user_id, content_type, link) -> bool:
+    def create(self, job_register_id, job_id, user_id, review_id, content_type, link) -> bool:
         query = """
-            INSERT INTO Content (job_register_id, job_id, user_id, type, link)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO Content (job_register_id, job_id, user_id, review_id, type, link)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
 
-        self.cursor.execute(query, (job_register_id, job_id, user_id, content_type, link)) # type: ignore
+        self.cursor.execute(query, (job_register_id, job_id, user_id, review_id, content_type, link)) # type: ignore
         return True
     
-    def update_by_id(self, id, job_register_id, job_id, user_id, content_type, link, point=None, active=None) -> bool:
+    def update_by_id(self, id, job_register_id, job_id, user_id, review_id, content_type, link, point=None, active=None) -> bool:
         update_query = "UPDATE Content SET "
         update_params = []
 
@@ -91,6 +91,10 @@ class Content:
         if user_id is not None:
             update_query += "user_id = %s, "
             update_params.append(user_id)
+        
+        if review_id is not None:
+            update_query += "review_id = %s, "
+            update_params.append(review_id)
 
         if content_type is not None:
             update_query += "type = %s, "
