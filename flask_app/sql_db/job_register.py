@@ -37,7 +37,7 @@ class JobRegister:
         """
 
         self.cursor.execute(query, (job_id, user_id)) # type: ignore
-        return self.cursor.fetchall() # type: ignore
+        return self.cursor.fetchone() # type: ignore
 
     def exist_by_ids(self, user_id, job_id) -> bool:
         query = """
