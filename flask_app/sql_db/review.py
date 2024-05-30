@@ -35,16 +35,16 @@ class Review:
         self.cursor.execute(query, (job_register_id)) # type: ignore
         return self.cursor.fetchall() # type: ignore
 
-    def create(self, job_register_id, job_id, user_id, link, review_type) -> bool:
+    def create(self, job_register_id, job_id, user_id, link, review_type, description) -> bool:
         query = """
-            INSERT INTO Review (job_register_id, job_id, user_id, link, type)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO Review (job_register_id, job_id, user_id, link, type, description)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
 
-        self.cursor.execute(query, (job_register_id, job_id, user_id, link, review_type)) # type: ignore
+        self.cursor.execute(query, (job_register_id, job_id, user_id, link, review_type, description)) # type: ignore
         return True
     
-    def update(self, id, job_register_id, job_id, user_id, link, review_type) -> bool:
+    def update(self, id, job_register_id, job_id, user_id, link, review_type, description) -> bool:
         update_query = "UPDATE Review SET "
         update_params = []
 
@@ -67,6 +67,10 @@ class Review:
         if review_type is not None:
             update_query += "type = %s, "
             update_params.append(review_type)
+        
+        if description is not None:
+            update_query += "description = %s, "
+            update_params.append(description)
 
         update_query = update_query.rstrip(", ") + " WHERE id = %s"
         update_params.append(id)
