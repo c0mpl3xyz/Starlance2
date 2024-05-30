@@ -78,9 +78,12 @@ class JobModal(Modal, title="Job registration"):
             'duration': int(str(self.duration)),
             'description': str(self.description),
             'upload_link': str(self.upload_link),
-            'requirements': "str(self.requirements)"
+            'requirements': "str(self.requirements)",
+            'type': 'Open',
+            'user_count': '20'
         }
 
+        print(f'{data=}')
         response = requests.post(self.url + '/job', json=data).json()
         print(response)
         if response and 'success' in response:
@@ -127,6 +130,45 @@ class JobAdditionalModal(Modal, title='Additional Information'):
 
         requests.put(self.url + '/job', json=data).json()
 
+class ReviewModal(Modal, title='Review upload'):
+    def __init__(self, bot, server_id, job_register_id, job_id, user_id):
+        super().__init__(title='Review upload')
+        self.server_id = server_id
+        self.bot = bot
+        self.job_register_id = job_register_id
+        self.job_id = job_id
+        self.user_id = user_id
+        self.link = TextInput(label="We transfer link", placeholder="https://we.tl/t-A6GJNEtest", required=True, min_length=1, max_length=200)
+        self.add_item(self.link)
+
+    async def on_submit(self, interaction: Interaction):
+        link = str(self.link)
+
+        data = {
+            'user_id': self.user_id,
+            'server_id': self.server_id,
+            'job_register_id': self.job_register_id,
+            'job_id': self.job_id,
+            'link': link,
+            'type': 'Pending'
+        }
+
+        print(f'{data=}')
+        response = requests.post(URL + '/review', json=data)
+
+        print(f'response {response.text}')
+        if response.json()['success']:
+            guild = discord.utils.get(self.bot.guilds, id=self.server_id)
+            if guild:
+                channel_name = Enums.REVIEW.value
+                channel = discord.utils.get(guild.channels, name=channel_name)  # Replace 'general' with your channel name or ID
+                if channel:
+                    await channel.send('New request arrived')
+            return await interaction.response.send_message('Successfully sent link to company')
+        else:
+            return await interaction.response.send_message('Error has been accured please, try again')
+            
+                
 class BankRegistrationModal(Modal, title='Bank Registration'):
     def __init__(self, bank_name, url):
         self.url = url

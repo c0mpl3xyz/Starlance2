@@ -16,6 +16,18 @@ class UserEmbed(Embed):
         self.add_field(name="Comment count", value='0')
         self.add_field(name="Points", value='4')
 
+class ReviewEmbed(Embed):
+     def __init__(self, user_id, user_name, job_name, link):
+        self.user_id = user_id
+        super().__init__(
+            title='Video review',
+            color = discord.Color.random()
+            )
+        
+        self.add_field(name='Job Name', value=job_name)
+        # self.add_field(name="User name", value=user_name)
+        self.add_field(name='link', value=link)
+
 class JobEmbed(Embed):
     def __init__(self, job_data):
         color = None

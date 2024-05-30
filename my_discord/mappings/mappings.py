@@ -20,7 +20,9 @@ def job_mapping_with_type(data: list) -> dict:
         'description': data[9],
         'upload_link': data[10],
         'requirements': data[11],
-        'type': data[12]
+        'job_type': data[12],
+        'user_count': data[13],
+        'type': data[14],
     }
 
     return job_dict
@@ -38,7 +40,31 @@ def job_mapping(data: list) -> dict:
         'participation_date': convert_date(data[8]),
         'description': data[9],
         'upload_link': data[10],
-        'requirements': data[11]
+        'requirements': data[11],
+        'job_type': data[12],
+        'user_count': data[13]
     }
 
     return job_dict
+
+def job_register_mapping(data: list):
+    job_register_dict = {
+        'id': data[0],
+        'user_id': data[1],
+        'job_id': data[2],
+        'type': data[3]
+    }
+
+    return job_register_dict
+
+def review_mappings(data: list):
+    review_dict = {
+        'id': data[0],
+        'job_register_id': data[1],
+        'job_id': data[2],
+        'user_id': data[3],
+        'link': data[4],
+        'type': data[5]
+    }
+
+    return review_dict

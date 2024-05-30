@@ -39,6 +39,19 @@ class SelectBudget(Select):
         budget = self.values[0].split(' ')[0]
         await interaction.response.send_modal(JobModal(self.bot, self.roles, int(budget), self.url))
 
+# class ReviewSelect(Select):
+#     def __init__(self, bot, user_id, job_id, server_id):
+#         self.user_id = user_id
+#         self.job_id = job_id
+#         self.server_id = server_id
+#         self.bot = bot
+
+#         super().__init__(options=options, placeholder='Please select Your Social account', min_values=1, max_values=4)
+
+    # async def callback(self, interaction: discord.Interaction) -> Any:
+    #     socials = self.values
+    #     await interaction.response.send_modal(SocialRegisterModal(self.user_id, self.job_id, socials, self.server_id, self.bot))
+
 class UploadLinkSelect(Select):
     def __init__(self, bot, user_id, job_id, server_id):
         self.user_id = user_id

@@ -1,6 +1,6 @@
 import requests, os
 from views import JobView
-from mappings.mappings import job_mapping_with_type, job_mapping 
+from mappings.mappings import job_mapping 
 URL = os.getenv('URL')
 
 class GetJobsByUserRoles:

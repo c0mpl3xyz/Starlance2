@@ -83,13 +83,14 @@ async def my_jobs(interaction: discord.Interaction):
         return
 
     if not is_influencer(interaction):
+        await interaction.response.defer(ephemeral=True)
         job_views = GetUserJobs().execute(interaction.user.id, client)
         if job_views is None or len(job_views) == 0:
-            return await interaction.response.send_message(ErrorMessageEnum.NO_JOB.value + f'<@{interaction.user.id}>', ephemeral=True)
+            await interaction.followup.send(ErrorMessageEnum.NO_JOB.value + f'<@{interaction.user.id}>', ephemeral=True)
         else:
             for view in job_views:
                 await interaction.user.send(embed=view.embed, view=view)
-        return await interaction.response.send_message(f'Job list sent to <@{interaction.user.id}>', ephemeral=True)
+            await interaction.followup.send(f'Job list sent to <@{interaction.user.id}>', ephemeral=True)
     
     else:
         await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
