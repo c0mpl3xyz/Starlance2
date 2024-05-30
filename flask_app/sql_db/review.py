@@ -37,7 +37,7 @@ class Review:
 
     def create(self, job_register_id, job_id, user_id, link, review_type) -> bool:
         query = """
-            INSERT INTO Content (job_register_id, job_id, user_id, link, 'type')
+            INSERT INTO Content (job_register_id, job_id, user_id, link, review_type)
             VALUES (%s, %s, %s, %s, %s)
         """
 
@@ -65,7 +65,7 @@ class Review:
             update_params.append(','.join(link))
         
         if review_type is not None:
-            update_query += "'type' = %s, "
+            update_query += "review_type = %s, "
             update_params.append(review_type)
 
         update_query = update_query.rstrip(", ") + " WHERE id = %s"
