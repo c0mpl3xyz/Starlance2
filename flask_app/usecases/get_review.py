@@ -16,9 +16,8 @@ class GetReviewByUser:
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
 
-        reviews = []
         review = Review(cursor)
-        review.get_by_user_id(user_id)
+        reviews = review.get_by_user_id(user_id)
         return reviews
     
 class GetReviewByJobRegister:
