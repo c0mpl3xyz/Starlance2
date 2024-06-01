@@ -15,7 +15,7 @@ def extract_review_request(request):
     job_description = request.json.get('job_description')
     user_id = request.json.get('user_id')
     server_id = request.json.get('server_id')
-    server_name = request.json.get('server_name_id')
+    server_name = request.json.get('server_name')
     description = request.json.get('description')
     link = request.json.get('link')
     review_type = request.json.get('type')
