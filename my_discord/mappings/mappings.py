@@ -9,7 +9,7 @@ def convert_date(date: str) -> str:
 def job_mapping_with_type(data: list) -> dict:
     job_dict = {
         'job_id': data[0],
-        'server_id': data[1],
+        'discord_server_id': data[1],
         'name': data[2],
         'roles': data[3],
         'budget': data[4],
@@ -30,7 +30,7 @@ def job_mapping_with_type(data: list) -> dict:
 def job_mapping(data: list) -> dict:
     job_dict = {
         'job_id': data[0],
-        'server_id': data[1],
+        'discord_server_id': data[1],
         'name': data[2],
         'roles': data[3],
         'budget': data[4],
@@ -62,9 +62,14 @@ def review_mappings(data: list):
         'id': data[0],
         'job_register_id': data[1],
         'job_id': data[2],
-        'user_id': data[3],
-        'link': data[4],
-        'type': data[5]
+        'job_name': data[3],
+        'job_description': data[4],
+        'user_id': data[5],
+        'server_id': data[6],
+        'server_name': data[7],
+        'link': data[8],
+        'description': data[9],
+        'type': data[10]
     }
 
     return review_dict

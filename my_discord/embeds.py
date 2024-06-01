@@ -17,16 +17,16 @@ class UserEmbed(Embed):
         self.add_field(name="Points", value='4')
 
 class ReviewEmbed(Embed):
-     def __init__(self, user_id, user_name, job_name, link):
-        self.user_id = user_id
+     def __init__(self, data: dict):
+        self.data = data
         super().__init__(
-            title='Video review',
+            title=data['server_name'],
             color = discord.Color.random()
             )
-        
-        self.add_field(name='Job Name', value=job_name)
-        # self.add_field(name="User name", value=user_name)
-        self.add_field(name='link', value=link)
+        self.add_field(name='Job Name', value=data['job_name'], inline=False)
+        self.add_field(name='Job Description', value=data['job_description'], inline=False)
+        self.add_field(name="Message", value=data['description'], inline=False)
+        self.add_field(name='link', value=data['link'], inline=False)
 
 class JobEmbed(Embed):
     def __init__(self, job_data):

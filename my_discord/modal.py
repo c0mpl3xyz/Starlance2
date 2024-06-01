@@ -1,5 +1,5 @@
 from typing import List
-from views import JobView
+from views import JobView, ReviewView
 import discord, requests
 from discord.ui import Modal, TextInput
 from discord import Interaction
@@ -83,9 +83,7 @@ class JobModal(Modal, title="Job registration"):
             'user_count': '20'
         }
 
-        print(f'{data=}')
         response = requests.post(self.url + '/job', json=data).json()
-        print(response)
         if response and 'success' in response:
             success = ['success']
             data['job_id'] = response['job_id']
@@ -130,46 +128,58 @@ class JobAdditionalModal(Modal, title='Additional Information'):
 
         requests.put(self.url + '/job', json=data).json()
 
-class ReviewModal(Modal, title='Review upload'):
-    def __init__(self, bot, server_id, job_register_id, job_id, user_id):
+class ReviewUserModal(Modal, title='Review upload'):
+    def __init__(self, bot, user_id, job_register_id, job_data: dict, review_type, company=False):
         super().__init__(title='Review upload')
-        self.server_id = server_id
         self.bot = bot
-        self.job_register_id = job_register_id
-        self.job_id = job_id
+        self.review_type = review_type
         self.user_id = user_id
+        self.job_register_id = job_register_id
+        self.job_data = job_data
+        self.company = company
         self.link = TextInput(label="We transfer link", placeholder="https://we.tl/t-A6GJNEtest", required=True, min_length=1, max_length=200)
-        self.add_item(self.link)
+        self.description = TextInput(label="Description", placeholder='', required=True,  style=discord.TextStyle.paragraph)
+        if not company:
+            self.add_item(self.link)
+        self.add_item(self.description)
 
     async def on_submit(self, interaction: Interaction):
         link = str(self.link)
-
+        description = str(self.description)
         data = {
             'user_id': self.user_id,
-            'server_id': self.server_id,
+            'discord_server_id': self.job_data['discord_server_id'],
             'job_register_id': self.job_register_id,
-            'job_id': self.job_id,
+            'job_id': self.job_data['job_id'],
+            'job_name': self.job_data['name'],
+            'job_description': self.job_data['description'],
             'link': link,
-            'type': 'Pending'
+            'type': self.review_type,
+            'description': description,
         }
 
-        print(f'{data=}')
-        response = requests.post(URL + '/review', json=data)
+        guild = discord.utils.get(self.bot.guilds, id=self.job_data['discord_server_id'])
+        if not guild:
+            return await interaction.response.send_message('Failed this company doesn\'t exists')
+        data['server_id'] = self.job_data['discord_server_id']
+        data['server_name'] = guild.name
 
-        print(f'response {response.text}')
+        print(guild.name)
+        response = requests.post(URL + '/review', json=data)
+        
         if response.json()['success']:
-            guild = discord.utils.get(self.bot.guilds, id=self.server_id)
-            if guild:
-                channel_name = Enums.REVIEW.value
-                channel = discord.utils.get(guild.channels, name=channel_name)  # Replace 'general' with your channel name or ID
-                if channel:
-                    await channel.send('New request arrived')
+            data['id'] = response.json()['review_id']
+            channel_name = Enums.REVIEW.value
+            channel = discord.utils.get(guild.channels, name=channel_name)  # Replace 'general' with your channel name or ID
+            view = ReviewView(data, self.bot, company=True)
+            if channel:
+                await channel.send(embed=view.embed, view=view)
             return await interaction.response.send_message('Successfully sent link to company')
         else:
             return await interaction.response.send_message('Error has been accured please, try again')
-            
-                
+                   
 class BankRegistrationModal(Modal, title='Bank Registration'):
+
     def __init__(self, bank_name, url):
         self.url = url
         self.bank_name = bank_name
@@ -268,3 +278,21 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             else:
                 message = 'Social link upload failed, pease try again'
                 await interaction.response.send_message(message)
+
+class ReviewRejectModal(Modal, title='Description'):
+    def __init__(self, embed_data, review_data, bot):
+        super().__init__()
+        self.embed_data = embed_data
+        self.review_data = review_data
+        self.bot = bot
+        self.description = TextInput(label="Description", placeholder='', required=True,  style=discord.TextStyle.paragraph)
+
+    async def on_submit(self, interaction: Interaction):
+        guild_id = Enums.GUILD_ID.value
+        guild = self.bot.get_guild(guild_id)
+        user = discord.utils.get(guild.members, id=self.review_data['user_id'])  # Fetch the user by ID
+        self.embed_data['Description'] = str(self.description)
+        view = ReviewView(self.embed_data, self.review_data, self.bot)
+        await user.send(embed=view.embed, view=view)
+        await interaction.message.delete()
+        self.stop()

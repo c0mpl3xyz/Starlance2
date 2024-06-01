@@ -2,7 +2,7 @@ import requests, os
 from views import JobView
 from mappings.mappings import job_mapping_with_type 
 URL = os.getenv('URL')
-class GetUserJobs:
+class GetUserJobViews:
     def execute(self, user_id, bot):
         data = {
                 'user_id': user_id,
