@@ -6,9 +6,8 @@ class GetReviewByJob:
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
 
-        reviews = []
         review = Review(cursor)
-        review.get_by_job_id(job_id)
+        reviews = review.get_by_job_id(job_id)
         return reviews
     
 class GetReviewByUser:
@@ -25,9 +24,8 @@ class GetReviewByJobRegister:
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
 
-        reviews = []
         review = Review(cursor)
-        review.get_by_job_register_id(job_register_id)
+        reviews = review.get_by_job_register_id(job_register_id)
         return reviews
     
 class GetReviewByJobRegisterAndUser:
@@ -35,7 +33,6 @@ class GetReviewByJobRegisterAndUser:
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
 
-        reviews = []
         review = Review(cursor)
-        review.get_by_job_register_id_and_user_id(job_register_id, user_id)
+        reviews = review.get_by_job_register_id_and_user_id(job_register_id, user_id)
         return reviews
