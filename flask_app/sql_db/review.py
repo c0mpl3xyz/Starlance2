@@ -35,13 +35,13 @@ class Review:
         self.cursor.execute(query, (job_register_id)) # type: ignore
         return self.cursor.fetchall() # type: ignore
 
-    def create(self, job_register_id, job_id, job_name, job_description, user_id, link, review_type, description) -> bool:
+    def create(self, job_register_id, job_id, job_name, job_description, user_id,  server_id, server_name, link, review_type, description) -> bool:
         query = """
-            INSERT INTO Review (job_register_id, job_id, job_name, job_description, user_id, link, type, description)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Review (job_register_id, job_id, job_name, job_description, user_id, server_id, server_name, link, type, description)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
-        self.cursor.execute(query, (job_register_id, job_id, job_name, job_description, user_id, link, review_type, description)) # type: ignore
+        self.cursor.execute(query, (job_register_id, job_id, job_name, job_description, user_id, server_id, server_name, link, review_type, description)) # type: ignore
         return True
     
     def update(self, id, job_register_id, job_id, job_name, job_description, user_id, link, review_type, description) -> bool:
