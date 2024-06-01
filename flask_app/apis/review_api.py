@@ -11,15 +11,17 @@ def extract_review_request(request):
     review_id = request.json.get('id')
     job_register_id = request.json.get('job_register_id')
     job_id = request.json.get('job_id')
+    job_name = request.json.get('job_name')
+    job_description = request.json.get('job_description')
     user_id = request.json.get('user_id')
     description = request.json.get('description')
     link = request.json.get('link')
     review_type = request.json.get('type')
-    return review_id, job_register_id, job_id, user_id, link, review_type, description
+    return review_id, job_register_id, job_id, job_name, job_description, user_id, link, review_type, description
 
 @review_bp.route('/', methods=['PUT'])
 def upate_review():
-    review_id, job_register_id, job_id, user_id, link, review_type, description = extract_review_request(request)
+    review_id, job_register_id, job_id, job_name, job_description, user_id, link, review_type, description = extract_review_request(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -28,7 +30,7 @@ def upate_review():
 
     try:
         review = Review(cursor)
-        updated = review.update(review_id, job_register_id, job_id, user_id, link, review_type, description)
+        updated = review.update(review_id, job_register_id, job_id, job_name, job_description, user_id, link, review_type, description)
         if updated:
             connection.commit()
             review_id = cursor.lastrowid
@@ -48,7 +50,7 @@ def upate_review():
 
 @review_bp.route('/', methods=['POST'])
 def create_review():
-    _, job_register_id, job_id, user_id, link, review_type, description = extract_review_request(request)
+    _, job_register_id, job_id, job_name, job_description, user_id, link, review_type, description = extract_review_request(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -58,7 +60,7 @@ def create_review():
 
     try:
         review = Review(cursor)
-        created = review.create(job_register_id, job_id, user_id, link, review_type, description)
+        created = review.create(job_register_id, job_id, job_name, job_description, user_id, link, review_type, description)
         if created:
             connection.commit()
             review_id = cursor.lastrowid
