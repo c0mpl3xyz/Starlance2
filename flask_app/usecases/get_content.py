@@ -6,9 +6,8 @@ class GetContentByJob:
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
 
-        contents = []
         content = Content(cursor)
-        content.get_by_job_id(job_id)
+        contents = content.get_by_job_id(job_id)
         return contents
     
 class GetContentByUser:
@@ -16,9 +15,8 @@ class GetContentByUser:
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
 
-        contents = []
         content = Content(cursor)
-        content.get_by_user_id(user_id)
+        contents = content.get_by_user_id(user_id)
         return contents
     
 class GetContentByJobRegister:
@@ -26,9 +24,8 @@ class GetContentByJobRegister:
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
 
-        contents = []
         content = Content(cursor)
-        content.get_by_job_register_id(job_register_id)
+        contents = content.get_by_job_register_id(job_register_id)
         return contents
     
 class GetContentByJobRegisterAndUser:
@@ -36,7 +33,6 @@ class GetContentByJobRegisterAndUser:
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
 
-        contents = []
         content = Content(cursor)
-        content.get_by_job_register_id_and_user_id(job_register_id, user_id)
+        contents = content.get_by_job_register_id_and_user_id(job_register_id, user_id)
         return contents
