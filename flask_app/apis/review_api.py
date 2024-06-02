@@ -3,7 +3,7 @@ from sql_db.conn import ConnectSQL
 import os
 from dotenv import load_dotenv
 from sql_db.review import Review
-from usecases.get_review import GetReviewByJob, GetReviewByUser, GetReviewByJobRegister, GetReviewByJobRegisterAndUser, GetReviewByCompany
+from usecases.get_review import *
 
 review_bp = Blueprint('review', __name__, url_prefix='/review')
 
@@ -121,4 +121,11 @@ def get_by_job_register_user():
 def get_by_company_id():
     company_id = request.json.get('server_id')
     data = GetReviewByCompany().execute(company_id)
+    return jsonify(data)
+
+@review_bp.route('/not_approved_count', methods=['GET'])
+def get_by_company_id():
+    company_ids = request.json.get('server_ids')
+    user_id = request.json.get('user_id')
+    data = GetCountsByJobIdsUserId().execute(company_ids, user_id)
     return jsonify(data)

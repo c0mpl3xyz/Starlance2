@@ -50,6 +50,28 @@ class Review:
 
         self.cursor.execute(query, (server_id,))  # Ensure server_id is a tuple
         return self.cursor.fetchall() # type: ignore
+    
+    def count_by_job_ids_user_id(self, job_ids, user_id):
+        query = """
+            SELECT job_id, user_id, COUNT(*) AS counts
+            FROM Review
+            WHERE job_id IN ({}) AND user_id = %s AND type != 'Approved'
+            GROUP BY job_id, user_id;
+        """
+
+        # Generate the comma-separated list of placeholders for job_id
+        placeholders = ','.join(['%s'] * len(job_ids))
+
+        # Format the query with the placeholders
+        formatted_query = query.format(placeholders)
+
+        # Execute the query with parameters
+        self.cursor.execute(formatted_query, job_ids + [user_id])
+
+        # Fetch all the rows
+        return self.cursor.fetchall()
+
+    
 
     def create(self, job_register_id, job_id, job_name, job_description, user_id,  server_id, server_name, link, review_type, description) -> bool:
         query = """

@@ -45,3 +45,16 @@ class GetReviewByCompany:
         review = Review(cursor)
         reviews = review.get_by_server_id(server_id)
         return reviews
+    
+class GetCountsByJobIdsUserId():
+    def execute(self, job_ids, user_id):
+        connection = ConnectSQL().get_connection()
+        cursor = connection.cursor()
+        review = Review(cursor)
+        results = review.count_by_job_ids_user_id(job_ids, user_id)
+
+        result_dict = {}
+        for result in results:
+            result_dict[result[0]] = result[2]
+
+        return result_dict
