@@ -45,7 +45,7 @@ class Review:
     
     def get_by_server_id(self, server_id):
         query = """
-            SELECT * FROM Review WHERE server_id %s
+            SELECT * FROM Review WHERE server_id = %s
         """
 
         self.cursor.execute(query, (server_id)) # type: ignore
