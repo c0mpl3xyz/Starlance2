@@ -3,7 +3,7 @@ from sql_db.conn import ConnectSQL
 import os
 from dotenv import load_dotenv
 from sql_db.content import Content
-from usecases.get_content import GetContentByJob, GetContentByJobRegister, GetContentByJobRegisterAndUser, GetContentByUser
+from usecases.get_content import GetContentByJob, GetContentByJobRegister, GetContentByJobRegisterAndUser, GetContentByUser, GetContentByCompany
 
 content_bp = Blueprint('content', __name__, url_prefix='/content')
 
