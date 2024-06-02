@@ -155,12 +155,12 @@ def create_content():
 
 @content_bp.route('/', methods=['GET'])
 def get_content_by_id():
-    job_register_id = request.json.get('job_register_id')
+    content_id = request.json.get('content_id')
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
     try:
         content = Content(cursor)
-        data = content.get_by_id(job_register_id)
+        data = content.get_by_id(content_id)
         return jsonify(data)
     finally:
         connection.close()
