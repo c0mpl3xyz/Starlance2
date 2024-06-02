@@ -32,18 +32,19 @@ def job_mapping(data: list) -> dict:
     job_dict = {
         'job_id': data[0],
         'discord_server_id': data[1],
-        'name': data[2],
-        'roles': data[3],
-        'budget': data[4],
-        'start_date': convert_date(data[5]),
-        'duration': data[6],
-        'end_date': convert_date(data[7]),
-        'participation_date': convert_date(data[8]),
-        'description': data[9],
-        'upload_link': data[10],
-        'requirements': data[11],
-        'job_type': data[12],
-        'user_count': data[13]
+        'server_name': data[2],
+        'name': data[3],
+        'roles': data[4],
+        'budget': data[5],
+        'start_date': convert_date(data[6]),
+        'duration': data[7],
+        'end_date': convert_date(data[8]),
+        'participation_date': convert_date(data[9]),
+        'description': data[10],
+        'upload_link': data[11],
+        'requirements': data[12],
+        'job_type': data[13],
+        'user_count': data[14]
     }
 
     return job_dict
