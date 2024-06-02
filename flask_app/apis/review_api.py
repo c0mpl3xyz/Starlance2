@@ -124,7 +124,7 @@ def get_by_company_id():
     return jsonify(data)
 
 @review_bp.route('/not_approved_count', methods=['GET'])
-def get_by_company_id():
+def not_approved_count():
     company_ids = request.json.get('server_ids')
     user_id = request.json.get('user_id')
     data = GetCountsByJobIdsUserId().execute(company_ids, user_id)
