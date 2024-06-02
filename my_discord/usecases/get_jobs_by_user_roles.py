@@ -11,7 +11,6 @@ class GetJobsByUserRoles:
             }
         
         response = requests.get(URL + '/job_register/roles', json=data)
-        print(f'{response.json()}')
         JSON = response.json()
         jobs = [JobView(job_mapping(job), bot) for job in JSON]
         return jobs

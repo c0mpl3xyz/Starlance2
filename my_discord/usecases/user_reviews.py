@@ -34,19 +34,9 @@ class GetCompanyReviewView:
         response = requests.get(URL + '/review/company', json=data)
         reviews = [ReviewView(review_mappings(review), bot) for review in response.json()]
         return reviews
-
-class CreateUserReview:
-    def execute(self, job_register_id, job_id, user_id, link, description):
-        data = {
-                'job_reister_id': job_register_id,
-                'job_id': job_id,
-                'user_id': user_id,
-                'link': link,
-                'description': description,
-                'type': 'Pending'
-            }
-        
-        response = requests.get(URL + 'review/user', json=data)
+    
+class UpdateReview:
+    def execute(self, review_data):        
+        response = requests.put(URL + '/review', json=review_data)
         JSON = response.json()
-        print(f'{JSON=}')
-        return None
+        return JSON

@@ -144,8 +144,7 @@ class ReviewUserModal(Modal, title='Review upload'):
         self.add_item(self.description)
 
     async def on_submit(self, interaction: Interaction):
-        link = str(self.link)
-        description = str(self.description)
+        await interaction.response.defer()
         data = {
             'user_id': self.user_id,
             'discord_server_id': self.job_data['discord_server_id'],
@@ -153,10 +152,12 @@ class ReviewUserModal(Modal, title='Review upload'):
             'job_id': self.job_data['job_id'],
             'job_name': self.job_data['name'],
             'job_description': self.job_data['description'],
-            'link': link,
             'type': self.review_type,
-            'description': description,
+            'description': str(self.description),
         }
+
+        if not self.company:
+            data['link'] = str(self.link)
 
         guild = discord.utils.get(self.bot.guilds, id=self.job_data['discord_server_id'])
         if not guild:
@@ -164,7 +165,6 @@ class ReviewUserModal(Modal, title='Review upload'):
         data['server_id'] = self.job_data['discord_server_id']
         data['server_name'] = guild.name
 
-        print(guild.name)
         response = requests.post(URL + '/review', json=data)
         
         if response.json()['success']:
@@ -174,9 +174,9 @@ class ReviewUserModal(Modal, title='Review upload'):
             view = ReviewView(data, self.bot, company=True)
             if channel:
                 await channel.send(embed=view.embed, view=view)
-            return await interaction.response.send_message('Successfully sent link to company')
-        else:
-            return await interaction.response.send_message('Error has been accured please, try again')
+        #     return await interaction.response.send_message('Successfully sent link to company')
+        # else:
+        #     return await interaction.response.send_message('Error has been accured please, try again')
                    
 class BankRegistrationModal(Modal, title='Bank Registration'):
 
@@ -280,19 +280,15 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
                 await interaction.response.send_message(message)
 
 class ReviewRejectModal(Modal, title='Description'):
-    def __init__(self, embed_data, review_data, bot):
+    def __init__(self):
         super().__init__()
-        self.embed_data = embed_data
-        self.review_data = review_data
-        self.bot = bot
-        self.description = TextInput(label="Description", placeholder='', required=True,  style=discord.TextStyle.paragraph)
+        self.description = TextInput(label="Description", placeholder='Tell me why you rejected this', required=True,  style=discord.TextStyle.paragraph)
+        self.add_item(self.description)
 
     async def on_submit(self, interaction: Interaction):
-        guild_id = Enums.GUILD_ID.value
-        guild = self.bot.get_guild(guild_id)
-        user = discord.utils.get(guild.members, id=self.review_data['user_id'])  # Fetch the user by ID
-        self.embed_data['Description'] = str(self.description)
-        view = ReviewView(self.embed_data, self.review_data, self.bot)
-        await user.send(embed=view.embed, view=view)
-        await interaction.message.delete()
-        self.stop()
+        await interaction.response.defer()
+        return str(self.description)
+    
+    # async def wait_for_submit(self):
+    #     await self._event.wait()  # Wait until the event is set
+    #     return self._return_value

@@ -9,7 +9,6 @@ class RegisterJob():
             'type': job_type
         }
 
-        print(f'TETSTSET: {data=}')
         response = requests.post(URL + '/job_register', json=data)
         if 'success' not in response.json():
             return False
