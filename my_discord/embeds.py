@@ -28,6 +28,47 @@ class ReviewEmbed(Embed):
         self.add_field(name="Message", value=data['description'], inline=False)
         self.add_field(name='link', value=data['link'], inline=False)
 
+class ContentEmbed(Embed):
+     def __init__(self, review_data, content_data):
+        self.review_data = review_data
+        self.content_data = content_data
+
+        color = None
+        if content_data['active'] == 0 or not content_data['active']:
+            color = discord.Color.red()
+        else:
+            color = discord.Color.green()
+
+        print(f'{self.review_data=}')
+        print(f'{self.content_data=}')
+        super().__init__(
+            title=review_data['server_name'],
+            color = color
+            )
+        
+        self.add_field(name='Job Name', value=review_data['job_name'], inline=False)
+        self.add_field(name='Job Description', value=review_data['job_description'], inline=False)
+        self.add_field(name='Content link', value=content_data['link'], inline=False)
+
+        if 'initial_plays' in content_data:
+            self.add_field(name='Initial plays', value=content_data['initial_plays'])
+        if 'plays' in content_data:
+            self.add_field(name='Plays', value=content_data['plays'])
+        if 'likes' in content_data:
+            self.add_field(name='Likes', value=content_data['likes'])
+        if 'replays' in content_data:
+            self.add_field(name='Replays', value=content_data['replays'])
+        if 'saves' in content_data:
+            self.add_field(name='Saves', value=content_data['saves'])
+        if 'shares' in content_data:
+            self.add_field(name='Shares', value=content_data['shares'])
+        if 'comments' in content_data:
+            self.add_field(name='Comments', value=content_data['comments'])
+        if 'percent_followers' in content_data:
+            self.add_field(name='Percent of followers', value=content_data['percent_followers'])
+        if 'percent_non_followers' in content_data:
+            self.add_field(name='Percent of followers', value=content_data['percent_non_followers'])
+
 class JobEmbed(Embed):
     def __init__(self, job_data):
         color = None
@@ -43,11 +84,12 @@ class JobEmbed(Embed):
             color = discord.Color.red()
 
         super().__init__(
-            title=job_data['name'],
+            title=job_data['server_name'],
             description=job_data['description'],
             color=color
         )
 
+        self.add_field(name="Job name", value=job_data['name'], inline=False)
         self.add_field(name="Start date", value=job_data['start_date'])
         self.add_field(name="Duration", value=f"{job_data['duration']} days")
         self.add_field(name="End date", value=job_data['end_date'])

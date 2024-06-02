@@ -11,7 +11,7 @@ from embeds import ApproveEmbed, ReviewEmbed
 from utils.enums import Enums
 
 class JobView(discord.ui.View):
-    def __init__(self, job_data, bot, company=False):
+    def __init__(self, job_data, bot, company=False, has_review=False):
         self.job_data = job_data
         self.bot = bot
         self.company = company
@@ -53,6 +53,10 @@ class JobView(discord.ui.View):
                 self.accept_button.disabled = True
 
                 self.add_item(self.accept_button)
+
+                if has_review:
+                    self.review_button.label = "Review request sent"
+                    self.review_button.disabled = True
                 self.add_item(self.review_button)
 
     async def reject_button_callback(self, interaction: discord.Interaction):
@@ -207,9 +211,11 @@ class ReviewView(discord.ui.View):
                 self.add_item(self.pending_button)
 
             elif review_data['type'] == 'Approved':
+                self.review_button.label = 'Reviewed'
+                self.review_button.disabled = True
                 self.add_item(self.approve_button)
                 self.add_item(self.review_button)
-                self.add_item(self.upload_bottun)
+                self.add_item(self.upload_button)
 
             elif review_data['type'] == 'Rejected':
                 self.reject_button.disabled = True
@@ -256,12 +262,17 @@ class ReviewView(discord.ui.View):
     async def upload_button_callback(self, interaction: discord.Interaction):
         from selects import UploadLinkSelect
         view = View()
-        view.add_item(UploadLinkSelect(bot, user_id, job_id, server_id)
-        success = await interaction.response.send_message('Select social accounts', view=view)
+        view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id']))
+        await interaction.response.send_message('Select social accounts', view=view)
+
+
+        self.upload_button.disabled = True
+        self.upload_button.label = 'Uploaded'
+        await interaction.message.edit(view=self)
 
 
     async def accept_button_callback(self, interaction: discord.Interaction):
-        interaction.response.defer()
+        await interaction.response.defer()
         review = Review()
         response = review.update(self.review_data['id'], review_type='Approved')
 
@@ -270,8 +281,6 @@ class ReviewView(discord.ui.View):
             self.remove_item(self.accept_button)
             self.add_item(self.approve_button)
             self.review_data['type'] = 'Approved'
-            
-            print(f'{self.review_data=}')
 
             await interaction.message.edit(view=self)
             user = await self.bot.fetch_user(self.review_data['user_id'])
@@ -280,3 +289,21 @@ class ReviewView(discord.ui.View):
         # else:
         #     await interaction.response.send_message(response['message'])
         # self.stop()
+
+class ContentView(discord.ui.View):
+    def __init__(self, review_data, content_data, bot):
+        from embeds import ContentEmbed
+        self.review_data = review_data
+        self.content_data = content_data
+        self.bot = bot
+        self.embed = ContentEmbed(review_data, content_data)
+
+        super().__init__(timeout=350)
+        self.edit_button = discord.ui.Button(label="Edit", style=discord.ButtonStyle.secondary, emoji='✔')
+        self.edit_button.callback = self.edit_button_callback
+
+    async def edit_button_callback(self, interaction: discord.Interaction):
+        from selects import UploadLinkSelect
+        view = View()
+        view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id']))
+        await interaction.response.send_message('Select social accounts', view=view)

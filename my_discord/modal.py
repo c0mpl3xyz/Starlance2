@@ -69,6 +69,7 @@ class JobModal(Modal, title="Job registration"):
         participation_date: str = participation_date_obj.strftime('%Y/%m/%d')
         data = {
             'discord_server_id': interaction.guild.id,
+            'server_name': interaction.guild.name,
             'name': str(self.name),
             'roles': str(','.join(self.roles)),
             'budget': int(self.budget),
@@ -83,7 +84,9 @@ class JobModal(Modal, title="Job registration"):
             'user_count': '20'
         }
 
-        response = requests.post(self.url + '/job', json=data).json()
+        response = requests.post(self.url + '/job', json=data)
+        print(response.text)
+        response = response.json()
         if response and 'success' in response:
             success = ['success']
             data['job_id'] = response['job_id']
@@ -218,11 +221,18 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
             await interaction.response.send_message(message)
 
 class SocialRegisterModal(Modal, title='Social account link upload'):
-    def __init__(self, user_id, job_id, socials, server_id, bot):
-        self.user_id = user_id
+    def __init__(self, user_id, job_id, server_id, job_register_id, review_id, socials, bot):
         self.bot = bot
+        self.user_id = user_id
         self.job_id = job_id
         self.server_id = server_id
+        self.job_register_id = job_register_id
+        self.review_id = review_id
+
+        self.instagram = None
+        self.facebook = None
+        self.tiktok = None
+        self.youtube = None
 
         super().__init__()
         if 'Instagram' in socials:
@@ -239,45 +249,57 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             self.add_item(self.facebook)
 
     async def on_submit(self, interaction: Interaction):
-        self.instagram = None
-        self.facebook = None
-        self.tiktok = None
-        self.youtube = None
-        success = False
+        from embeds import ContentEmbed
+        from usecases.user_reviews import GetUserReviewById
+        from usecases.get_content import GetContentById
+        from views import ContentView
+        await interaction.response.defer()
+
+        print('debug1')
+
         data = {
             'user_id': self.user_id,
-            'job_id': self.job_id
+            'job_id': self.job_id,
+            'server_id': self.server_id,
+            'job_register_id': self.job_register_id,
+            'review_id': self.review_id
         }
 
         socials = []
+        types = []
         if self.instagram is not None and str(self.instagram) != '':
-            data['instagram'] = str(self.instagram)
-            socials.append( str(self.instagram))
+            types.append('instagram')
+            socials.append(str(self.instagram))
         if self.facebook is not None and str(self.facebook) != '':
-            data['facebook'] = str(self.facebook)
-            socials.append( str(self.facebook))
+            types.append('facebook')
+            socials.append(str(self.facebook))
         if self.tiktok is not None and str(self.tiktok) != '':
-            data['tiktok'] = str(self.tiktok)
-            socials.append( str(self.tiktok))
+            types.append('tiktok')
+            socials.append(str(self.tiktok))
         if self.youtube is not None and str(self.youtube) != '':
-            data['youtube'] = str(self.youtube)
-            socials.append( str(self.youtube))
+            types.append('youtube')
+            socials.append(str(self.youtube))
 
-        response = requests.put(URL + '/job_register/link', json=data)
-        if response and 'success' in response.json():
-            success = response.json()['success']
+        content_ids = []
+        for i, social in enumerate(socials):
+            data['type'] = types[i]
+            data['link'] = social
+            response = requests.post(URL + '/content', json=data)
+            content_ids.append(response.json()['content_id'])
 
-            if success:
-                message = f'<@{self.user_id}>: Social links succesfully uploaded {", ".join(socials)}'
+        message = f'<@{self.user_id}>: Social links succesfully uploaded {", ".join(socials)}'
 
-                guild = discord.utils.get(self.bot.guilds, id=self.server_id)
-                channel_name =  Enums.NOTIFICATION.value
-                channel = discord.utils.get(guild.channels, name=channel_name)
-                await channel.send(message)
-                await interaction.response.send_message(message)
-            else:
-                message = 'Social link upload failed, pease try again'
-                await interaction.response.send_message(message)
+        review_data = GetUserReviewById().execute(self.review_id, self.bot)
+        for content_id in content_ids:    
+            content_data = GetContentById().execute(content_id)
+            view = ContentView(review_data, content_data, self.bot)
+            await interaction.followup.send(message, embed=view.embed, view=view)
+
+            guild = discord.utils.get(self.bot.guilds, id=self.server_id)
+            channel_name =  Enums.CONTENT.value
+            channel = discord.utils.get(guild.channels, name=channel_name)
+            await channel.send(message, embed=view.embed, view=view)
+        self.stop()
 
 class ReviewRejectModal(Modal, title='Description'):
     def __init__(self):

@@ -38,19 +38,25 @@ class SelectBudget(Select):
         await interaction.response.send_modal(JobModal(self.bot, self.roles, int(budget), self.url))
 
 class UploadLinkSelect(Select):
-    def __init__(self, bot, user_id, job_id, server_id):
+    def __init__(self, bot, user_id, job_id, server_id, job_register_id, review_id):
         self.user_id = user_id
         self.job_id = job_id
         self.server_id = server_id
+        self.job_register_id = job_register_id
+        self.review_id = review_id
+
         self.bot = bot
 
-        socials = ['Facebook', 'Instagram', 'TikTok', 'Youtube']
+        socials = Enums.SOCIAL_ACCOUNTS.value
         options = [discord.SelectOption(label=social, description='') for social in socials]
-        super().__init__(options=options, placeholder='Please select Your Social account', min_values=1, max_values=4)
+        super().__init__(options=options, placeholder='Please select Your Social account', min_values=1, max_values=len(options))
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         socials = self.values
-        await interaction.response.send_modal(SocialRegisterModal(self.user_id, self.job_id, socials, self.server_id, self.bot))
+        modal = SocialRegisterModal(self.user_id, self.job_id, self.server_id, self.job_register_id, self.review_id, socials, self.bot)
+        await interaction.response.send_modal(modal)
+        await modal.wait()
+        await interaction.message.delete()
 
 class SelectBankNames(Select):
     def __init__(self, url):
