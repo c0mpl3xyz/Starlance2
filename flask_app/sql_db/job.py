@@ -68,7 +68,7 @@ class Job:
     def create(self, data: dict) -> bool:
         # TODO: default values
         # TODO: fill fb id and, Ig id
-        company_id = data['company_id']
+        company_id = data['discord_server_id']
         name = data['name'] 
         server_name = data['server_name'] 
         roles = data['roles'] 
