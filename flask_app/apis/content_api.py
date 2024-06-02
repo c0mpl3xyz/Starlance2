@@ -13,16 +13,17 @@ def extract_content_request(request):
     job_id = request.json.get('job_id')
     review_id = request.json.get('review_id')
     user_id = request.json.get('user_id')
+    server_id = request.json.get('server_id')
     content_type = request.json.get('type')
     link = request.json.get('link')
     point = request.json.get('point')
     active = request.json.get('active')
 
-    return content_id, job_register_id, job_id, user_id, review_id, content_type, link, point, active
+    return content_id, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active
 
 @content_bp.route('/', methods=['PUT'])
 def upate_content():
-    content_id, job_register_id, job_id, user_id, review_id, content_type, link, point, active = extract_content_request(request)
+    content_id, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active = extract_content_request(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -31,7 +32,7 @@ def upate_content():
 
     try:
         content = Content(cursor)
-        updated = content.update_by_id(content_id, job_register_id, job_id, user_id, review_id, content_type, link, point, active)
+        updated = content.update_by_id(content_id, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active)
         if updated:
             connection.commit()
             content_id = cursor.lastrowid
@@ -50,8 +51,8 @@ def upate_content():
         connection.close()
 
 @content_bp.route('/', methods=['POST'])
-def create_job():
-    _, job_register_id, job_id, user_id, review_id, content_type, link, point, active = extract_content_request(request)
+def create_content():
+    _, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active = extract_content_request(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -61,7 +62,7 @@ def create_job():
 
     try:
         content = Content(cursor)
-        created = content.create(job_register_id, job_id, user_id, review_id, content_type, link)
+        created = content.create(job_register_id, job_id, user_id, review_id, server_id, content_type, link)
         if created:
             connection.commit()
             content_id = cursor.lastrowid
@@ -114,4 +115,10 @@ def get_by_job_register_user():
     job_register_id = request.json.get('job_register_id')
     user_id = request.json.get('user_id')
     data = GetContentByJobRegisterAndUser().execute(job_register_id, user_id)
+    return jsonify(data)
+
+@content_bp.route('/company', methods=['GET'])
+def get_by_company():
+    server_id = request.json.get('server_id')
+    data = GetContentByCompany().execute(server_id)
     return jsonify(data)

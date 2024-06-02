@@ -36,3 +36,12 @@ class GetContentByJobRegisterAndUser:
         content = Content(cursor)
         contents = content.get_by_job_register_id_and_user_id(job_register_id, user_id)
         return contents
+    
+class GetContentByCompany:
+    def execute(self, server_id):
+        connection = ConnectSQL().get_connection()
+        cursor = connection.cursor()
+
+        content = Content(cursor)
+        contents = content.get_by_company(server_id)
+        return contents
