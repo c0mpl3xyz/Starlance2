@@ -34,6 +34,22 @@ class Review:
 
         self.cursor.execute(query, (job_register_id)) # type: ignore
         return self.cursor.fetchall() # type: ignore
+    
+    def get_by_job_register_id(self, job_register_id, user_id):
+        query = """
+            SELECT * FROM Review WHERE job_register_id = %s and user_id = %s
+        """
+
+        self.cursor.execute(query, (job_register_id, user_id)) # type: ignore
+        return self.cursor.fetchall() # type: ignore
+    
+    def get_by_server_id(self, server_id):
+        query = """
+            SELECT * FROM Review WHERE server_id %s
+        """
+
+        self.cursor.execute(query, (server_id)) # type: ignore
+        return self.cursor.fetchall() # type: ignore
 
     def create(self, job_register_id, job_id, job_name, job_description, user_id,  server_id, server_name, link, review_type, description) -> bool:
         query = """

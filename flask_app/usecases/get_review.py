@@ -36,3 +36,12 @@ class GetReviewByJobRegisterAndUser:
         review = Review(cursor)
         reviews = review.get_by_job_register_id_and_user_id(job_register_id, user_id)
         return reviews
+    
+class GetReviewByCompany:
+    def execute(self, server_id):
+        connection = ConnectSQL().get_connection()
+        cursor = connection.cursor()
+
+        review = Review(cursor)
+        reviews = review.get_by_server_id(server_id)
+        return reviews
