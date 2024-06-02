@@ -65,19 +65,34 @@ class Job:
         self.cursor.execute(query, (id,)) # type: ignore
         return self.cursor.fetchone() is not None# type: ignore
 
-    def create(self, company_id, name, roles, budget, start_date, end_date, duration: int, participation_date, description, upload_link, requirements, job_type, user_count) -> bool:
+    def create(self, data: dict) -> bool:
         # TODO: default values
         # TODO: fill fb id and, Ig id
+        company_id = data['company_id']
+        name = data['name'] 
+        server_name = data['server_name'] 
+        roles = data['roles'] 
+        budget = data['budget'] 
+        start_date = data['start_date'] 
+        end_date = data['end_date'] 
+        duration = data['duration'] 
+        participation_date = data['participation_date'] 
+        description = data['description'] 
+        upload_link = data['upload_link'] 
+        requirements = data['requirements'] 
+        job_type = data['job_type'] 
+        user_count = data['user_count'] 
+        
         start_date = datetime.strptime(start_date, self.date_format)
         end_date = datetime.strptime(end_date, self.date_format)
         participation_date = datetime.strptime(participation_date, self.date_format)
         
         query = """
-            INSERT INTO Job (discord_server_id, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, type, user_count)
+            INSERT INTO Job (discord_server_id, server_name, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, type, user_count)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
-        self.cursor.execute(query, (company_id, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, job_type, user_count)) # type: ignore
+        self.cursor.execute(query, (company_id, server_name, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, job_type, user_count)) # type: ignore
         return True
     
     def update(self, job_id, data) -> bool:
