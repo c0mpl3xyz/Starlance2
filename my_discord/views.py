@@ -270,7 +270,6 @@ class ReviewView(discord.ui.View):
         self.upload_button.label = 'Uploaded'
         await interaction.message.edit(view=self)
 
-
     async def accept_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
         review = Review()

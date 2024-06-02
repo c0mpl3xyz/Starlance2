@@ -39,8 +39,6 @@ class ContentEmbed(Embed):
         else:
             color = discord.Color.green()
 
-        print(f'{self.review_data=}')
-        print(f'{self.content_data=}')
         super().__init__(
             title=review_data['server_name'],
             color = color

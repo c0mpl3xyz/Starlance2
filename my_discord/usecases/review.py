@@ -4,7 +4,7 @@ URL = os.getenv('URL')
 class Review():
     def update(self, review_id=None, job_register_id=None, job_id=None, user_id=None, link=None, review_type=None, descripton=None):
         data = {
-            'review_id': review_id,
+            'id': review_id,
             'job_register_id': job_register_id,
             'job_id': job_id,
             'user_id': user_id,

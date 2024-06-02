@@ -12,6 +12,9 @@ from utils.error_message_enums import ErrorMessageEnum, MessageEnum
 from embeds import UserEmbed
 from datetime import datetime
 from usecases.user_reviews import GetUserReview, GetUserReviewView, GetCompanyReviewView
+from usecases.user_contents import GetUserContentView
+from usecases.company_contents import GetCompanyContentView
+
 # from usecases.get_company_jobs import GetCompanyJobs
 load_dotenv()
 
@@ -42,12 +45,12 @@ async def on_ready():
     synced = await client.tree.sync()
     print(f'I\'m Ready\nCommands {str(len(synced))}')
 
-@client.tree.command(description='Status')
-async def status(interaction: discord.Interaction):
-    # if not await is_influencer(interaction):
-    #     return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
-    embed = UserEmbed(interaction.user.id, interaction.user.name)
-    await interaction.response.send_message(embed=embed)
+# @client.tree.command(description='Status')
+# async def status(interaction: discord.Interaction):
+#     # if not await is_influencer(interaction):
+#     #     return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+#     embed = UserEmbed(interaction.user.id, interaction.user.name)
+#     await interaction.response.send_message(embed=embed)
 
 @client.tree.command(description="Sends the bot's latency.") # this decorator makes a slash command
 async def ping(interaction: discord.Interaction): # a slash command will be created with the name "ping"
@@ -83,6 +86,7 @@ async def my_jobs(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
 
+    # TODO: remove not
     if not is_influencer(interaction):
         await interaction.response.defer(ephemeral=True)
         job_views = GetUserJobViews().execute(interaction.user.id, client)
@@ -95,12 +99,32 @@ async def my_jobs(interaction: discord.Interaction):
     
     else:
         await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+    
+@client.tree.command(name='my_contents')
+async def my_contents(interaction: discord.Interaction):
+    if await is_dm(interaction):
+        return
+
+    # TODO: remove not
+    if not is_influencer(interaction):
+        await interaction.response.defer(ephemeral=True)
+        content_views = GetUserContentView().execute(interaction.user.id, client)
+        if content_views is None or len(content_views) == 0:
+            await interaction.followup.send(ErrorMessageEnum.NO_CONTENT.value + f'<@{interaction.user.id}>', ephemeral=True)
+        else:
+            for view in content_views:
+                await interaction.user.send(embed=view.embed, view=view)
+            await interaction.followup.send(f'Content list sent to <@{interaction.user.id}>', ephemeral=True)
+    
+    else:
+        await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
 
 @client.tree.command(name='my_reviews')
 async def my_reviews(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
 
+    # TODO: remove not
     if not is_influencer(interaction):
         await interaction.response.defer(ephemeral=True)
         review_views = GetUserReviewView().execute(interaction.user.id, client)
@@ -160,6 +184,23 @@ async def company_reviews(interaction: discord.Interaction):
             for view in review_views:
                 await interaction.channel.send(embed=view.embed, view=view)
             await interaction.followup.send(f'Review list sent to <@{interaction.user.id}>', ephemeral=True)
+    else:
+        await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+
+@client.tree.command(name='company_contents')
+async def company_contents(interaction: discord.Interaction):
+    if await is_dm(interaction):
+        return
+
+    if not is_influencer(interaction):
+        await interaction.response.defer(ephemeral=True)
+        content_views = GetCompanyContentView().execute(interaction.guild.id, client)
+        if content_views is None or len(content_views) == 0:
+            await interaction.followup.send(ErrorMessageEnum.NO_CONTENT.value + f'<@{interaction.user.id}>', ephemeral=True)
+        else:
+            for view in content_views:
+                await interaction.channel.send(embed=view.embed, view=view)
+            await interaction.followup.send(f'Content list sent to <@{interaction.user.id}>', ephemeral=True)
     else:
         await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
 

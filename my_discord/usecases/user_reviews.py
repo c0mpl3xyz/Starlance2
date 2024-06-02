@@ -43,7 +43,6 @@ class GetCompanyReviewView:
         }
 
         response = requests.get(URL + '/review/company', json=data)
-        print(response.text)
         reviews = [ReviewView(review_mappings(review), bot, company=True) for review in response.json()]
         return reviews
     
