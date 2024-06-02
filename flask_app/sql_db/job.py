@@ -89,7 +89,7 @@ class Job:
         
         query = """
             INSERT INTO Job (discord_server_id, server_name, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, type, user_count)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
         self.cursor.execute(query, (company_id, server_name, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, job_type, user_count)) # type: ignore
