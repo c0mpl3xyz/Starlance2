@@ -64,7 +64,7 @@ def upate_content():
     finally:
         connection.close()
 
-@content_bp.route('/status', methods='PUT')
+@content_bp.route('/status', methods=['PUT'])
 def update_content_status():
     content_id, initial_plays, plays, likes, replays, saves, shares, comments, percent_followers, percent_non_followers = extract_content_status(request)
 
@@ -93,7 +93,7 @@ def update_content_status():
     finally:
         connection.close()
 
-@content_bp.route('/active', methods='PUT')
+@content_bp.route('/active', methods=['PUT'])
 def update_content_active():
     content_id = request.json.get('content_id')
     active = request.json.get['active']
