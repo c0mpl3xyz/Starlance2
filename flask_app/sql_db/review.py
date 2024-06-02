@@ -111,7 +111,7 @@ class Review:
             update_params.append(','.join(link))
         
         if review_type is not None:
-            update_query += "type = %s, "
+            update_query += "`type` = %s, "
             update_params.append(review_type)
         
         if description is not None:
