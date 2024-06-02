@@ -40,7 +40,7 @@ class Content:
             SELECT * FROM Content WHERE job_register_id = %s
         """
 
-        self.cursor.execute(query, (job_register_id)) # type: ignore
+        self.cursor.execute(query, (job_register_id,)) # type: ignore
         return self.cursor.fetchall() # type: ignore
     
     def get_by_job_register_id_and_user_id(self, job_register_id, user_id):
