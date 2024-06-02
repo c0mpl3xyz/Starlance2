@@ -84,7 +84,7 @@ class Content:
         self.cursor.execute(query, (job_register_id, job_id, user_id, review_id, server_id, content_type, link)) # type: ignore
         return True
     
-    def update_by_id(self, id, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point=None, active=None) -> bool:
+    def update_by_id(self, id, job_register_id=None, job_id=None, user_id=None, review_id=None, server_id=None, content_type=None, link=None, point=None, active=None) -> bool:
         update_query = "UPDATE Content SET "
         update_params = []
 
@@ -114,15 +114,77 @@ class Content:
 
         if link is not None:
             update_query += "link = %s, "
-            update_params.append(','.join(link))
+            update_params.append(link)
         
         if point is not None:
             update_query += "point = %s, "
-            update_params.append(','.join(point))
+            update_params.append(point)
 
         if active is not None:
             update_query += "active = %s, "
-            update_params.append(','.join(active))
+            update_params.append(active)
+
+        update_query = update_query.rstrip(", ") + " WHERE id = %s"
+        update_params.append(id)
+        self.cursor.execute(update_query, tuple(update_params)) # type: ignore
+        self.cursor.fetchall() # type: ignore
+
+        return True
+    
+    def update_active(self, id, active):
+        update_query = "UPDATE Content SET "
+        update_params = []
+
+        if active is not None:
+            update_query += "active = %s, "
+            update_params.append(active)
+
+        update_query = update_query.rstrip(", ") + " WHERE id = %s"
+        update_params.append(id)
+        self.cursor.execute(update_query, tuple(update_params)) # type: ignore
+        self.cursor.fetchall() # type: ignore
+
+        return True
+
+    def update_status(self, id, initial_plays, plays, likes, replays, saves, shares, comments, percent_followers, percent_non_followers) -> bool:
+        update_query = "UPDATE Content SET "
+        update_params = []
+
+        if initial_plays is not None:
+            update_query += "initial_plays = %s, "
+            update_params.append(initial_plays)
+
+        if plays is not None:
+            update_query += "plays = %s, "
+            update_params.append(plays)
+        
+        if likes is not None:
+            update_query += "likes = %s, "
+            update_params.append(likes)
+        
+        if replays is not None:
+            update_query += "replays = %s, "
+            update_params.append(replays)
+        
+        if saves is not None:
+            update_query += "saves = %s, "
+            update_params.append(saves)
+        
+        if shares is not None:
+            update_query += "shares = %s, "
+            update_params.append(shares)
+        
+        if comments is not None:
+            update_query += "comments = %s, "
+            update_params.append(comments)
+        
+        if percent_followers is not None:
+            update_query += "percent_followers = %s, "
+            update_params.append(percent_followers)
+
+        if percent_non_followers is not None:
+            update_query += "percent_non_followers = %s, "
+            update_params.append(percent_non_followers)
 
         update_query = update_query.rstrip(", ") + " WHERE id = %s"
         update_params.append(id)

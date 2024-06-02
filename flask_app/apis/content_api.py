@@ -7,6 +7,20 @@ from usecases.get_content import GetContentByJob, GetContentByJobRegister, GetCo
 
 content_bp = Blueprint('content', __name__, url_prefix='/content')
 
+def extract_content_status(request):
+    content_id = request.json.get('content_id')
+    initial_plays = request.json.get('initial_plays')
+    plays = request.json.get('plays')
+    likes = request.json.get('likes')
+    replays = request.json.get('replays')
+    saves = request.json.get('saves')
+    shares = request.json.get('shares')
+    comments = request.json.get('comments')
+    percent_followers = request.json.get('percent_followers')
+    percent_non_followers = request.json.get('percent_non_followers')
+
+    return content_id, initial_plays, plays, likes, replays, saves, shares, comments, percent_followers, percent_non_followers
+
 def extract_content_request(request):
     content_id = request.json.get('id')
     job_register_id = request.json.get('job_register_id')
@@ -50,6 +64,65 @@ def upate_content():
     finally:
         connection.close()
 
+@content_bp.route('/status', methods='PUT')
+def update_content_status():
+    content_id, initial_plays, plays, likes, replays, saves, shares, comments, percent_followers, percent_non_followers = extract_content_status(request)
+
+    connection = ConnectSQL().get_connection()
+    cursor = connection.cursor()
+    updated: bool = False
+    message: str = ''
+
+    try:
+        content = Content(cursor)
+        updated = content.update_status(content_id, initial_plays, plays, likes, replays, saves, shares, comments, percent_followers, percent_non_followers)
+        if updated:
+            connection.commit()
+            content_id = cursor.lastrowid
+            message = 'Content updated'
+        else:
+            message = 'Content not updated'
+            
+        result = {
+            'success': updated,
+            'content_id': content_id,
+            'message': message
+        }
+
+        return jsonify(result)
+    finally:
+        connection.close()
+
+@content_bp.route('/active', methods='PUT')
+def update_content_active():
+    content_id = request.json.get('content_id')
+    active = request.json.get['active']
+
+    connection = ConnectSQL().get_connection()
+    cursor = connection.cursor()
+    updated: bool = False
+    message: str = ''
+
+    try:
+        content = Content(cursor)
+        updated = content.update_active(content_id, active)
+        if updated:
+            connection.commit()
+            content_id = cursor.lastrowid
+            message = 'Content updated'
+        else:
+            message = 'Content not updated'
+            
+        result = {
+            'success': updated,
+            'content_id': content_id,
+            'message': message
+        }
+
+        return jsonify(result)
+    finally:
+        connection.close()
+
 @content_bp.route('/', methods=['POST'])
 def create_content():
     _, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active = extract_content_request(request)
@@ -72,7 +145,7 @@ def create_content():
             
         result = {
             'success': created,
-            'job_id': content_id,
+            'content_id': content_id,
             'message': message
         }
 
