@@ -80,7 +80,7 @@ class Review:
         """
 
         self.cursor.execute(query, (job_register_id, job_id, job_name, job_description, user_id, server_id, server_name, link, review_type, description)) # type: ignore
-        return True
+        return self.cursor.rowcount > 0
     
     def update(self, id, job_register_id, job_id, job_name, job_description, user_id, link, review_type, description) -> bool:
         update_query = "UPDATE Review SET "
@@ -111,7 +111,7 @@ class Review:
             update_params.append(link)
         
         if review_type is not None:
-            update_query += "`type` = %s, "
+            update_query += "type = %s, "
             update_params.append(review_type)
         
         if description is not None:
