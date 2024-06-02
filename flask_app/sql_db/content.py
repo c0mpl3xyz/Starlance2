@@ -56,7 +56,7 @@ class Content:
             SELECT * FROM Content WHERE server_id = %s
         """
 
-        self.cursor.execute(query, (server_id)) # type: ignore
+        self.cursor.execute(query, (server_id,)) # type: ignore
         return self.cursor.fetchall() # type: ignore
 
     def get_by_job_register_id(self, job_register_id):
