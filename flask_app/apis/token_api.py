@@ -15,7 +15,7 @@ HOME = os.getenv('HOME')
 APP_ID = os.getenv('APP_ID')
 APP_SECRET = os.getenv('APP_SECRET')
 URL = os.getenv('URL')
-REDIRECT_URL = URL + '/exchange_token/'
+REDIRECT_URL = URL + 'exchange_token/'
 API_VERSION = os.getenv('API_VERSION')
 API_PREFIX = os.getenv('API_PREFIX')
 URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
@@ -72,7 +72,8 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
             'access_token': check_token,
             'user_created': created,
             'debug': debug,
-            'data': data
+            'data': data,
+            'json': JSON
         }
         
     return message
