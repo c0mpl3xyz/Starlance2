@@ -59,13 +59,11 @@ class Content:
         self.cursor.execute(query, (server_id,)) # type: ignore
         return self.cursor.fetchall() # type: ignore
 
-    def get_by_job_register_id(self, job_register_id):
+    def get_all_by_job_id(self, job_ids: list):
         query = """
-            SELECT * FROM Content WHERE job_register_id = %s
-        """
-
-        self.cursor.execute(query, (job_register_id,)) # type: ignore
-        return self.cursor.fetchall() # type: ignore
+                SELECT * FROM Content WHERE job_id IN %s AND active = 1
+            """
+        self.cursor.execute(query, (tuple(job_ids),))
 
     def exist_by_social_type(self, job_register_id, social_type) -> bool:
         query = """

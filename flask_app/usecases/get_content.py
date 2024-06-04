@@ -45,3 +45,12 @@ class GetContentByCompany:
         content = Content(cursor)
         contents = content.get_by_company(server_id)
         return contents
+    
+class GetByJobId:
+    def execute(self, job_ids):
+        connection = ConnectSQL().get_connection()
+        cursor = connection.cursor()
+
+        content = Content(cursor)
+        contents = content.get_all_by_job_id(job_ids)
+        return contents

@@ -6,7 +6,7 @@ from discord import Interaction
 from utils.enums import Enums
 from datetime import datetime, timedelta
 from validator.validator import Validator
-import re, os
+import re, os, pytz
 
 URL = os.getenv('URL')
 # start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
@@ -40,12 +40,16 @@ class JobModal(Modal, title="Job registration"):
     #     if not validator.date_validator(self.start_date):
     #         pass
 
-    def validate(self, start_date, duration):
+    def validate(self, start_date_string, duration):
         validator = Validator()
         messages = []
-        if not validator.date_validator(start_date):
+        # timezone = pytz.timezone('Asia/Ulaanbaatar')
+
+        date = datetime.now()
+        today = datetime(date.year, date.month, date.day)
+        if not validator.date_validator(start_date_string):
             messages.append('Start date is invalid')
-        elif datetime.strptime(start_date, '%Y/%m/%d') < datetime.now():
+        elif datetime.strptime(start_date_string, '%Y/%m/%d') < today:
             messages.append('Start date must be after today')
 
         if not duration.isdigit():
