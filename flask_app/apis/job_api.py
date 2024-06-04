@@ -122,3 +122,14 @@ def get_company_jobs():
     company_id = request.json.get('company_id')
     data = GetCompanyJobs().execute(company_id)
     return jsonify(data)
+
+@job_bp.route('/open_jobs', methods=['GET'])
+def get_open_jobs():
+    connection = ConnectSQL().get_connection()
+    cursor = connection.cursor()
+    try:
+        job = Job(cursor)
+        data = job.get_all_open_job()
+        return jsonify(data)
+    finally:
+        connection.close()
