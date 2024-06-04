@@ -89,8 +89,4 @@ def exchange_token_test():
             connection.commit()
     finally:
         connection.close()
-    return jsonify(result)
-
-@token_bp.route('/', methods=['GET'])
-def home_page():
     return redirect(HOME)
