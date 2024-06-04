@@ -27,7 +27,7 @@ class IGGraph():
         self.access_token = access_token
         self.base_url = URL_PREFIX
         self.url_suffix = f'access_token={self.access_token}'
-        self.user_id = '17841407620688258'
+        self.user_id = '17841465259887339'
 
     def get_user_id(self):
         return self.user_id
@@ -101,7 +101,7 @@ class IGGraph():
         return None
     
 if __name__ == '__main__':
-    ig_graph = IGGraph('EAANeVorcn0QBOZCh9WRPZAKyOZBcQVzJdiA0aqiSBn884BWuI1xMVDWBPgCnGP36E282aZAQqibZBrvZAgZChg6t7BkulzN05RfXXqp5Sl07CDw2wb8iwAminZCwBHzepNNMHOCZAxPs1zFSFV2D3LIt3k5ZAs3c1iKZC5y7ZAJU9zZAEcjo8CcHqYV6c8ln8eAuCuKpBWf4Fzb3vfZAYeiRdu23dZBJxyoUJTT6tF2H4aIXqTEV3lWDCR2xQ0eIE1mJxfGZAV4U7wZDZD')
+    ig_graph = IGGraph()
     print(ig_graph.get_user_id())
     print(ig_graph.get_media_list())
     # print(ig_graph.get_media_list())

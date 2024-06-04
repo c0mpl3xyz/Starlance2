@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, redirect
 from sql_db.conn import ConnectSQL
 from typing import Dict, List, Tuple, Union
 import os, ast
@@ -11,7 +11,7 @@ from flask_app.sql_db.access_token import AccessToken
 import datetime
 
 load_dotenv()
-
+HOME = os.getenv('HOME')
 APP_ID = os.getenv('APP_ID')
 APP_SECRET = os.getenv('APP_SECRET')
 URL = os.getenv('URL')
@@ -75,7 +75,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
             'data': data
         }
         
-    return message
+    return redirect(HOME)
 
 @token_bp.route('/exchange_token/', methods=['GET'])
 def exchange_token_test():
