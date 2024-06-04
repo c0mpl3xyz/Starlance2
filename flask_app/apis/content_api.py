@@ -197,7 +197,7 @@ def get_by_company():
     return jsonify(data)
 
 @content_bp.route('/job_ids', methods=['GET'])
-def get_by_company():
+def get_by_job_ids():
     job_ids = request.json.get('job_ids')
     data = GetByJobId().execute(job_ids)
     return jsonify(data)
