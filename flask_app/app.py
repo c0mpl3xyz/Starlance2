@@ -19,7 +19,6 @@ API_PREFIX = os.getenv('API_PREFIX')
 URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
 
 app = Flask(__name__)
-app.logger.info(REDIRECT_URL)
 app.register_blueprint(user_bp)
 app.register_blueprint(token_bp)
 app.register_blueprint(job_bp)
