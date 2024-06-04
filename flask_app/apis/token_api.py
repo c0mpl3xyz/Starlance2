@@ -75,7 +75,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
             'data': data
         }
         
-    return redirect(HOME)
+    return message
 
 @token_bp.route('/exchange_token/', methods=['GET'])
 def exchange_token_test():
@@ -93,4 +93,4 @@ def exchange_token_test():
 
 @token_bp.route('/', methods=['GET'])
 def home_page():
-    return render_template('index.html')
+    return redirect(HOME)
