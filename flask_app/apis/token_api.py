@@ -89,4 +89,4 @@ def exchange_token_test():
             connection.commit()
     finally:
         connection.close()
-    return redirect(HOME)
+    return jsonify(result)
