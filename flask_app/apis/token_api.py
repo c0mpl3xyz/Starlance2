@@ -11,7 +11,6 @@ from flask_app.sql_db.access_token import AccessToken
 import datetime
 
 load_dotenv()
-HOME = os.getenv('HOME')
 APP_ID = os.getenv('APP_ID')
 APP_SECRET = os.getenv('APP_SECRET')
 URL = os.getenv('URL')
@@ -90,4 +89,4 @@ def exchange_token_test():
             connection.commit()
     finally:
         connection.close()
-    return redirect(HOME)
+    return redirect('https://www.ugc-mongolia.com')

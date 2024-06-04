@@ -9,10 +9,11 @@ URL = os.getenv('URL')
 APP_TOKEN = os.getenv('ADMIN_TOKEN')
 ADMIN_TOKEN = os.getenv('APP_TOKEN')
 CONFIG_ID = os.getenv('CONFIG_ID')
-REDIRECT_URL = URL + '/exchange_token/'
+REDIRECT_URL = URL + 'exchange_token/'
 CLIENT_SECRET = os.getenv('APP_SECRET')
 API_VERSION = os.getenv('API_VERSION')
 
+print(f'{REDIRECT_URL=}')
 def get_manual_link(user_id, username):
     # scope = ''
     url = f'https://www.facebook.com/{API_VERSION}/dialog/oauth'
@@ -20,7 +21,7 @@ def get_manual_link(user_id, username):
         'client_id': APP_ID,
         # 'client_secret': CLIENT_SECRET,
         'redirect_uri': REDIRECT_URL,
-        "auth_type": "reauthenticate",
+        # "auth_type": "reauthenticate",
         'scope': 'instagram_basic,instagram_manage_insights',
         'state': {
             'user_id': user_id,
