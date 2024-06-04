@@ -1,12 +1,16 @@
 import os
 from sql_db.conn import ConnectSQL
 from datetime import datetime, timedelta
+import pytz
+
 class Job:
     def __init__(self, cursor=None):
         self.cursor = cursor
         self.date_format = '%Y/%m/%d'
-        self.current = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
+        self.timezone = pytz.timezone('Asia/Ulaanbaatar')
+        date = datetime.now(self.timezone)
+        self.current = datetime(date.year, date.month, date.day)
+
     def get_by_id(self, id):
         query = """
             SELECT * FROM Job WHERE id = %s
@@ -17,7 +21,7 @@ class Job:
     
     def get_all_by_company_id(self, discord_server_id):
         query = """
-            SELECT * FROM Job WHERE discord_server_id = %s AND start_date > %s
+            SELECT * FROM Job WHERE discord_server_id = %s AND start_date >= %s
         """
 
         self.cursor.execute(query, (discord_server_id, self.current))
@@ -81,7 +85,7 @@ class Job:
         upload_link = data['upload_link'] 
         requirements = data['requirements'] 
         job_type = data['job_type'] 
-        user_count = data['user_count'] 
+        user_count = data['user_count']
         
         start_date = datetime.strptime(start_date, self.date_format)
         end_date = datetime.strptime(end_date, self.date_format)
@@ -184,7 +188,7 @@ class Job:
         return result
     
     def get_all_open_job(self):
-        today = datetime.now()
+        today = datetime.now(self.timezone)
         start_date = datetime(today.year, today.month, today.day)
         query = "SELECT id FROM Job WHERE type = 'OPEN' and start_date <= %s"
         self.cursor.execute(query, (start_date,)) # type: ignore
