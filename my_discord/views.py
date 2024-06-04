@@ -1,5 +1,5 @@
 from discord.ui import View
-from embeds import JobEmbed
+from embeds import JobEmbed, LoginEmbed
 from usecases.register_job import RegisterJob
 import discord
 import requests
@@ -9,6 +9,19 @@ from usecases.get_job_by_id import GetJobById
 from usecases.user_reviews import GetUserReview, UpdateReview
 from embeds import ApproveEmbed, ReviewEmbed
 from utils.enums import Enums
+
+class LogInView(discord.ui.View):
+    def __init__(self, user_id, user_name):
+        from manual import get_manual_link
+        link = get_manual_link(user_id, user_name)
+        self.embed = LoginEmbed(user_name)
+        super().__init__()
+        self.login_button = discord.ui.Button(label="Log in with Facebook", style=discord.ButtonStyle.url, url=link)
+        self.add_item(self.login_button)
+
+    async def on_timeout(self):
+        await self.message.edit(content="Link timed out", view=None)
+
 
 class JobView(discord.ui.View):
     def __init__(self, job_data, bot, company=False, has_review=False):

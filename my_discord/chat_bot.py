@@ -12,6 +12,7 @@ from utils.error_message_enums import ErrorMessageEnum, MessageEnum
 from embeds import UserEmbed
 from datetime import datetime
 from usecases.user_reviews import GetUserReview, GetUserReviewView, GetCompanyReviewView
+from views import LogInView
 from usecases.user_contents import GetUserContentView
 from usecases.company_contents import GetCompanyContentView
 
@@ -61,9 +62,9 @@ async def login(interaction: discord.Interaction):
     if await is_dm(interaction):
         return 
     
-    if is_influencer(interaction):
-        message = get_manual_link(interaction.user.id, interaction.user.name)
-        await interaction.user.send(message)
+    if not is_influencer(interaction):
+        view = LogInView(interaction.user.id, interaction.user.name)
+        await interaction.user.send('Login with Facebook', view=view, embed=view.embed)
         return await interaction.response.send_message(f'Log in link sent to user: <@{interaction.user.id}>', ephemeral=True)
     else:
         return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)

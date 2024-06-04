@@ -20,11 +20,11 @@ def get_manual_link(user_id, username):
         'client_id': APP_ID,
         # 'client_secret': CLIENT_SECRET,
         'redirect_uri': REDIRECT_URL,
-        # "auth_type": "reauthenticate",
-        'scope': 'instagram_basic',
+        "auth_type": "reauthenticate",
+        'scope': 'instagram_basic,instagram_manage_insights',
         'state': {
             'user_id': user_id,
-            'username': 'username'
+            'username': username
         },
         'response_type': 'code',
         'config_id': 985148693320820
