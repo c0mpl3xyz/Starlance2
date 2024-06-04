@@ -61,13 +61,13 @@ class Content:
 
     def get_all_by_job_id(self, job_ids: list):
         query = """
-                SELECT * FROM Content WHERE job_id IN ({}) AND active = 1
-            """
+            SELECT * FROM Content WHERE job_id IN ({}) AND active = 1
+        """
         placeholders = ','.join(['%s'] * len(job_ids))
-        # Format the query with the placeholders
-
         formatted_query = query.format(placeholders)
-        self.cursor.execute(formatted_query, (job_ids,))
+        self.cursor.execute(formatted_query, tuple(job_ids))
+
+        return self.cursor.fetchall()
 
     def exist_by_social_type(self, job_register_id, social_type) -> bool:
         query = """
