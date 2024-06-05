@@ -51,7 +51,11 @@ class ProIGToken():
         response = requests.get(url)
         return response.json()
     
-    def filter_by_shortcodes(self, shortcodes: list):
+    def filter_by_shortcodes(self, shortcode_dict: dict):
+        shortcodes = list(shortcode_dict.keys())
+        if not len(shortcodes):
+            return {}
+        
         foundcodes = []
         finished = False
         my_result = {}
@@ -68,7 +72,7 @@ class ProIGToken():
             for shortcode in shortcodes:
                 if shortcode in media_dict.keys():
                     foundcodes.append(shortcode)
-                    my_result[shortcode] = media_dict[shortcode]
+                    my_result[shortcode_dict[shortcode]] = media_dict[shortcode]
             
             if set(shortcodes).intersection(set(foundcodes)) == set(shortcodes):
                 finished = True
@@ -88,6 +92,9 @@ class ProIGToken():
                 insights_data = data['insights']['data']
                 new_data = {}
                 for insight in insights_data:
+                    if insight['name'] == 'plays':
+                        new_data['initial_plays'] = insight['values'][0]['value']
+
                     if insight['name'] == 'likes':
                         new_data['likes'] = insight['values'][0]['value']
 
@@ -100,17 +107,16 @@ class ProIGToken():
                     if insight['name'] == 'shares':
                         new_data['shares'] = insight['values'][0]['value']
 
-                    if insight['name'] == 'plays':
-                        new_data['plays'] = insight['values'][0]['value']
-                    
                     if insight['name'] == 'reach':
-                        new_data['reach'] = insight['values'][0]['value']
+                        new_data['account_reach'] = insight['values'][0]['value']
                     
                     if insight['name'] == 'total_interactions':
                         new_data['total_interactions'] = insight['values'][0]['value']
 
-                new_data['replies'] = new_data['plays'] - new_data['reach']
-                new_data['total_views'] = new_data['plays'] + new_data['replies']
+                new_data['replays'] = new_data['initial_plays'] - new_data['account_reach']
+                new_data['total_plays'] = new_data['initial_plays'] + new_data['replays']
+                new_data['points'] = 0 # calculate points
+                new_data['engagement'] = 0 # calculate engagement
                 my_data[data['shortcode']] = new_data
         next_url = None
         if 'next' in media['paging']:

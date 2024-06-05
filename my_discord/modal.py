@@ -83,7 +83,7 @@ class JobModal(Modal, title="Job registration"):
             'duration': int(str(self.duration)),
             'description': str(self.description),
             'upload_link': str(self.upload_link),
-            'requirements': "str(self.requirements)",
+            'requirements': "",
             'type': 'Open',
             'user_count': '20'
         }

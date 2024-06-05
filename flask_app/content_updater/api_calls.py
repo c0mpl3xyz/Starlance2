@@ -1,10 +1,11 @@
 import requests, os, time
 from dotenv import load_dotenv
+from pro_ig_token import ProIGToken
 load_dotenv()
 URL = os.getenv('URL')
 def get_jobs():
     result = requests.get(URL + 'job/open_jobs')
-    # print(result.text)
+    # print(result.json())
     return result.json()
 
 def get_contents_by_job_ids(job_ids):
@@ -12,35 +13,38 @@ def get_contents_by_job_ids(job_ids):
         'job_ids': job_ids
     }
 
-    print(f'{URL=}')
     result = requests.get(URL + 'content/job_ids', json=data)
-    print(f'{result.text}')
+    # print(result.json())
     return result.json()
 
-def update_content(content_dict: dict):
-    for k, v in content_dict.items():
-        data = {
-            'content_id': k,
-            
-        }
-        requests.post(URL + '/content', json=data)
+def update_content(data):
+    requests.put(URL + '/content/status', json=data)
+
+def get_shortcode(link):
+    link = link.replace('https://www.instagram.com/reel/', '').replace('https://www.instagram.com/p/','')
+    splits = link.split('/')
+    if len(splits):
+        return splits[0]
+    return None
 
 def content_updater():
-    while True:
-        try:
-            jobs = get_jobs()
-            job_ids = [job[0] for job in jobs]
-            contents = get_contents_by_job_ids(job_ids)
-            contents = [list((content[0], content[6])) for content in contents]
+    try:
+        jobs = get_jobs()
+        job_ids = [job[0] for job in jobs]
+        contents = get_contents_by_job_ids(job_ids)
+        contents_dict = {get_shortcode(content[6]): content[0] for content in contents if get_shortcode(content[6]) is not None}
 
-            if not len(contents):
-                time.sleep()
-            else:
-                pass
-        except Exception:
+        ig_token = ProIGToken()
+        result = ig_token.filter_by_shortcodes(contents_dict)
+        for k, v in result.items():
+            print(v)
+            v['content_id'] = k
+            update_content(v)
             pass
+        
+    except Exception as e:
+        raise e
 
 
 if __name__ == '__main__':
-    print(URL)
-    content_updater()
+    print(content_updater())
