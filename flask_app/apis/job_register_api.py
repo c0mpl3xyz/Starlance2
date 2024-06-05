@@ -20,7 +20,11 @@ def job_register():
     success: bool = False
     connection = ConnectSQL().get_connection()
     job_register = JobRegister(connection.cursor())
-    
+    user = User(connection.cursor())
+    user_exist = user.exists(user_id)
+    if not user_exist:
+        user.create(user_id)
+        
     success = job_register.create(user_id, job_id, job_type)
 
     if success:
