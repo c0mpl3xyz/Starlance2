@@ -188,9 +188,9 @@ class Job:
         return result
     
     def get_all_open_job(self):
-        # today = datetime.now(self.timezone)
-        # start_date = datetime(today.year, today.month, today.day)
-        query = "SELECT id FROM Job WHERE type = 'OPEN'"
-        self.cursor.execute(query) # type: ignore
+        today = datetime.now(self.timezone)
+        start_date = datetime(today.year, today.month, today.day)
+        query = "SELECT id FROM Job WHERE type = 'OPEN' and start_date <= %s"
+        self.cursor.execute(query, (start_date,)) # type: ignore
         result = self.cursor.fetchall() # type: ignore
         return result
