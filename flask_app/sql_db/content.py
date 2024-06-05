@@ -148,7 +148,7 @@ class Content:
 
         return True
 
-    def update_status(self, id, initial_plays, total_views, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement) -> bool:
+    def update_status(self, id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement) -> bool:
         update_query = "UPDATE Content SET "
         update_params = []
 
@@ -156,9 +156,9 @@ class Content:
             update_query += "initial_plays = %s, "
             update_params.append(initial_plays)
         
-        if total_views is not None:
-            update_query += "total_views = %s, "
-            update_params.append(total_views)
+        if total_plays is not None:
+            update_query += "total_plays = %s, "
+            update_params.append(total_plays)
         
         if likes is not None:
             update_query += "likes = %s, "
