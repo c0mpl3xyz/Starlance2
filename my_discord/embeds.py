@@ -59,22 +59,28 @@ class ContentEmbed(Embed):
 
         if 'initial_plays' in content_data:
             self.add_field(name='Initial plays', value=content_data['initial_plays'])
-        if 'plays' in content_data:
-            self.add_field(name='Plays', value=content_data['plays'])
+        if 'total_plays' in content_data:
+            self.add_field(name='Views', value=content_data['total_plays'])
         if 'likes' in content_data:
             self.add_field(name='Likes', value=content_data['likes'])
         if 'replays' in content_data:
-            self.add_field(name='Replays', value=content_data['replays'])
+            self.add_field(name='Replay', value=content_data['replays'])
         if 'saves' in content_data:
             self.add_field(name='Saves', value=content_data['saves'])
         if 'shares' in content_data:
             self.add_field(name='Shares', value=content_data['shares'])
         if 'comments' in content_data:
             self.add_field(name='Comments', value=content_data['comments'])
-        if 'percent_followers' in content_data:
-            self.add_field(name='Percent of followers', value=content_data['percent_followers'])
-        if 'percent_non_followers' in content_data:
-            self.add_field(name='Percent of followers', value=content_data['percent_non_followers'])
+        if 'account_reach' in content_data:
+            self.add_field(name='Account reached', value=content_data['account_reach'])
+        if 'total_interactions' in content_data:
+            self.add_field(name='Total interaction', value=content_data['total_interactions'])
+        if 'engagement' in content_data:
+            self.add_field(name='Engagements', value=content_data['engagement'])
+        if 'active' in content_data:
+            self.add_field(name='Active', value=content_data['active'])
+        if 'points' in content_data:
+            self.add_field(name='Total Points', value=content_data['points'], inline=False)
 
 class JobEmbed(Embed):
     def __init__(self, job_data):

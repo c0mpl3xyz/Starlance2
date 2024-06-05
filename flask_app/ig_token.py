@@ -101,7 +101,7 @@ class IGGraph():
         return None
     
 if __name__ == '__main__':
-    ig_graph = IGGraph()
+    ig_graph = IGGraph('')
     print(ig_graph.get_user_id())
     print(ig_graph.get_media_list())
     # print(ig_graph.get_media_list())

@@ -148,17 +148,17 @@ class Content:
 
         return True
 
-    def update_status(self, id, initial_plays, plays, likes, replays, saves, shares, comments, percent_followers, percent_non_followers) -> bool:
+    def update_status(self, id, initial_plays, total_views, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement) -> bool:
         update_query = "UPDATE Content SET "
         update_params = []
 
         if initial_plays is not None:
             update_query += "initial_plays = %s, "
             update_params.append(initial_plays)
-
-        if plays is not None:
-            update_query += "plays = %s, "
-            update_params.append(plays)
+        
+        if total_views is not None:
+            update_query += "total_views = %s, "
+            update_params.append(total_views)
         
         if likes is not None:
             update_query += "likes = %s, "
@@ -180,13 +180,21 @@ class Content:
             update_query += "comments = %s, "
             update_params.append(comments)
         
-        if percent_followers is not None:
-            update_query += "percent_followers = %s, "
-            update_params.append(percent_followers)
+        if account_reach is not None:
+            update_query += "account_reach = %s, "
+            update_params.append(account_reach)
+        
+        if total_interactions is not None:
+            update_query += "total_interactions = %s, "
+            update_params.append(total_interactions)
 
-        if percent_non_followers is not None:
-            update_query += "percent_non_followers = %s, "
-            update_params.append(percent_non_followers)
+        if points is not None:
+            update_query += "points = %s, "
+            update_params.append(points)
+
+        if engagement is not None:
+            update_query += "engagement = %s, "
+            update_params.append(engagement)
 
         update_query = update_query.rstrip(", ") + " WHERE id = %s"
         update_params.append(id)

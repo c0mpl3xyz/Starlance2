@@ -10,16 +10,18 @@ content_bp = Blueprint('content', __name__, url_prefix='/content')
 def extract_content_status(request):
     content_id = request.json.get('content_id')
     initial_plays = request.json.get('initial_plays')
-    plays = request.json.get('plays')
+    total_views = request.json.get('total_views')
     likes = request.json.get('likes')
     replays = request.json.get('replays')
     saves = request.json.get('saves')
     shares = request.json.get('shares')
     comments = request.json.get('comments')
-    percent_followers = request.json.get('percent_followers')
-    percent_non_followers = request.json.get('percent_non_followers')
+    account_reach = request.json.get('account_reach')
+    total_interactions = request.json.get('total_interactions')
+    points = request.json.get('points')
+    engagement = request.json.get('engagement')
 
-    return content_id, initial_plays, plays, likes, replays, saves, shares, comments, percent_followers, percent_non_followers
+    return content_id, initial_plays, total_views, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement
 
 def extract_content_request(request):
     content_id = request.json.get('id')
@@ -66,7 +68,7 @@ def upate_content():
 
 @content_bp.route('/status', methods=['PUT'])
 def update_content_status():
-    content_id, initial_plays, plays, likes, replays, saves, shares, comments, percent_followers, percent_non_followers = extract_content_status(request)
+    content_id, initial_plays, total_views, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement = extract_content_status(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -75,7 +77,7 @@ def update_content_status():
 
     try:
         content = Content(cursor)
-        updated = content.update_status(content_id, initial_plays, plays, likes, replays, saves, shares, comments, percent_followers, percent_non_followers)
+        updated = content.update_status(content_id, initial_plays, total_views, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement)
         if updated:
             connection.commit()
             content_id = cursor.lastrowid

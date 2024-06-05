@@ -5,6 +5,8 @@ from flask_app.apis.job_api import job_bp
 from flask_app.apis.job_register_api import job_register_bp
 from flask_app.apis.content_api import content_bp
 from flask_app.apis.review_api import review_bp
+from content_updater.api_calls import content_updater
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from flask import Flask
 from dotenv import load_dotenv
@@ -27,4 +29,7 @@ app.register_blueprint(content_bp)
 app.register_blueprint(review_bp)
 
 if __name__ == '__main__':
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(content_updater, 'interval', minutes=5)
+    scheduler.start()
     app.run(ssl_context=('key/cert.pem', 'key/key.pem'), debug=True, host='0.0.0.0', port=9000, threaded=True)
