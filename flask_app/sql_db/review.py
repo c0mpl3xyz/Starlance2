@@ -43,6 +43,14 @@ class Review:
         self.cursor.execute(query, (job_register_id, user_id)) # type: ignore
         return self.cursor.fetchall() # type: ignore
     
+    def get_all_reviews(self):
+        query = """
+            SELECT * FROM Review WHERE type = 'Pending'
+        """
+
+        self.cursor.execute(query)  # Ensure server_id is a tuple
+        return self.cursor.fetchall() # type: ignore
+    
     def get_by_server_id(self, server_id):
         query = """
             SELECT * FROM Review WHERE server_id = %s

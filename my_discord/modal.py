@@ -99,7 +99,7 @@ class JobModal(Modal, title="Job registration"):
             print(f'test 1')
             user_job_view = JobView(data, self.bot)
             company_job_view = JobView(data, self.bot, company=True)
-            await interaction.response.send_message('New Job added', embed=company_job_view.embed, view=company_job_view)
+            company_job_view.message = await interaction.response.send_message('New Job added', embed=company_job_view.embed, view=company_job_view)
             await interaction.message.delete()
 
             # TODO: change user id to job registered users
@@ -116,7 +116,7 @@ class JobModal(Modal, title="Job registration"):
                     dm_channel = user.dm_channel
                     if not dm_channel:
                         dm_channel = await user.create_dm()
-                    await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
+                    user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
         else:
             await interaction.response.send_message(response['message'])
         return success
@@ -186,7 +186,7 @@ class ReviewUserModal(Modal, title='Review upload'):
             channel = discord.utils.get(guild.channels, name=channel_name)  # Replace 'general' with your channel name or ID
             view = ReviewView(data, self.bot, company=True)
             if channel:
-                await channel.send(embed=view.embed, view=view)
+                view.message = await channel.send(embed=view.embed, view=view)
         #     return await interaction.response.send_message('Successfully sent link to company')
         # else:
         #     return await interaction.response.send_message('Error has been accured please, try again')

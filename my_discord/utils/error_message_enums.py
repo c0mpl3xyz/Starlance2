@@ -2,6 +2,7 @@ from enum import Enum
 
 class ErrorMessageEnum(Enum):
     NOT_INFLUENCER = 'You are not influencer, Permission denied'
+    NOT_MAIN = 'This command availabled only for UGC admins'
     NOT_COMPANY = 'You are not a company, Permission denied'
     NOT_DM = 'Use this command from Discord server'
     NO_JOB =  'You have no jobs registered'

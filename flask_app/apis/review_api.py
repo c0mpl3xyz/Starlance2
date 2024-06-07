@@ -123,6 +123,11 @@ def get_by_company_id():
     data = GetReviewByCompany().execute(company_id)
     return jsonify(data)
 
+@review_bp.route('/company_all', methods=['GET'])
+def get_by_company_all():
+    data = GetReviewByAllCompany().execute()
+    return jsonify(data)
+
 @review_bp.route('/not_approved_count', methods=['GET'])
 def not_approved_count():
     job_ids = request.json.get('job_ids')

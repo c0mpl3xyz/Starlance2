@@ -36,13 +36,9 @@ class GetUserReviewView:
         return reviews
     
 class GetCompanyReviewView:
-    def execute(self, server_id, bot):
+    def execute(self, bot):
         from views import ReviewView
-        data = {
-                'server_id': server_id,
-        }
-
-        response = requests.get(URL + '/review/company', json=data)
+        response = requests.get(URL + '/review/company_all')
         reviews = [ReviewView(review_mappings(review), bot, company=True) for review in response.json()]
         return reviews
     

@@ -24,6 +24,8 @@ class LogInView(discord.ui.View):
 
 class JobView(discord.ui.View):
     def __init__(self, job_data, bot, company=False, has_review=False, contents=[]):
+        self.message = None
+        timeout = 15
         self.job_data = job_data
         self.bot = bot
         self.company = company
@@ -31,7 +33,7 @@ class JobView(discord.ui.View):
         if 'type' in job_data:
             self.type = job_data['type']
 
-        super().__init__(timeout=350)
+        super().__init__(timeout=timeout)
         self.description = '\n'.join([f'{k}: {v}' for (k, v) in job_data.items() if k != 'discord_server_id'])
         
         self.reject_button = discord.ui.Button(label="Reject", style=discord.ButtonStyle.danger, emoji='✖')
@@ -118,18 +120,27 @@ class JobView(discord.ui.View):
             guild = self.bot.get_guild(guild_id)
             channel_name =  Enums.APPROVE_GUILD.value
             channel = discord.utils.get(guild.channels, name=channel_name)
-            await channel.send(embed=job_approve_view.embed, view=job_approve_view)
+            job_approve_view.message = await channel.send(embed=job_approve_view.embed, view=job_approve_view)
             await interaction.response.edit_message(view=self)
         else:
             await interaction.response.send_message(response['message'])
         self.stop()
 
+    async def on_timeout(self):
+        self.clear_items()
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button.disabled = True
+        self.add_item(timeout_button)
+        await self.message.edit(view=self)
+
 class ApprovementJobView(discord.ui.View):
     def __init__(self, embed_data, job_data, bot):
         self.job_data = job_data
+        self.message = None
+        timeout = 15
         self.bot = bot
         self.embed = ApproveEmbed(embed_data)
-        super().__init__(timeout=350)
+        super().__init__(timeout=timeout)
         self.user_id = embed_data['user_id']
         self.server_id = embed_data['job_id']
         self.reject_button = discord.ui.Button(label="Reject", style=discord.ButtonStyle.danger, custom_id='reject', emoji='✖')
@@ -180,18 +191,27 @@ class ApprovementJobView(discord.ui.View):
             await interaction.response.edit_message(view=self)
 
             
-            await user.send(embed=job_view.embed, view=job_view)
+            job_view.message = await user.send(embed=job_view.embed, view=job_view)
         else:
             await interaction.response.send_message(response['message'])
+
+    async def on_timeout(self):
+        self.clear_items()
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button.disabled = True
+        self.add_item(timeout_button)
+        await self.message.edit(view=self)
 
 class ReviewView(discord.ui.View):
     def __init__(self, review_data, bot, company=False):
         self.review_data = review_data
+        self.message = None
+        timeout = 15
         self.bot = bot
         self.company = company
         self.embed = ReviewEmbed(review_data)
 
-        super().__init__(timeout=350)
+        super().__init__(timeout=timeout)
         self.reject_button = discord.ui.Button(label="Reject", style=discord.ButtonStyle.danger, emoji='✖')
         self.reject_button.callback = self.reject_button_callback
     
@@ -266,7 +286,7 @@ class ReviewView(discord.ui.View):
             UpdateReview().execute(self.review_data)
             user = await self.bot.fetch_user(self.review_data['user_id'])
             view = ReviewView(self.review_data, self.bot)
-            await user.send(embed=view.embed, view=view)
+            view.message = await user.send(embed=view.embed, view=view)
         else: 
             await interaction.response.send_message('Failed to execute this command please try again')
         self.stop()
@@ -296,17 +316,26 @@ class ReviewView(discord.ui.View):
             await interaction.message.edit(view=self)
             user = await self.bot.fetch_user(self.review_data['user_id'])
             view= ReviewView(self.review_data, self.bot)
-            await user.send(embed=view.embed, view=view)
+            view.message = await user.send(embed=view.embed, view=view)
+
+    async def on_timeout(self):
+        self.clear_items()
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button.disabled = True
+        self.add_item(timeout_button)
+        await self.message.edit(view=self)
 
 class ContentView(discord.ui.View):
-    def __init__(self, review_data, content_data, bot):
+    def __init__(self, review_data, content_data, bot, main=False):
         from embeds import ContentEmbed
+        self.message = None
         self.review_data = review_data
         self.content_data = content_data
+        timeout = 15
         self.bot = bot
         self.embed = ContentEmbed(review_data, content_data)
 
-        super().__init__(timeout=350)
+        super().__init__(timeout=timeout)
         self.edit_button = discord.ui.Button(label="Edit", style=discord.ButtonStyle.secondary, emoji='✔')
         self.edit_button.callback = self.edit_button_callback
 
@@ -315,3 +344,11 @@ class ContentView(discord.ui.View):
         view = View()
         view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id']))
         await interaction.response.send_message('Select social accounts', view=view)
+
+    async def on_timeout(self):
+        self.clear_items()
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button.disabled = True
+        self.add_item(timeout_button)
+        if self.main:
+            await self.message.edit(view=self)

@@ -46,6 +46,15 @@ class GetReviewByCompany:
         reviews = review.get_by_server_id(server_id)
         return reviews
     
+class GetReviewByAllCompany:
+    def execute(self):
+        connection = ConnectSQL().get_connection()
+        cursor = connection.cursor()
+
+        review = Review(cursor)
+        reviews = review.get_all_reviews()
+        return reviews
+    
 class GetCountsByJobIdsUserId():
     def execute(self, job_ids, user_id):
         connection = ConnectSQL().get_connection()
