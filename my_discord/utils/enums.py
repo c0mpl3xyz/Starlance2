@@ -6,6 +6,8 @@ class Enums(Enum):
     SOCIAL_ACCOUNTS = ['Instagram']
     APPROVE_GUILD = 'approve-influencer'
     NOTIFICATION = 'notification'
-    CONTENT = 'review-content'
+    CONTENT = 'contents'
     REVIEW = 'review-video'
-    GUILD_ID = 1212987222400307280
+
+    # change guild id
+    GUILD_ID = 617630064653238272

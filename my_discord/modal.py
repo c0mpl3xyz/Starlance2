@@ -35,11 +35,6 @@ class JobModal(Modal, title="Job registration"):
         # self.add_item(self.description)
         # self.add_item(self.requirements)
 
-    # def validate(self, data, interaction):
-    #     validator = Validator()
-    #     if not validator.date_validator(self.start_date):
-    #         pass
-
     def validate(self, start_date_string, duration):
         validator = Validator()
         messages = []
@@ -101,17 +96,27 @@ class JobModal(Modal, title="Job registration"):
         #     await channel.send(message)
         
         if success:
-            job_view = JobView(data, self.bot)
-            message = '\n'.join(f'{k}: {v}' for (k, v) in data.items())
-            await interaction.response.send_message(message)
+            print(f'test 1')
+            user_job_view = JobView(data, self.bot)
+            company_job_view = JobView(data, self.bot, company=True)
+            await interaction.response.send_message('New Job added', embed=company_job_view.embed, view=company_job_view)
             await interaction.message.delete()
 
             # TODO: change user id to job registered users
-            user = await self.bot.fetch_user(537848640140476436)
-            guild = await self.bot.fetch_guild(data['discord_server_id'])
-            if user and guild:
-                data['company name'] = guild.name
-                await user.send(embed=job_view.embed, view=job_view)
+            guild = self.bot.get_guild(Enums.GUILD_ID.value)
+
+            print(f'{guild.members=}')
+            job_roles = set(self.roles)
+            for user in guild.members:
+
+                user_roles = set([role.name for role in user.roles])
+                intersection_set = user_roles & job_roles
+
+                if list(intersection_set):
+                    dm_channel = user.dm_channel
+                    if not dm_channel:
+                        dm_channel = await user.create_dm()
+                    await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
         else:
             await interaction.response.send_message(response['message'])
         return success
@@ -166,7 +171,8 @@ class ReviewUserModal(Modal, title='Review upload'):
         if not self.company:
             data['link'] = str(self.link)
 
-        guild = discord.utils.get(self.bot.guilds, id=self.job_data['discord_server_id'])
+        guild_id = Enums.GUILD_ID.value
+        guild = self.bot.get_guild(guild_id)
         if not guild:
             return await interaction.response.send_message('Failed this company doesn\'t exists')
         data['server_id'] = self.job_data['discord_server_id']
@@ -186,7 +192,6 @@ class ReviewUserModal(Modal, title='Review upload'):
         #     return await interaction.response.send_message('Error has been accured please, try again')
                    
 class BankRegistrationModal(Modal, title='Bank Registration'):
-
     def __init__(self, bank_name, url):
         self.url = url
         self.bank_name = bank_name
@@ -297,12 +302,16 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
         for content_id in content_ids:    
             content_data = GetContentById().execute(content_id)
             view = ContentView(review_data, content_data, self.bot)
-            await interaction.followup.send(message, embed=view.embed, view=view)
-
-            guild = discord.utils.get(self.bot.guilds, id=self.server_id)
-            channel_name =  Enums.CONTENT.value
-            channel = discord.utils.get(guild.channels, name=channel_name)
+            
+            #await interaction.followup.send(message, embed=view.embed, view=view)
+            guild = self.bot.get_guild(Enums.GUILD_ID.value)
+            channel = discord.utils.get(guild.channels, name=Enums.CONTENT.value)
             await channel.send(message, embed=view.embed, view=view)
+
+            print(data)
+            guild_company = self.bot.get_guild(int(data['server_id']))
+            channel_company = discord.utils.get(guild_company.channels, name=Enums.CONTENT.value)
+            await channel_company.send(message, embed=view.embed, view=view)
         self.stop()
 
 class ReviewRejectModal(Modal, title='Description'):

@@ -17,6 +17,7 @@ class SelectRoles(Select):
         view = View()
         view.add_item(SelectBudget(self.bot, roles, self.url))
         success = await interaction.response.send_message('Select budget', view=view)
+        await interaction.message.delete()
         return success
     
     def clean_roles(self, roles):

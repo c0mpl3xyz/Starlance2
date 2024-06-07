@@ -216,7 +216,7 @@ async def company_job_add(interaction: discord.Interaction):
     view = View()
     roles = [role.name for role in interaction.user.roles]
     view.add_item(SelectRoles(client, roles, URL))
-    return await interaction.response.send_message('Select roles', view=view)
+    await interaction.response.send_message('Select roles', view=view)
 
 # @client.tree.command(name='test_embed')
 # async def test_embed(interaction: discord.Interaction):
@@ -241,6 +241,7 @@ async def company_job_add(interaction: discord.Interaction):
 
 # @client.event
 # async def on_message(message):
+#     print(message.guild.id)
 #     if message.author == client.user:
 #         return
 #     if message.content.startswith('!'):

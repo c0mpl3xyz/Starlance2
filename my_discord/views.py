@@ -22,13 +22,12 @@ class LogInView(discord.ui.View):
     async def on_timeout(self):
         await self.message.edit(content="Link timed out", view=None)
 
-
 class JobView(discord.ui.View):
-    def __init__(self, job_data, bot, company=False, has_review=False):
+    def __init__(self, job_data, bot, company=False, has_review=False, contents=[]):
         self.job_data = job_data
         self.bot = bot
         self.company = company
-        self.embed = JobEmbed(job_data)
+        self.embed = JobEmbed(job_data, contents)
         if 'type' in job_data:
             self.type = job_data['type']
 
@@ -44,7 +43,7 @@ class JobView(discord.ui.View):
         self.pending_button = discord.ui.Button(label="Pending", style=discord.ButtonStyle.primary)
         self.pending_button.disabled = True
 
-        self.review_button = discord.ui.Button(label='add Review', style=discord.ButtonStyle.green, emoji='👀')
+        self.review_button = discord.ui.Button(label='Content Review Add', style=discord.ButtonStyle.green, emoji='👀')
         self.review_button.callback = self.review_button_callback
 
         if not company:
@@ -114,7 +113,9 @@ class JobView(discord.ui.View):
 
             self.job_data['type'] = 'Approved'            
             job_approve_view = ApprovementJobView(embed_data, self.job_data, self.bot)
-            guild = discord.utils.get(self.bot.guilds, id=self.job_data['discord_server_id'])
+            # guild = discord.utils.get(self.bot.guilds, id=self.job_data['discord_server_id'])
+            guild_id = Enums.GUILD_ID.value
+            guild = self.bot.get_guild(guild_id)
             channel_name =  Enums.APPROVE_GUILD.value
             channel = discord.utils.get(guild.channels, name=channel_name)
             await channel.send(embed=job_approve_view.embed, view=job_approve_view)
@@ -139,7 +140,6 @@ class ApprovementJobView(discord.ui.View):
 
         self.approve_button = discord.ui.Button(label="Approved", style=discord.ButtonStyle.primary, custom_id='approve')
         self.approve_button.disabled = True
-
 
         if 'type' not in embed_data or embed_data['type'] is None or embed_data['type'] == 'Pending':
             self.add_item(self.reject_button)
@@ -172,9 +172,9 @@ class ApprovementJobView(discord.ui.View):
             self.remove_item(self.accept_button)
             self.add_item(self.approve_button)
 
-            guild_id = Enums.GUILD_ID.value  # The guild (server) where the command was called
+            guild_id = Enums.GUILD_ID.value
             guild = self.bot.get_guild(guild_id)
-            user = discord.utils.get(guild.members, id=self.user_id)  # Fetch the user by ID
+            user = discord.utils.get(guild.members, id=self.user_id)
 
             job_view = JobView(self.job_data, self.bot)
             await interaction.response.edit_message(view=self)
@@ -183,7 +183,6 @@ class ApprovementJobView(discord.ui.View):
             await user.send(embed=job_view.embed, view=job_view)
         else:
             await interaction.response.send_message(response['message'])
-        self.stop()
 
 class ReviewView(discord.ui.View):
     def __init__(self, review_data, bot, company=False):
@@ -218,6 +217,7 @@ class ReviewView(discord.ui.View):
 
             elif review_data['type'] == 'Approved':
                 self.add_item(self.approve_button)
+                self.add_item(self.upload_button)
 
         else:
             if review_data['type'] == 'Pending':
@@ -227,8 +227,7 @@ class ReviewView(discord.ui.View):
                 self.review_button.label = 'Reviewed'
                 self.review_button.disabled = True
                 self.add_item(self.approve_button)
-                self.add_item(self.review_button)
-                self.add_item(self.upload_button)
+                # self.add_item(self.review_button)
 
             elif review_data['type'] == 'Rejected':
                 self.reject_button.disabled = True
@@ -277,11 +276,10 @@ class ReviewView(discord.ui.View):
         view = View()
         view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id']))
         await interaction.response.send_message('Select social accounts', view=view)
-
-
         self.upload_button.disabled = True
         self.upload_button.label = 'Uploaded'
         await interaction.message.edit(view=self)
+        self.stop()
 
     async def accept_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -292,15 +290,13 @@ class ReviewView(discord.ui.View):
             self.remove_item(self.reject_button)
             self.remove_item(self.accept_button)
             self.add_item(self.approve_button)
+            self.add_item(self.upload_button)
             self.review_data['type'] = 'Approved'
 
             await interaction.message.edit(view=self)
             user = await self.bot.fetch_user(self.review_data['user_id'])
             view= ReviewView(self.review_data, self.bot)
             await user.send(embed=view.embed, view=view)
-        # else:
-        #     await interaction.response.send_message(response['message'])
-        # self.stop()
 
 class ContentView(discord.ui.View):
     def __init__(self, review_data, content_data, bot):

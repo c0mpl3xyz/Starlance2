@@ -83,7 +83,7 @@ class ContentEmbed(Embed):
             self.add_field(name='Total Points', value=content_data['points'], inline=False)
 
 class JobEmbed(Embed):
-    def __init__(self, job_data):
+    def __init__(self, job_data, contents):
         color = None
         if 'type' not in job_data:
             color = discord.Color.green()
@@ -110,14 +110,8 @@ class JobEmbed(Embed):
         self.add_field(name="Job files", value=f"[Click Here]({job_data['upload_link']})")
         self.add_field(name="Roles", value=job_data['roles'].replace(',', ' '), inline=False)
 
-        if 'instagram_link' in job_data:
-            self.add_field(name='Instagram link', value=f"[Click Here]({job_data['instagram_link']})")
-        if 'facebook_link' in job_data:
-            self.add_field(name='Facebook link', value=f"[Click Here]({job_data['facebook_link']})")
-        if 'tiktok_link' in job_data:
-            self.add_field(name='Tiktok link', value=f"[Click Here]({job_data['tiktok_link']})")
-        if 'youtube_link' in job_data:
-            self.add_field(name='Youtube link', value=f"[Click Here]({job_data['youtube_link']})")
+        for idx, content in enumerate(contents):
+            self.add_field(name=f'content-{idx}', value=f"[Click Here]({content['link']})", inline=False)
 
 class ApproveEmbed(Embed):
     def __init__(self, data):
