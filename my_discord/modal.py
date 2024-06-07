@@ -84,7 +84,6 @@ class JobModal(Modal, title="Job registration"):
         }
 
         response = requests.post(self.url + '/job', json=data)
-        print(response.text)
         response = response.json()
         if response and 'success' in response:
             success = ['success']
@@ -96,7 +95,6 @@ class JobModal(Modal, title="Job registration"):
         #     await channel.send(message)
         
         if success:
-            print(f'test 1')
             user_job_view = JobView(data, self.bot)
             company_job_view = JobView(data, self.bot, company=True)
             company_job_view.message = await interaction.response.send_message('New Job added', embed=company_job_view.embed, view=company_job_view)
@@ -105,7 +103,6 @@ class JobModal(Modal, title="Job registration"):
             # TODO: change user id to job registered users
             guild = self.bot.get_guild(Enums.GUILD_ID.value)
 
-            print(f'{guild.members=}')
             job_roles = set(self.roles)
             for user in guild.members:
 
@@ -264,8 +261,6 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
         from views import ContentView
         await interaction.response.defer()
 
-        print('debug1')
-
         data = {
             'user_id': self.user_id,
             'job_id': self.job_id,
@@ -308,7 +303,6 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             channel = discord.utils.get(guild.channels, name=Enums.CONTENT.value)
             await channel.send(message, embed=view.embed, view=view)
 
-            print(data)
             guild_company = self.bot.get_guild(int(data['server_id']))
             channel_company = discord.utils.get(guild_company.channels, name=Enums.CONTENT.value)
             await channel_company.send(message, embed=view.embed, view=view)

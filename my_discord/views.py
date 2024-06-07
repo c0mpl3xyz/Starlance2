@@ -78,7 +78,7 @@ class JobView(discord.ui.View):
         response = register_job.register(interaction.user.id, self.job_data['job_id'], 'Rejected')
         if response['success']:
             await interaction.message.delete()
-        self.stop()
+        
 
     async def review_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewUserModal
@@ -91,7 +91,7 @@ class JobView(discord.ui.View):
         self.review_button.label = 'Review request sent'
         self.review_button.disabled = True
         await interaction.message.edit(view=self)
-        self.stop()
+        
 
     async def accept_button_callback(self, interaction: discord.Interaction):
         register_job = RegisterJob()
@@ -108,6 +108,8 @@ class JobView(discord.ui.View):
 
             embed_data = {
                 'user_id': interaction.user.id,
+                'server_id': self.job_data['discord_server_id'],
+                'job_id': self.job_data['job_id'],
                 'user_roles': [role.name for role in user.roles],
                 'job_name': self.job_data['name'],
                 'job_roles': self.job_data['roles'],
@@ -127,7 +129,7 @@ class JobView(discord.ui.View):
             await interaction.response.edit_message(view=self)
         else:
             await interaction.response.send_message(response['message'])
-        self.stop()
+        
 
     async def on_timeout(self):
         self.clear_items()
@@ -145,7 +147,9 @@ class ApprovementJobView(discord.ui.View):
         self.embed = ApproveEmbed(embed_data)
         super().__init__(timeout=timeout)
         self.user_id = embed_data['user_id']
-        self.server_id = embed_data['job_id']
+
+        self.server_id = embed_data['server_id']
+        self.job_id = embed_data['job_id']
         self.reject_button = discord.ui.Button(label="Reject", style=discord.ButtonStyle.danger, custom_id='reject', emoji='✖')
         self.reject_button.callback = self.reject_button_callback
     
@@ -166,7 +170,7 @@ class ApprovementJobView(discord.ui.View):
     async def reject_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
         register_job = RegisterJob()
-        response = register_job.update(self.user_id, self.server_id, 'Rejected')
+        response = register_job.update(self.user_id, self.job_id, 'Rejected')
         guild_id = Enums.GUILD_ID.value
         guild = self.bot.get_guild(guild_id)
         user = discord.utils.get(guild.members, id=self.user_id)  # Fetch the user by ID
@@ -175,12 +179,11 @@ class ApprovementJobView(discord.ui.View):
             self.remove_item(self.accept_button)
             await interaction.message.delete()
             await user.send(f'{self.job_data["name"]} uploaded link was Rejected, please check command: `/my_reviews`')
-        self.stop()
+        
 
     async def accept_button_callback(self, interaction: discord.Interaction):
         register_job = RegisterJob()
-        response = register_job.update(self.user_id, self.server_id, 'Approved')
-
+        response = register_job.update(self.user_id, self.job_id, 'Approved')
         if response['success']:
             self.remove_item(self.reject_button)
             self.remove_item(self.accept_button)
@@ -266,7 +269,7 @@ class ReviewView(discord.ui.View):
         self.review_button.label = 'Review request sent'
         self.review_button.disabled = True
         await interaction.message.edit(view=self)
-        self.stop()
+        
 
     #TODO: add rejected message to influencer
     async def reject_button_callback(self, interaction: discord.Interaction):
@@ -292,7 +295,7 @@ class ReviewView(discord.ui.View):
             view.message = await user.send(embed=view.embed, view=view)
         else: 
             await interaction.response.send_message('Failed to execute this command please try again')
-        self.stop()
+        
 
     async def upload_button_callback(self, interaction: discord.Interaction):
         from selects import UploadLinkSelect
@@ -302,7 +305,7 @@ class ReviewView(discord.ui.View):
         self.upload_button.disabled = True
         self.upload_button.label = 'Uploaded'
         await interaction.message.edit(view=self)
-        self.stop()
+        
 
     async def accept_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()

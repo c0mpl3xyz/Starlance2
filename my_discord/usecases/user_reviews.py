@@ -68,7 +68,9 @@ class GetServerApprovementView:
                     'start_date': job_data['start_date'],
                     'description': job_data['description'],
                     'type': job_register['type'],
+                    'job_type': job_data['job_type']
                 }
+                job_data['type'] = job_register['type']
 
                 reviews.append(ApprovementJobView(embed_data, job_data, bot))
         return reviews

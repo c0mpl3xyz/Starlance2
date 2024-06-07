@@ -229,7 +229,10 @@ async def server_approves(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     approve_views = GetServerApprovementView().execute(client)
     if approve_views is None or len(approve_views) == 0:
-        await interaction.response.send_message(ErrorMessageEnum.NO_APPROVES.value + f'<@{interaction.user.id}>', ephemeral=True)
+        try:
+            await interaction.response.send_message(ErrorMessageEnum.NO_APPROVES.value + f'<@{interaction.user.id}>', ephemeral=True)
+        except discord.errors.InteractionResponded:
+            await interaction.followup.send(ErrorMessageEnum.NO_APPROVES.value + f'<@{interaction.user.id}>', ephemeral=True)
     else:
         for view in approve_views:
             view.message = await interaction.channel.send(embed=view.embed, view=view)

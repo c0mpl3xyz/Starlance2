@@ -30,14 +30,14 @@ class SelectBudget(Select):
         self.roles = roles
         self.url = url
 
-        cashes = list(range(500000, 10250000, 250000))
-        options = [discord.SelectOption(label=str(cash) + ' tugrik', description='') for cash in cashes[:25]]
+        cashes = list(range(1000000, 6000000, 250000))
+        options = [discord.SelectOption(label=str(f"{cash:,}") + ' ₮', description='') for cash in cashes[:25]]
         super().__init__(options=options, placeholder='Please select Budget', min_values=1)
 
     async def callback(self, interaction: discord.Interaction) -> Any:
-        budget = self.values[0].split(' ')[0]
+        budget = self.values[0].split(' ')[0].replace(',', '')
         await interaction.response.send_modal(JobModal(self.bot, self.roles, int(budget), self.url))
-
+    
 class UploadLinkSelect(Select):
     def __init__(self, bot, user_id, job_id, server_id, job_register_id, review_id):
         self.user_id = user_id
