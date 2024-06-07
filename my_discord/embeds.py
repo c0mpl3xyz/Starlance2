@@ -116,8 +116,7 @@ class JobEmbed(Embed):
 class ApproveEmbed(Embed):
     def __init__(self, data):
         self.user = f'<@{data["user_id"]}>'
-        self.user_name = data['user_name']
-        # self.user_roles = data['user_roles']
+        self.user_roles = data['user_roles']
         self.job_name = data['job_name']
         self.job_roles = data['job_roles']
         self.start_date = data['start_date']
@@ -138,10 +137,10 @@ class ApproveEmbed(Embed):
             description=self.description,
             color=color
         )
-
-        self.add_field(name="User", value=self.user_name)
-        self.add_field(name="User", value=self.user_name)
+        
+        self.add_field(name="User", value=self.user)
         self.add_field(name="Job name", value=self.job_name)
         self.add_field(name="Start date", value=self.start_date)
+        self.add_field(name="Description", value=self.description)
         self.add_field(name="Job roles", value=self.job_roles.replace(',', ' '), inline=False)
-        # self.add_field(name="User roles", value=self.user_roles.replace(',', ' '), inline=False)
+        self.add_field(name="User roles", value=' '.join(self.user_roles), inline=False)

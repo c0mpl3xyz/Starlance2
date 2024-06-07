@@ -25,7 +25,7 @@ class LogInView(discord.ui.View):
 class JobView(discord.ui.View):
     def __init__(self, job_data, bot, company=False, has_review=False, contents=[]):
         self.message = None
-        timeout = 15
+        timeout = 350
         self.job_data = job_data
         self.bot = bot
         self.company = company
@@ -101,11 +101,14 @@ class JobView(discord.ui.View):
             self.remove_item(self.reject_button)
             self.remove_item(self.accept_button)
             self.add_item(self.pending_button)
+
+            guild_id = Enums.GUILD_ID.value
+            guild = self.bot.get_guild(guild_id)
+            user = discord.utils.get(guild.members, id=interaction.user.id)
+
             embed_data = {
                 'user_id': interaction.user.id,
-                'job_id': self.job_data['job_id'],
-                'user_name': interaction.user.name,
-                # 'user_roles': interaction.user.roles,
+                'user_roles': [role.name for role in user.roles],
                 'job_name': self.job_data['name'],
                 'job_roles': self.job_data['roles'],
                 'start_date': self.job_data['start_date'],
@@ -137,7 +140,7 @@ class ApprovementJobView(discord.ui.View):
     def __init__(self, embed_data, job_data, bot):
         self.job_data = job_data
         self.message = None
-        timeout = 15
+        timeout = 350
         self.bot = bot
         self.embed = ApproveEmbed(embed_data)
         super().__init__(timeout=timeout)
@@ -206,7 +209,7 @@ class ReviewView(discord.ui.View):
     def __init__(self, review_data, bot, company=False):
         self.review_data = review_data
         self.message = None
-        timeout = 15
+        timeout = 350
         self.bot = bot
         self.company = company
         self.embed = ReviewEmbed(review_data)
@@ -331,7 +334,7 @@ class ContentView(discord.ui.View):
         self.message = None
         self.review_data = review_data
         self.content_data = content_data
-        timeout = 15
+        timeout = 350
         self.bot = bot
         self.embed = ContentEmbed(review_data, content_data)
 

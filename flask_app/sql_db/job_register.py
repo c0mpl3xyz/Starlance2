@@ -46,6 +46,14 @@ class JobRegister:
 
         self.cursor.execute(query, (user_id, job_id)) # type: ignore
         return self.cursor.fetchone() is not None# type: ignore
+    
+    def get_all_by_job_ids(self, job_ids) -> bool:
+        query = """
+            SELECT * FROM JobRegister WHERE job_id IN ({}) and type = 'Pending'
+        """.format(','.join(['%s'] * len(job_ids)))
+
+        self.cursor.execute(query, job_ids) # type: ignore
+        return self.cursor.fetchall()
 
     def create(self, user_id, job_id, job_type='Pending') -> bool:
         if self.exist_by_ids(user_id, job_id):

@@ -12,7 +12,7 @@ from utils.error_message_enums import ErrorMessageEnum, MessageEnum
 from utils.enums import Enums
 from embeds import UserEmbed
 from datetime import datetime
-from usecases.user_reviews import GetUserReview, GetUserReviewView, GetCompanyReviewView
+from usecases.user_reviews import GetUserReview, GetUserReviewView, GetCompanyReviewView, GetServerApprovementView
 from views import LogInView
 from usecases.user_contents import GetUserContentView
 from usecases.company_contents import GetCompanyContentView
@@ -66,7 +66,8 @@ async def bank_register(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
     
-    if not is_influencer(interaction):
+     # TODO: add not
+    if is_influencer(interaction):
         return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
     
     view = discord.ui.View()
@@ -79,7 +80,8 @@ async def my_jobs(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
     
-    if is_influencer(interaction):
+    # TODO: change it not
+    if not is_influencer(interaction):
         await interaction.response.defer(ephemeral=True)
         job_views = GetUserJobViews().execute(interaction.user.id, client)
         if job_views is None or len(job_views) == 0:
@@ -97,7 +99,8 @@ async def my_contents(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
 
-    if is_influencer(interaction):
+     # TODO: change it not
+    if not is_influencer(interaction):
         await interaction.response.defer(ephemeral=True)
         content_views = GetUserContentView().execute(interaction.user.id, client)
         if content_views is None or len(content_views) == 0:
@@ -115,7 +118,8 @@ async def my_reviews(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
 
-    if is_influencer(interaction):
+     # TODO: change it not
+    if not is_influencer(interaction):
         await interaction.response.defer(ephemeral=True)
         review_views = GetUserReviewView().execute(interaction.user.id, client)
         if review_views is None or len(review_views) == 0:
@@ -132,7 +136,8 @@ async def my_all_jobs(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
 
-    if is_influencer(interaction):
+    # TODO: change it not
+    if not is_influencer(interaction):
         roles = [role.name for role in interaction.user.roles]
         job_views = GetJobsByUserRoles().execute(interaction.user.id, roles, client)
         if job_views is None or len(job_views) == 0:
@@ -207,6 +212,26 @@ async def server_reviews(interaction: discord.Interaction):
         await interaction.followup.send(ErrorMessageEnum.NO_REVIEWS.value + f'<@{interaction.user.id}>', ephemeral=True)
     else:
         for view in review_views:
+            view.message = await interaction.channel.send(embed=view.embed, view=view)
+        await interaction.followup.send(f'Review list sent to <@{interaction.user.id}>', ephemeral=True)
+
+@client.tree.command(name='server_approves')
+async def server_approves(interaction: discord.Interaction):
+    if await is_dm(interaction):
+        return
+
+    if is_influencer(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+    
+    if not is_main_server(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+    
+    await interaction.response.defer(ephemeral=True)
+    approve_views = GetServerApprovementView().execute(client)
+    if approve_views is None or len(approve_views) == 0:
+        await interaction.response.send_message(ErrorMessageEnum.NO_APPROVES.value + f'<@{interaction.user.id}>', ephemeral=True)
+    else:
+        for view in approve_views:
             view.message = await interaction.channel.send(embed=view.embed, view=view)
         await interaction.followup.send(f'Review list sent to <@{interaction.user.id}>', ephemeral=True)
 

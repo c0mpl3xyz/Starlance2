@@ -7,6 +7,7 @@ class ErrorMessageEnum(Enum):
     NOT_DM = 'Use this command from Discord server'
     NO_JOB =  'You have no jobs registered'
     NO_REVIEWS =  'You have no reviews registered'
+    NO_APPROVES =  'There is no approvements'
     NO_JOB_ROLES = 'There is no new jobs on your roles yet'
     NO_CONTENT = 'There is no contents'
 

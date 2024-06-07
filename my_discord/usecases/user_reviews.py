@@ -1,6 +1,7 @@
 import requests, os
-from mappings.mappings import review_mappings
-
+from mappings.mappings import review_mappings, job_mapping
+import discord
+from utils.enums import Enums
 URL = os.getenv('URL')
 class GetUserReview:
     def execute(self, user_id):
@@ -41,7 +42,36 @@ class GetCompanyReviewView:
         response = requests.get(URL + '/review/company_all')
         reviews = [ReviewView(review_mappings(review), bot, company=True) for review in response.json()]
         return reviews
+
+class GetServerApprovementView:
+    def execute(self, bot):
+        from views import ApprovementJobView
+        response = requests.get(URL + '/job/open_jobs')
+
+        reviews = []
+        for job in response.json():
+            job_data = job_mapping(job)
+            response = requests.get(URL + '/job_register/job', json={'job_id': job_data['job_id']})
+            for job_register in response.json():
+
+                guild_id = Enums.GUILD_ID.value
+                guild = self.bot.get_guild(guild_id)
+                user = discord.utils.get(guild.members, id=job_register['user_id'])
+
+                embed_data = {
+                    'user_id': job_register['user_id'],
+                    'job_name': job_data['name'],
+                    'job_roles': job_data['roles'],
+                    'user_roles': [role.name for role in user.roles],
+                    'start_date': job_data['start_date'],
+                    'description': job_data['description'],
+                    'type': job_register['type'],
+                }
+
+                reviews.append(ApprovementJobView(embed_data, job_data, bot))
+        return reviews
     
+
 class UpdateReview:
     def execute(self, review_data):        
         response = requests.put(URL + '/review', json=review_data)
