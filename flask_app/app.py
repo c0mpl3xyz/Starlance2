@@ -30,6 +30,6 @@ app.register_blueprint(review_bp)
 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(content_updater, 'interval', minutes=5)
+    scheduler.add_job(content_updater, 'interval', minutes=1)
     scheduler.start()
     app.run(ssl_context=('key/cert.pem', 'key/key.pem'), debug=True, host='0.0.0.0', port=9000, threaded=True)
