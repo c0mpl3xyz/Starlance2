@@ -3,7 +3,7 @@ from sql_db.conn import ConnectSQL
 import os
 from dotenv import load_dotenv
 from sql_db.content import Content
-from usecases.get_content import GetContentByJob, GetContentByJobRegister, GetContentByJobRegisterAndUser, GetContentByUser, GetContentByCompany, GetByJobId
+from usecases.get_content import *
 
 content_bp = Blueprint('content', __name__, url_prefix='/content')
 
@@ -183,6 +183,13 @@ def get_by_job_register():
 def get_by_user():
     user_id = request.json.get('user_id')
     data = GetContentByUser().execute(user_id)
+    return jsonify(data)
+
+@content_bp.route('/user_and_job', methods=['GET'])
+def get_by_user():
+    user_id = request.json.get('user_id')
+    job_id = request.json.get('job_id')
+    data = GetContentByUserAndJob().execute(user_id, job_id)
     return jsonify(data)
 
 @content_bp.route('/job_register_and_user', methods=['GET'])

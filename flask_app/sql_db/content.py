@@ -27,7 +27,7 @@ class Content:
         self.cursor.execute(query, (user_id,)) # type: ignore
         return self.cursor.fetchall() # type: ignore
     
-    def get_by_job_id_and_user_id(self, user_id, job_id):
+    def get_by_job_and_user(self, user_id, job_id):
         query = """
             SELECT * FROM Content WHERE user_id = %s and job_id = %s
         """
