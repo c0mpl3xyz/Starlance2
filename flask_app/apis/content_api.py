@@ -186,7 +186,7 @@ def get_by_user():
     return jsonify(data)
 
 @content_bp.route('/user_and_job', methods=['GET'])
-def get_by_user():
+def get_by_user_and_job():
     user_id = request.json.get('user_id')
     job_id = request.json.get('job_id')
     data = GetContentByUserAndJob().execute(user_id, job_id)
