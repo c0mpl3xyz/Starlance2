@@ -25,7 +25,7 @@ class JobRegister:
 
     def get_by_job_id(self, job_id):
         query = """
-            SELECT * FROM JobRegister WHERE job_id = %s
+            SELECT * FROM JobRegister WHERE job_id = %s and type = 'Pending'
         """
 
         self.cursor.execute(query, (job_id,)) # type: ignore

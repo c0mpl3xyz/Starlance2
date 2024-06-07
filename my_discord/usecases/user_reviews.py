@@ -1,5 +1,5 @@
 import requests, os
-from mappings.mappings import review_mappings, job_mapping
+from mappings.mappings import review_mappings, job_mapping, job_register_mapping
 import discord
 from utils.enums import Enums
 URL = os.getenv('URL')
@@ -52,15 +52,17 @@ class GetServerApprovementView:
         for job in response.json():
             job_data = job_mapping(job)
             response = requests.get(URL + '/job_register/job', json={'job_id': job_data['job_id']})
-            for job_register in response.json():
-
+            for job_register_raw in response.json():
+                job_register = job_register_mapping(job_register_raw)
                 guild_id = Enums.GUILD_ID.value
-                guild = self.bot.get_guild(guild_id)
-                user = discord.utils.get(guild.members, id=job_register['user_id'])
+                guild = bot.get_guild(guild_id)
+                user = discord.utils.get(guild.members, id=int(job_register['user_id']))
 
                 embed_data = {
                     'user_id': job_register['user_id'],
+                    'server_id': job_data['discord_server_id'],
                     'job_name': job_data['name'],
+                    'job_id': job_data['job_id'],
                     'job_roles': job_data['roles'],
                     'user_roles': [role.name for role in user.roles],
                     'start_date': job_data['start_date'],
