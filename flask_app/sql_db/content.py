@@ -105,7 +105,7 @@ class Content:
         update_query = update_query.rstrip(", ") + " WHERE review_id = %s"
         update_params.append(review_id)
         self.cursor.execute(update_query, tuple(update_params)) # type: ignore
-        self.cursor.fetchall() # type: ignore
+        # self.cursor.fetchall() # type: ignore
 
         return True
     
