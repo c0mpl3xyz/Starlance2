@@ -94,6 +94,21 @@ class Content:
         self.cursor.execute(query, (job_register_id, job_id, user_id, review_id, server_id, content_type, link)) # type: ignore
         return True
     
+    def update_link(self, review_id, link):
+        update_query = "UPDATE Content SET "
+        update_params = []
+
+        if link is not None:
+            update_query += "link = %s, "
+            update_params.append(link)
+
+        update_query = update_query.rstrip(", ") + " WHERE review_id = %s"
+        update_params.append(id)
+        self.cursor.execute(update_query, tuple(update_params)) # type: ignore
+        self.cursor.fetchall() # type: ignore
+
+        return True
+    
     def update_by_id(self, id, job_register_id=None, job_id=None, user_id=None, review_id=None, server_id=None, content_type=None, link=None, point=None, active=None) -> bool:
         update_query = "UPDATE Content SET "
         update_params = []

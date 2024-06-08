@@ -14,7 +14,6 @@ IG_TOKEN = os.getenv('IG_TOKEN')
 IG_ID = os.getenv('IG_ID')
 PERMISSIONS = ['instagram_manage_insights', 'instagram_basic', 'pages_show_list']
 
-
 class ProIGToken():
     def __init__(self):
         self.access_token = IG_TOKEN
@@ -51,8 +50,11 @@ class ProIGToken():
         response = requests.get(url)
         return response.json()
     
+    def sanity_shortcodes(self, shortcodes):
+        return [shortcode for shortcode in shortcodes if len(shortcode) == 11]
+        
     def filter_by_shortcodes(self, shortcode_dict: dict):
-        shortcodes = list(shortcode_dict.keys())
+        shortcodes = self.sanity_shortcodes(list(shortcode_dict.keys()))
         if not len(shortcodes):
             return {}
         

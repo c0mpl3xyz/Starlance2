@@ -1,11 +1,11 @@
 import requests, os, time
 from dotenv import load_dotenv
-from content_updater.pro_ig_token import ProIGToken
+from pro_ig_token import ProIGToken
 load_dotenv()
 URL = os.getenv('URL')
 def get_jobs():
     result = requests.get(URL + 'job/open_jobs')
-    # print(result.json())
+    print(f'jobs: {result.json()}')
     return result.json()
 
 def get_contents_by_job_ids(job_ids):
@@ -14,7 +14,7 @@ def get_contents_by_job_ids(job_ids):
     }
 
     result = requests.get(URL + 'content/job_ids', json=data)
-    # print(result.json())
+    print(f'contents: {result.json()}')
     return result.json()
 
 def update_content(data):
@@ -23,6 +23,7 @@ def update_content(data):
 def get_shortcode(link):
     link = link.replace('https://www.instagram.com/reel/', '').replace('https://www.instagram.com/p/','')
     splits = link.split('/')
+    print(f'{splits=}')
     if len(splits):
         return splits[0]
     return None
@@ -34,6 +35,7 @@ def content_updater():
         contents = get_contents_by_job_ids(job_ids)
         contents_dict = {get_shortcode(content[6]): content[0] for content in contents if get_shortcode(content[6]) is not None}
 
+        print(f'{contents_dict=}')
         ig_token = ProIGToken()
         result = ig_token.filter_by_shortcodes(contents_dict)
         for k, v in result.items():

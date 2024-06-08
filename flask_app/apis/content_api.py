@@ -37,6 +37,35 @@ def extract_content_request(request):
 
     return content_id, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active
 
+@content_bp.route('/link_by_review', methods=['PUT'])
+def upate_content_link():
+    content_id, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active = extract_content_request(request)
+
+    connection = ConnectSQL().get_connection()
+    cursor = connection.cursor()
+    updated: bool = False
+    message: str = ''
+
+    try:
+        content = Content(cursor)
+        updated = content.update_link(review_id, link)
+        if updated:
+            connection.commit()
+            content_id = cursor.lastrowid
+            message = 'Content updated'
+        else:
+            message = 'Content not updated'
+            
+        result = {
+            'success': updated,
+            'content_id': content_id,
+            'message': message
+        }
+
+        return jsonify(result)
+    finally:
+        connection.close()
+
 @content_bp.route('/', methods=['PUT'])
 def upate_content():
     content_id, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active = extract_content_request(request)

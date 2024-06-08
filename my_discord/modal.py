@@ -301,6 +301,8 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
         review_data = GetUserReviewById().execute(self.review_id, self.bot)
         for content_id in content_ids:    
             content_data = GetContentById().execute(content_id)
+
+            print(f'{content_data=}')
             view = ContentView(review_data, content_data, self.bot)
             view_main = ContentView(review_data, content_data, self.bot, main=True)
             
