@@ -48,10 +48,15 @@ def upate_content_link():
 
     try:
         content = Content(cursor)
+        content_id = 0
         updated = content.update_link(review_id, link)
         if updated:
             connection.commit()
-            content_id = cursor.lastrowid
+            
+            result = content.get_by_review_id(review_id)
+            
+            if len(result):
+                content_id = result[0][0]
             message = 'Content updated'
         else:
             message = 'Content not updated'

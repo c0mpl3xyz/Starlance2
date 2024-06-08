@@ -26,6 +26,14 @@ class Content:
 
         self.cursor.execute(query, (user_id,)) # type: ignore
         return self.cursor.fetchall() # type: ignore
+
+    def get_by_review_id(self, review_id):
+        query = """
+            SELECT * FROM Content WHERE review_id = %s
+        """
+
+        self.cursor.execute(query, (review_id,)) # type: ignore
+        return self.cursor.fetchall() # type: ignore
     
     def get_by_job_and_user(self, user_id, job_id):
         query = """
@@ -105,11 +113,8 @@ class Content:
         update_query = update_query.rstrip(", ") + " WHERE review_id = %s"
         update_params.append(review_id)
         self.cursor.execute(update_query, tuple(update_params)) # type: ignore
-        result = self.cursor.fetchall() # type: ignore
 
-        if len(result):
-            return result[0][0]
-        return None
+        return True
     
     def update_by_id(self, id, job_register_id=None, job_id=None, user_id=None, review_id=None, server_id=None, content_type=None, link=None, point=None, active=None) -> bool:
         update_query = "UPDATE Content SET "
