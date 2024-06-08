@@ -205,7 +205,6 @@ def get_by_company():
     data = GetContentByCompany().execute(server_id)
     return jsonify(data)
 
-
 @content_bp.route('/server', methods=['GET'])
 def get_by_company():
     data = GetContentByServer().execute()
