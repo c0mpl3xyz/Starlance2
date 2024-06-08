@@ -12,7 +12,7 @@ from utils.error_message_enums import ErrorMessageEnum, MessageEnum
 from utils.enums import Enums
 from embeds import UserEmbed
 from datetime import datetime
-from usecases.user_reviews import GetUserReview, GetUserReviewView, GetCompanyReviewView, GetServerApprovementView
+from usecases.user_reviews import GetUserReview, GetUserReviewView, GetServerReviewView, GetServerApprovementView
 from views import LogInView
 from usecases.user_contents import GetUserContentView
 from usecases.company_contents import GetCompanyContentView
@@ -207,13 +207,33 @@ async def server_reviews(interaction: discord.Interaction):
         return await interaction.response.send_message(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     await interaction.response.defer(ephemeral=True)
-    review_views = GetCompanyReviewView().execute(client)
+    review_views = GetServerReviewView().execute(client)
     if review_views is None or len(review_views) == 0:
         await interaction.followup.send(ErrorMessageEnum.NO_REVIEWS.value + f'<@{interaction.user.id}>', ephemeral=True)
     else:
         for view in review_views:
             view.message = await interaction.channel.send(embed=view.embed, view=view)
         await interaction.followup.send(f'Review list sent to <@{interaction.user.id}>', ephemeral=True)
+
+@client.tree.command(name='server_contents')
+async def server_contents(interaction: discord.Interaction):
+    if await is_dm(interaction):
+        return
+
+    if is_influencer(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+    
+    if not is_main_server(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+    
+    await interaction.response.defer(ephemeral=True)
+    content_views = GetCompanyContentView().execute(client)
+    if content_views is None or len(content_views) == 0:
+        await interaction.followup.send(ErrorMessageEnum.NO_CONTENT.value + f'<@{interaction.user.id}>', ephemeral=True)
+    else:
+        for view in content_views:
+            view.message = await interaction.channel.send(embed=view.embed, view=view)
+        await interaction.followup.send(f'Content list sent to <@{interaction.user.id}>', ephemeral=True)
 
 @client.tree.command(name='server_approves')
 async def server_approves(interaction: discord.Interaction):

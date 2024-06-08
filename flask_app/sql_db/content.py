@@ -53,7 +53,15 @@ class Content:
 
     def get_by_company(self, server_id):
         query = """
-            SELECT * FROM Content WHERE server_id = %s
+            SELECT * FROM Content WHERE server_id = %s and active = 1
+        """
+
+        self.cursor.execute(query, (server_id,)) # type: ignore
+        return self.cursor.fetchall() # type: ignore
+    
+    def get_by_server(self):
+        query = """
+            SELECT * FROM Content WHERE active = 1
         """
 
         self.cursor.execute(query, (server_id,)) # type: ignore

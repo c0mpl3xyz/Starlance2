@@ -356,7 +356,7 @@ class ContentView(discord.ui.View):
         self.message = None
         self.review_data = review_data
         self.content_data = content_data
-        timeout = 10
+        timeout = 250
         self.bot = bot
         self.embed = ContentEmbed(review_data, content_data)
 
