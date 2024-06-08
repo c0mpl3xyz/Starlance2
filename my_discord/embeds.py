@@ -43,6 +43,7 @@ class ContentEmbed(Embed):
         self.content_data = content_data
 
         color = None
+        print(f'{content_data=}')
         if content_data['active'] == 0 or not content_data['active']:
             color = discord.Color.red()
         else:
