@@ -7,7 +7,7 @@ from urllib.parse import urlencode
 from flask import Flask, request, jsonify, make_response, render_template
 from dotenv import load_dotenv
 from sql_db.user  import User
-from flask_app.sql_db.access_token import AccessToken
+from sql_db.access_token import AccessToken
 import datetime
 
 load_dotenv()

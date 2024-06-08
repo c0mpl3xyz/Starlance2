@@ -297,15 +297,16 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
         for content_id in content_ids:    
             content_data = GetContentById().execute(content_id)
             view = ContentView(review_data, content_data, self.bot)
+            view_main = ContentView(review_data, content_data, self.bot, main=True)
             
             #await interaction.followup.send(message, embed=view.embed, view=view)
             guild = self.bot.get_guild(Enums.GUILD_ID.value)
             channel = discord.utils.get(guild.channels, name=Enums.CONTENT.value)
-            await channel.send(message, embed=view.embed, view=view)
+            view_main.message = await channel.send(message, embed=view_main.embed, view=view_main)
 
             guild_company = self.bot.get_guild(int(data['server_id']))
             channel_company = discord.utils.get(guild_company.channels, name=Enums.CONTENT.value)
-            await channel_company.send(message, embed=view.embed, view=view)
+            view.message = await channel_company.send(message, embed=view.embed, view=view)
         self.stop()
 
 class ReviewRejectModal(Modal, title='Description'):

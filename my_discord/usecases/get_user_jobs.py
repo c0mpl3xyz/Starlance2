@@ -13,7 +13,6 @@ class GetUserJobViews:
         JSON = response.json()
         
         job_ids = [job[0] for job in JSON]
-
         data['job_ids'] = job_ids
         response = requests.get(URL + '/review/not_approved_count', json=data)
 

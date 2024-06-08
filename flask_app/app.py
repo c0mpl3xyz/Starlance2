@@ -1,10 +1,10 @@
 import os
-from flask_app.apis.user_api import user_bp
-from flask_app.apis.token_api import token_bp
-from flask_app.apis.job_api import job_bp
-from flask_app.apis.job_register_api import job_register_bp
-from flask_app.apis.content_api import content_bp
-from flask_app.apis.review_api import review_bp
+from apis.user_api import user_bp
+from apis.token_api import token_bp
+from apis.job_api import job_bp
+from apis.job_register_api import job_register_bp
+from apis.content_api import content_bp
+from apis.review_api import review_bp
 from content_updater.api_calls import content_updater
 from apscheduler.schedulers.background import BackgroundScheduler
 

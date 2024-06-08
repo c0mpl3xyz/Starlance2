@@ -1,14 +1,15 @@
 from discord.ui import View
 from embeds import JobEmbed, LoginEmbed
 from usecases.register_job import RegisterJob
-import discord
-import requests
+import discord, requests, os
 from usecases.register_job import RegisterJob
 from usecases.review import Review
 from usecases.get_job_by_id import GetJobById
 from usecases.user_reviews import GetUserReview, UpdateReview
 from embeds import ApproveEmbed, ReviewEmbed
 from utils.enums import Enums
+
+URL = os.getenv('URL')
 
 class LogInView(discord.ui.View):
     def __init__(self, user_id, user_name):
@@ -78,19 +79,34 @@ class JobView(discord.ui.View):
         response = register_job.register(interaction.user.id, self.job_data['job_id'], 'Rejected')
         if response['success']:
             await interaction.message.delete()
-        
+        self.stop()
 
     async def review_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewUserModal
+        interaction.response.defer()
 
-        register_job = RegisterJob().get_by_user_job(interaction.user.id, self.job_data['job_id'])
-        modal = ReviewUserModal(self.bot, interaction.user.id, register_job['id'], self.job_data, 'Pending', self.company)
-        await interaction.response.send_modal(modal)
-        await modal.wait()
+        data = {
+                'user_id': interaction.user.id,
+                'job_ids': [self.job_data['job_id']]
+            }
 
-        self.review_button.label = 'Review request sent'
-        self.review_button.disabled = True
-        await interaction.message.edit(view=self)
+        response = requests.get(URL + '/review/not_approved_count', json=data)
+        DICT = response.json()
+        print(f'{DICT=}')
+        if str(self.job_data['job_id']) in DICT.keys():
+            self.review_button.label = 'Review request is already sent'
+            self.review_button.disabled = True
+            await interaction.message.edit(view=self)
+        else:
+            register_job = RegisterJob().get_by_user_job(interaction.user.id, self.job_data['job_id'])
+            modal = ReviewUserModal(self.bot, interaction.user.id, register_job['id'], self.job_data, 'Pending', self.company)
+            await interaction.response.send_modal(modal)
+            await modal.wait()
+
+            self.review_button.label = 'Review request sent'
+            self.review_button.disabled = True
+            await interaction.message.edit(view=self)
+        self.stop()
         
 
     async def accept_button_callback(self, interaction: discord.Interaction):
@@ -129,6 +145,8 @@ class JobView(discord.ui.View):
             await interaction.response.edit_message(view=self)
         else:
             await interaction.response.send_message(response['message'])
+        
+        self.stop()
         
 
     async def on_timeout(self):
@@ -193,10 +211,10 @@ class ApprovementJobView(discord.ui.View):
             guild = self.bot.get_guild(guild_id)
             user = discord.utils.get(guild.members, id=self.user_id)
 
+            self.job_data['type'] = 'Approved'
             job_view = JobView(self.job_data, self.bot)
             await interaction.response.edit_message(view=self)
 
-            
             job_view.message = await user.send(embed=job_view.embed, view=job_view)
         else:
             await interaction.response.send_message(response['message'])
@@ -334,10 +352,11 @@ class ReviewView(discord.ui.View):
 class ContentView(discord.ui.View):
     def __init__(self, review_data, content_data, bot, main=False):
         from embeds import ContentEmbed
+        self.main = main
         self.message = None
         self.review_data = review_data
         self.content_data = content_data
-        timeout = 350
+        timeout = 10
         self.bot = bot
         self.embed = ContentEmbed(review_data, content_data)
 
@@ -345,11 +364,18 @@ class ContentView(discord.ui.View):
         self.edit_button = discord.ui.Button(label="Edit", style=discord.ButtonStyle.secondary, emoji='✔')
         self.edit_button.callback = self.edit_button_callback
 
+        if main:
+            self.add_item(self.edit_button)
+
     async def edit_button_callback(self, interaction: discord.Interaction):
         from selects import UploadLinkSelect
         view = View()
         view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id']))
         await interaction.response.send_message('Select social accounts', view=view)
+
+        self.edit_button.lable = 'Link was beed updated'
+        self.edit_button.disables = True
+        await interaction.message.edit(view=self)
 
     async def on_timeout(self):
         self.clear_items()
