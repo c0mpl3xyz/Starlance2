@@ -8,6 +8,7 @@ class Enums(Enum):
     NOTIFICATION = 'notification'
     CONTENT = 'contents'
     REVIEW = 'review-video'
+    JOB = 'jobs'
 
     # change guild id
     GUILD_ID = 617630064653238272

@@ -20,6 +20,6 @@ class GetCompanyContentView:
             content = content_mappings(content_json)
             review_data = requests.get(URL + '/review', json={'review_id': content['review_id']}).json()
             if len(review_data):
-                review_data = review_data[0]
-            contents.append(ContentView(review_mappings(review_data), content, bot))
+                for review in review_data:
+                    contents.append(ContentView(review_mappings(review), content, bot))
         return contents

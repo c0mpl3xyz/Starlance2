@@ -154,27 +154,45 @@ async def company_job_add(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
     
+    if is_main_server(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
+
     if is_influencer(interaction):
         return await interaction.response.send_message(ErrorMessageEnum.NOT_COMPANY.value + f' <@{interaction.user.id}>', ephemeral=True)
 
+    await interaction.response.defer(ephemeral=True)
     view = View()
     roles = [role.name for role in interaction.user.roles]
     view.add_item(SelectRoles(client, roles, URL))
-    await interaction.response.send_message('Select roles', view=view)
+
+    channel = discord.utils.get(interaction.guild.channels, name=Enums.JOB.value)
+    if not channel:
+        channel = interaction.channel
+    if channel:
+        view.message = await channel.send('Add new Job here \nSelect roles', view=view)
+
+    await interaction.followup.send(f'Job add sent to <#{channel.id}>')
 
 @client.tree.command(name='company_jobs')
 async def company_jobs(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
 
+    if is_main_server(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
+    
     if not is_influencer(interaction):
+        await interaction.response.defer(ephemeral=True)
         job_views = GetCompanyJobs().execute(interaction.user.guild.id, client)
         if job_views is None or len(job_views) == 0:
-            return await interaction.response.send_message(ErrorMessageEnum.NO_JOB.value)
+            return await interaction.followup.send(ErrorMessageEnum.NO_JOB.value)
         else:
+            channel = discord.utils.get(interaction.guild.channels, name=Enums.JOB.value)
+            if not channel:
+                channel = interaction.channel
             for view in job_views:
-                view.message = await interaction.channel.send(embed=view.embed, view=view)
-        return await interaction.response.send_message(MessageEnum.SUCCESS.value)
+                view.message = await channel.send(embed=view.embed, view=view)
+        return await interaction.followup.send(f'Job list sent to <#{channel.id}>')
     else:
         return await interaction.response.send_message(ErrorMessageEnum.NOT_COMPANY.value + f' <@{interaction.user.id}>', ephemeral=True)
 
@@ -182,6 +200,9 @@ async def company_jobs(interaction: discord.Interaction):
 async def company_contents(interaction: discord.Interaction):
     if await is_dm(interaction):
         return
+    
+    if is_main_server(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
 
     if not is_influencer(interaction):
         await interaction.response.defer(ephemeral=True)
@@ -189,9 +210,12 @@ async def company_contents(interaction: discord.Interaction):
         if content_views is None or len(content_views) == 0:
             await interaction.followup.send(ErrorMessageEnum.NO_CONTENT.value + f'<@{interaction.user.id}>', ephemeral=True)
         else:
+            channel = discord.utils.get(interaction.guild.channels, name=Enums.CONTENT.value)
+            if not channel:
+                channel = interaction.channel
             for view in content_views:
-                await interaction.channel.send(embed=view.embed, view=view)
-            await interaction.followup.send(f'Content list sent to <@{interaction.user.id}>', ephemeral=True)
+                view.message = await channel.send(embed=view.embed, view=view)
+            await interaction.followup.send(f'Content list sent to <#{channel.id}>', ephemeral=True)
     else:
         await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
 
@@ -211,9 +235,12 @@ async def server_reviews(interaction: discord.Interaction):
     if review_views is None or len(review_views) == 0:
         await interaction.followup.send(ErrorMessageEnum.NO_REVIEWS.value + f'<@{interaction.user.id}>', ephemeral=True)
     else:
+        channel = discord.utils.get(interaction.guild.channels, name=Enums.REVIEW.value)
+        if not channel:
+            channel = interaction.channel
         for view in review_views:
-            view.message = await interaction.channel.send(embed=view.embed, view=view)
-        await interaction.followup.send(f'Review list sent to <@{interaction.user.id}>', ephemeral=True)
+            view.message = await channel.send(embed=view.embed, view=view)
+        await interaction.followup.send(f'Review list sent to <#{channel.id}>', ephemeral=True)
 
 @client.tree.command(name='server_contents')
 async def server_contents(interaction: discord.Interaction):
@@ -231,9 +258,12 @@ async def server_contents(interaction: discord.Interaction):
     if content_views is None or len(content_views) == 0:
         await interaction.followup.send(ErrorMessageEnum.NO_CONTENT.value + f'<@{interaction.user.id}>', ephemeral=True)
     else:
+        channel = discord.utils.get(interaction.guild.channels, name=Enums.CONTENT.value)
+        if not channel:
+            channel = interaction.channel
         for view in content_views:
-            view.message = await interaction.channel.send(embed=view.embed, view=view)
-        await interaction.followup.send(f'Content list sent to <@{interaction.user.id}>', ephemeral=True)
+            view.message = await channel.send(embed=view.embed, view=view)
+        await interaction.followup.send(f'Content list sent to <#{channel.id}>', ephemeral=True)
 
 @client.tree.command(name='server_approves')
 async def server_approves(interaction: discord.Interaction):
@@ -250,13 +280,16 @@ async def server_approves(interaction: discord.Interaction):
     approve_views = GetServerApprovementView().execute(client)
     if approve_views is None or len(approve_views) == 0:
         try:
-            await interaction.response.send_message(ErrorMessageEnum.NO_APPROVES.value + f'<@{interaction.user.id}>', ephemeral=True)
+            await interaction.followup.send(ErrorMessageEnum.NO_APPROVES.value + f'<@{interaction.user.id}>', ephemeral=True)
         except discord.errors.InteractionResponded:
             await interaction.followup.send(ErrorMessageEnum.NO_APPROVES.value + f'<@{interaction.user.id}>', ephemeral=True)
     else:
+        channel = discord.utils.get(interaction.guild.channels, name=Enums.APPROVE_GUILD.value)
+        if not channel:
+            channel = interaction.channel
         for view in approve_views:
             view.message = await interaction.channel.send(embed=view.embed, view=view)
-        await interaction.followup.send(f'Review list sent to <@{interaction.user.id}>', ephemeral=True)
+        await interaction.followup.send(f'Approvement list sent to <#{channel.id}>', ephemeral=True)
 
 
 # @client.tree.command(name='test_embed')

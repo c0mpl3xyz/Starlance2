@@ -20,8 +20,8 @@ class GetUserContentView:
             content = content_mappings(content_json)
             review_data = requests.get(URL + '/review', json={'review_id': content['review_id']}).json()
             if len(review_data):
-                review_data = review_data[0]
-            contents.append(ContentView(review_mappings(review_data), content, bot))
+                for review in review_data:
+                    contents.append(ContentView(review_mappings(review), content, bot))
         return contents
     
 class GetServerContentView:
@@ -31,9 +31,12 @@ class GetServerContentView:
 
         contents = []
         JSON = response.json()
-        for content in JSON:
-            review_data = requests.get(URL + '/review', json={'review_id': content['review_id']}).json()
-            if len(review_data):
-                review_data = review_data[0]
-            contents.append(ContentView(review_mappings(review_data), content, bot, main=True))
+        for content_json in JSON:
+            content = content_mappings(content_json)
+            print(f'{content=}')
+            review_json = requests.get(URL + '/review', json={'review_id': content['review_id']}).json()
+
+            for review in review_json:
+                if len(review):
+                    contents.append(ContentView(review_mappings(review), content, bot, main=True))
         return contents

@@ -11,5 +11,7 @@ class ErrorMessageEnum(Enum):
     NO_JOB_ROLES = 'There is no new jobs on your roles yet'
     NO_CONTENT = 'There is no contents'
 
+    FOR_COMPANY = 'This command is for company'
+
 class MessageEnum(Enum):
     SUCCESS = 'Command successfully executed'
