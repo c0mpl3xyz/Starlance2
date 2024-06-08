@@ -60,21 +60,18 @@ class Review:
         return self.cursor.fetchall() # type: ignore
     
     def count_by_job_ids_user_id(self, job_ids, user_id):
-        query = """
+        placeholders = ','.join(['%s'] * len(job_ids))
+        
+        # Format the query with the placeholders
+        query = f"""
             SELECT job_id, user_id, COUNT(*) AS counts
             FROM Review
-            WHERE job_id IN ({}) AND user_id = %s AND type != 'Approved'
+            WHERE job_id IN ({placeholders}) AND user_id = %s AND type != 'Approved'
             GROUP BY job_id, user_id;
         """
 
-        # Generate the comma-separated list of placeholders for job_id
-        placeholders = ','.join(['%s'] * len(job_ids))
-
-        # Format the query with the placeholders
-        formatted_query = query.format(placeholders)
-
         # Execute the query with parameters
-        self.cursor.execute(formatted_query, job_ids + [user_id])
+        self.cursor.execute(query, job_ids + [user_id])
 
         # Fetch all the rows
         return self.cursor.fetchall()
