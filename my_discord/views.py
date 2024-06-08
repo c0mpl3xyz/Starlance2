@@ -75,6 +75,7 @@ class JobView(discord.ui.View):
                 self.add_item(self.review_button)
 
     async def reject_button_callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         register_job = RegisterJob()
         response = register_job.register(interaction.user.id, self.job_data['job_id'], 'Rejected')
         if response['success']:
@@ -82,14 +83,15 @@ class JobView(discord.ui.View):
         self.stop()
 
     async def review_button_callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         from modal import ReviewUserModal
-        interaction.response.defer()
 
         data = {
-                'user_id': interaction.user.id,
-                'job_ids': [self.job_data['job_id']]
-            }
+            'user_id': interaction.user.id,
+            'job_ids': [self.job_data['job_id']]
+        }
 
+        print(f'{data=}')
         response = requests.get(URL + '/review/not_approved_count', json=data)
         DICT = response.json()
         print(f'{DICT=}')
@@ -100,7 +102,7 @@ class JobView(discord.ui.View):
         else:
             register_job = RegisterJob().get_by_user_job(interaction.user.id, self.job_data['job_id'])
             modal = ReviewUserModal(self.bot, interaction.user.id, register_job['id'], self.job_data, 'Pending', self.company)
-            await interaction.response.send_modal(modal)
+            await interaction.followup.send(modal)
             await modal.wait()
 
             self.review_button.label = 'Review request sent'
@@ -110,6 +112,7 @@ class JobView(discord.ui.View):
         
 
     async def accept_button_callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         register_job = RegisterJob()
         response = register_job.register(interaction.user.id, self.job_data['job_id'], 'Pending')
 
@@ -142,9 +145,9 @@ class JobView(discord.ui.View):
             channel_name =  Enums.APPROVE_GUILD.value
             channel = discord.utils.get(guild.channels, name=channel_name)
             job_approve_view.message = await channel.send(embed=job_approve_view.embed, view=job_approve_view)
-            await interaction.response.edit_message(view=self)
+            await interaction.message.edit(view=self)
         else:
-            await interaction.response.send_message(response['message'])
+            await interaction.message.edit(response['message'])
         
         self.stop()
         
@@ -200,6 +203,7 @@ class ApprovementJobView(discord.ui.View):
         
 
     async def accept_button_callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         register_job = RegisterJob()
         response = register_job.update(self.user_id, self.job_id, 'Approved')
         if response['success']:
@@ -213,11 +217,11 @@ class ApprovementJobView(discord.ui.View):
 
             self.job_data['type'] = 'Approved'
             job_view = JobView(self.job_data, self.bot)
-            await interaction.response.edit_message(view=self)
+            await interaction.message.edit(view=self)
 
             job_view.message = await user.send(embed=job_view.embed, view=job_view)
         else:
-            await interaction.response.send_message(response['message'])
+            await interaction.followup.send_message(response['message'])
 
     async def on_timeout(self):
         self.clear_items()
@@ -280,9 +284,10 @@ class ReviewView(discord.ui.View):
 
     async def review_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewUserModal
+        await interaction.response.defer()
         job_data = GetJobById(self.review_data['job_id']).execute()
         modal = ReviewUserModal(self.bot, interaction.user.id, self.review_data['job_register_id'], job_data, 'Pending', self.company)
-        await interaction.response.send_modal(modal)
+        await interaction.followup.send(modal)
         await modal.wait()
         self.review_button.label = 'Review request sent'
         self.review_button.disabled = True
@@ -292,13 +297,14 @@ class ReviewView(discord.ui.View):
     #TODO: add rejected message to influencer
     async def reject_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewRejectModal
+        interaction.response.defer()
         review = Review() 
         
         response = review.update(self.review_data['id'], link=self.review_data['link'], review_type='Rejected', descripton=self.review_data['description'])
         if response['success']:
             self.review_data['type'] = 'Rejected'
             modal = ReviewRejectModal()
-            await interaction.response.send_modal(modal)
+            await interaction.followup.send(modal)
             await modal.wait()
             self.review_data['description'] = modal.description.value
 
@@ -312,14 +318,15 @@ class ReviewView(discord.ui.View):
             view = ReviewView(self.review_data, self.bot)
             view.message = await user.send(embed=view.embed, view=view)
         else: 
-            await interaction.response.send_message('Failed to execute this command please try again')
+            await interaction.followup.send_message('Failed to execute this command please try again')
         
 
     async def upload_button_callback(self, interaction: discord.Interaction):
         from selects import UploadLinkSelect
+        await interaction.response.defer()
         view = View()
         view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id']))
-        await interaction.response.send_message('Select social accounts', view=view)
+        await interaction.followup.send('Select social accounts', view=view)
         self.upload_button.disabled = True
         self.upload_button.label = 'Uploaded'
         await interaction.message.edit(view=self)
@@ -369,9 +376,10 @@ class ContentView(discord.ui.View):
 
     async def edit_button_callback(self, interaction: discord.Interaction):
         from selects import UploadLinkSelect
+        await interaction.response.defer()
         view = View()
         view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id'], edit=True))
-        await interaction.response.send_message('Select social accounts', view=view)
+        await interaction.followup.send('Select social accounts', view=view)
 
         self.edit_button.lable = 'Link was beed updated'
         self.edit_button.disables = True

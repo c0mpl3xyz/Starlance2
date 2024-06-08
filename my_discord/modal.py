@@ -53,9 +53,10 @@ class JobModal(Modal, title="Job registration"):
         return messages
     
     async def on_submit(self, interaction: Interaction):
+        await interaction.response.defer()
         valid_messages = self.validate(str(self.start_date), str(self.duration))
         if len(valid_messages) > 0:
-            await interaction.response.send_message('Job registration failed')
+            await interaction.followup.send('Job registration failed')
 
             for message in valid_messages:
                 await interaction.channel.send(message)
@@ -97,7 +98,7 @@ class JobModal(Modal, title="Job registration"):
         if success:
             user_job_view = JobView(data, self.bot)
             company_job_view = JobView(data, self.bot, company=True)
-            company_job_view.message = await interaction.response.send_message('New Job added', embed=company_job_view.embed, view=company_job_view)
+            company_job_view.message = await interaction.followup.send('New Job added', embed=company_job_view.embed, view=company_job_view)
             await interaction.message.delete()
 
             # TODO: change user id to job registered users
@@ -109,14 +110,15 @@ class JobModal(Modal, title="Job registration"):
                 user_roles = set([role.name for role in user.roles])
                 intersection_set = user_roles & job_roles
 
-                if list(intersection_set):
-                    dm_channel = user.dm_channel
-                    if not dm_channel:
-                        dm_channel = await user.create_dm()
-                    user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
-        else:
-            await interaction.response.send_message(response['message'])
-        return success
+                if isinstance(user, discord.User) or isinstance(user, discord.Member):
+                    if list(intersection_set):
+                        dm_channel = user.dm_channel
+                        if not dm_channel:
+                            dm_channel = await user.create_dm()
+                        user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
+                    else:
+                        await interaction.followup.send(response['message'])
+                    return success
 
 class JobAdditionalModal(Modal, title='Additional Information'):
     def __init__(self, url):
@@ -295,16 +297,12 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             else:
                 response = requests.post(URL + '/content', json=data)
             content_ids.append(response.json()['content_id'])
-            print(f'{content_ids=}')
 
         message = f'<@{self.user_id}>: Social links succesfully uploaded {", ".join(socials)}'
 
         review_data = GetUserReviewById().execute(self.review_id, self.bot)
         for content_id in content_ids:
-            print(f'{content_id=}')
             content_data = GetContentById().execute(content_id)
-
-            print(f'{content_data=}')
             view = ContentView(review_data, content_data, self.bot)
             view_main = ContentView(review_data, content_data, self.bot, main=True)
             

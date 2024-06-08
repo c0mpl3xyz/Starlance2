@@ -43,4 +43,3 @@ def get_manual_link(user_id, username):
 
 if __name__ == '__main__':
     link = get_manual_link(user_id='1', username='test')
-    print(link)

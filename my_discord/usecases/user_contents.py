@@ -33,7 +33,6 @@ class GetServerContentView:
         JSON = response.json()
         for content_json in JSON:
             content = content_mappings(content_json)
-            print(f'{content=}')
             review_json = requests.get(URL + '/review', json={'review_id': content['review_id']}).json()
 
             for review in review_json:
