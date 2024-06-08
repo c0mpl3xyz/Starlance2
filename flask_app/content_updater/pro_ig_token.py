@@ -125,8 +125,8 @@ class ProIGToken():
             next_url = media['paging']['next']
         return my_data, next_url
     
-if __name__ == '__main__':
-    ig_graph = ProIGToken()
-    shortcodes = ['C7Lt8_hLEfS', 'C7D3fqBLoAP', 'C7EHGmxL9pU']
-    my_data = ig_graph.filter_by_shortcodes(shortcodes)
-    print(my_data)
+# if __name__ == '__main__':
+#     ig_graph = ProIGToken()
+#     shortcodes = ['C7Lt8_hLEfS', 'C7D3fqBLoAP', 'C7EHGmxL9pU']
+#     my_data = ig_graph.filter_by_shortcodes(shortcodes)
+#     print(my_data)
