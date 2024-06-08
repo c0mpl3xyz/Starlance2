@@ -291,7 +291,7 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             data['link'] = social
             response = None
             if self.edit:
-                response = requests.put(URL + '/content', json=data)
+                response = requests.put(URL + '/content/link_by_review', json=data)
             else:
                 response = requests.post(URL + '/content', json=data)
             content_ids.append(response.json()['content_id'])

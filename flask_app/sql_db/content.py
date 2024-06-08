@@ -103,7 +103,7 @@ class Content:
             update_params.append(link)
 
         update_query = update_query.rstrip(", ") + " WHERE review_id = %s"
-        update_params.append(id)
+        update_params.append(review_id)
         self.cursor.execute(update_query, tuple(update_params)) # type: ignore
         self.cursor.fetchall() # type: ignore
 
