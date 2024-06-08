@@ -295,11 +295,13 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             else:
                 response = requests.post(URL + '/content', json=data)
             content_ids.append(response.json()['content_id'])
+            print(f'{content_ids=}')
 
         message = f'<@{self.user_id}>: Social links succesfully uploaded {", ".join(socials)}'
 
         review_data = GetUserReviewById().execute(self.review_id, self.bot)
-        for content_id in content_ids:    
+        for content_id in content_ids:
+            print(f'{content_id=}')
             content_data = GetContentById().execute(content_id)
 
             print(f'{content_data=}')

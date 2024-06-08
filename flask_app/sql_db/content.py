@@ -105,9 +105,11 @@ class Content:
         update_query = update_query.rstrip(", ") + " WHERE review_id = %s"
         update_params.append(review_id)
         self.cursor.execute(update_query, tuple(update_params)) # type: ignore
-        # self.cursor.fetchall() # type: ignore
+        result = self.cursor.fetchall() # type: ignore
 
-        return True
+        if len(result):
+            return result[0][0]
+        return None
     
     def update_by_id(self, id, job_register_id=None, job_id=None, user_id=None, review_id=None, server_id=None, content_type=None, link=None, point=None, active=None) -> bool:
         update_query = "UPDATE Content SET "
