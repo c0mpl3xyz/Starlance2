@@ -1,6 +1,6 @@
 import requests, os, time
 from dotenv import load_dotenv
-from content_updater.pro_ig_token import ProIGToken
+from pro_ig_token import ProIGToken
 load_dotenv()
 URL = os.getenv('URL')
 def get_jobs():
