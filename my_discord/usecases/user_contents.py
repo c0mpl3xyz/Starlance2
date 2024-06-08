@@ -28,5 +28,12 @@ class GetServerContentView:
     def execute(self, bot):
         from views import ContentView
         response = requests.get(URL + '/content/server')
-        reviews = [ContentView(content_mappings(content), bot) for content in response.json()]
-        return reviews
+
+        contents = []
+        JSON = response.json()
+        for content in JSON:
+            review_data = requests.get(URL + '/review', json={'review_id': content['review_id']}).json()
+            if len(review_data):
+                review_data = review_data[0]
+            contents.append(ContentView(review_mappings(review_data), content, bot, main=True))
+        return contents

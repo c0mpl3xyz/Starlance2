@@ -12,9 +12,9 @@ from utils.error_message_enums import ErrorMessageEnum, MessageEnum
 from utils.enums import Enums
 from embeds import UserEmbed
 from datetime import datetime
-from usecases.user_reviews import GetUserReview, GetUserReviewView, GetServerReviewView, GetServerApprovementView
+from usecases.user_reviews import *
+from usecases.user_contents import *
 from views import LogInView
-from usecases.user_contents import GetUserContentView
 from usecases.company_contents import GetCompanyContentView
 
 # from usecases.get_company_jobs import GetCompanyJobs
@@ -227,7 +227,7 @@ async def server_contents(interaction: discord.Interaction):
         return await interaction.response.send_message(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     await interaction.response.defer(ephemeral=True)
-    content_views = GetCompanyContentView().execute(client)
+    content_views = GetServerContentView().execute(client)
     if content_views is None or len(content_views) == 0:
         await interaction.followup.send(ErrorMessageEnum.NO_CONTENT.value + f'<@{interaction.user.id}>', ephemeral=True)
     else:
