@@ -227,13 +227,14 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
             await interaction.response.send_message(message)
 
 class SocialRegisterModal(Modal, title='Social account link upload'):
-    def __init__(self, user_id, job_id, server_id, job_register_id, review_id, socials, bot):
+    def __init__(self, user_id, job_id, server_id, job_register_id, review_id, socials, bot, edit):
         self.bot = bot
         self.user_id = user_id
         self.job_id = job_id
         self.server_id = server_id
         self.job_register_id = job_register_id
         self.review_id = review_id
+        self.edit = edit
 
         self.instagram = None
         self.facebook = None
@@ -288,7 +289,11 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
         for i, social in enumerate(socials):
             data['type'] = types[i]
             data['link'] = social
-            response = requests.post(URL + '/content', json=data)
+            response = None
+            if self.edit:
+                response = requests.put(URL + '/content', json=data)
+            else:
+                response = requests.post(URL + '/content', json=data)
             content_ids.append(response.json()['content_id'])
 
         message = f'<@{self.user_id}>: Social links succesfully uploaded {", ".join(socials)}'

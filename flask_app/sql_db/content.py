@@ -64,7 +64,7 @@ class Content:
             SELECT * FROM Content WHERE active = 1
         """
 
-        self.cursor.execute(query, (server_id,)) # type: ignore
+        self.cursor.execute(query) # type: ignore
         return self.cursor.fetchall() # type: ignore
 
     def get_all_by_job_id(self, job_ids: list):

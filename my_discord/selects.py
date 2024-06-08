@@ -39,14 +39,14 @@ class SelectBudget(Select):
         await interaction.response.send_modal(JobModal(self.bot, self.roles, int(budget), self.url))
     
 class UploadLinkSelect(Select):
-    def __init__(self, bot, user_id, job_id, server_id, job_register_id, review_id):
+    def __init__(self, bot, user_id, job_id, server_id, job_register_id, review_id, edit=False):
         self.user_id = user_id
         self.job_id = job_id
         self.server_id = server_id
         self.job_register_id = job_register_id
         self.review_id = review_id
-
         self.bot = bot
+        self.edit = edit
 
         socials = Enums.SOCIAL_ACCOUNTS.value
         options = [discord.SelectOption(label=social, description='') for social in socials]
@@ -54,7 +54,7 @@ class UploadLinkSelect(Select):
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         socials = self.values
-        modal = SocialRegisterModal(self.user_id, self.job_id, self.server_id, self.job_register_id, self.review_id, socials, self.bot)
+        modal = SocialRegisterModal(self.user_id, self.job_id, self.server_id, self.job_register_id, self.review_id, socials, self.bot, self.edit)
         await interaction.response.send_modal(modal)
         await modal.wait()
         await interaction.message.delete()

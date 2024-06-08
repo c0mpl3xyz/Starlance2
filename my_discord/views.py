@@ -370,7 +370,7 @@ class ContentView(discord.ui.View):
     async def edit_button_callback(self, interaction: discord.Interaction):
         from selects import UploadLinkSelect
         view = View()
-        view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id']))
+        view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id'], edit=True))
         await interaction.response.send_message('Select social accounts', view=view)
 
         self.edit_button.lable = 'Link was beed updated'
