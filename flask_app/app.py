@@ -5,7 +5,7 @@ from apis.job_api import job_bp
 from apis.job_register_api import job_register_bp
 from apis.content_api import content_bp
 from apis.review_api import review_bp
-from content_updater.api_calls import content_updater
+from instagram.api_calls import content_updater
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from flask import Flask
