@@ -27,6 +27,10 @@ class User:
         if user:
             return False
 
+        if total_points is None:
+            total_points = 0
+        if points is None:
+            points = 0
         # TODO: fill fb id and, Ig id
         query = """
             INSERT INTO User (id, total_points, points, bank_name, bank_number, register)
