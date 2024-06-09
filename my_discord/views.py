@@ -6,7 +6,7 @@ from usecases.register_job import RegisterJob
 from usecases.review import Review
 from usecases.get_job_by_id import GetJobById
 from usecases.user_reviews import GetUserReview, UpdateReview
-from embeds import ApproveEmbed, ReviewEmbed
+from embeds import ApproveEmbed, ReviewEmbed, UserEmbed
 from utils.enums import Enums
 
 URL = os.getenv('URL')
@@ -22,6 +22,33 @@ class LogInView(discord.ui.View):
 
     async def on_timeout(self):
         await self.message.edit(content="Link timed out", view=None)
+
+class UserView(discord.ui.View):
+    def __init__(self, user_data):
+        self.embed = UserEmbed(user_data)
+        super().__init__()
+        self.collect_button = discord.ui.Button(label="Collect Points", style=discord.ButtonStyle.green, emoji='✨')
+        self.collect_button.callback = self.collect_button_callback
+        collectable = user_data['points'] > 0 #TODO: add threshold
+        if not collectable:
+            self.collect_button.label = 'No Points to collect'
+            self.collect_button.disabled = True
+        self.add_item(self.collect_button)
+
+    async def collect_button_callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+        register_job = RegisterJob()
+        response = register_job.register(interaction.user.id, self.job_data['job_id'], 'Rejected')
+        if response['success']:
+            await interaction.message.delete()
+        self.stop()
+
+    async def on_timeout(self):
+        self.clear_items()
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command /status', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button.disabled = True
+        self.add_item(timeout_button)
+        await self.message.edit(view=self)
 
 class JobView(discord.ui.View):
     def __init__(self, job_data, bot, company=False, has_review=False, contents=[]):

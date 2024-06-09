@@ -10,7 +10,7 @@ class ErrorMessageEnum(Enum):
     NO_APPROVES =  'There is no approvements'
     NO_JOB_ROLES = 'There is no new jobs on your roles yet'
     NO_CONTENT = 'There is no contents'
-
+    NO_USER = 'You are new user, so you don\'t have points'
     FOR_COMPANY = 'This command is for company'
 
 class MessageEnum(Enum):

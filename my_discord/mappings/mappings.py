@@ -59,6 +59,18 @@ def job_register_mapping(data: list):
 
     return job_register_dict
 
+def user_mappings(data: list):
+    user_dict = {
+        'user_id': data[0],
+        'total_points': data[1],
+        'points': data[2],
+        'bank_name': data[3],
+        'bank_number': data[4],
+        'register': data[5]
+    }
+
+    return user_dict
+
 def review_mappings(data: list):
     review_dict = {
         'id': data[0],

@@ -18,19 +18,17 @@ user_bp = Blueprint('user_api', __name__, url_prefix='/user')
 
 def extract_user_request(request):
     user_id = request.json.get('user_id')
-    fb_id = request.json.get('fb_id')
-    ig_id = request.json.get('ig_id')
-    tiktok_id = request.json.get('tiktok_id')
-    youtube_id = request.json.get('youtube_id')
+    total_points = request.json.get('total_points')
+    points = request.json.get('points')
     bank_name = request.json.get('bank_name')
     bank_number = request.json.get('bank_number')
     register = request.json.get('register')
 
-    return user_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register
+    return user_id, total_points, points, bank_name, bank_number, register
 
 @user_bp.route('/bank_register', methods=['POST'])
 def bank_registration():
-    user_id, _, _, _, _, bank_name, bank_number, register = extract_user_request(request)
+    user_id, _, _, bank_name, bank_number, register = extract_user_request(request)
 
     connection = ConnectSQL().get_connection()
     updated: bool = False
@@ -69,31 +67,33 @@ def get_user():
     data = user.get_by_id(user_id)
     return jsonify(data)
 
-@user_bp.route('/get_users', methods=['GET'])
-def get_users():
-    user_ids = request.args.get('user_ids')
+@user_bp.route('/status', methods=['PUT'])
+def user_status():
+    user_id, total_points, points, bank_name, bank_number, register = extract_user_request(request)
 
     connection = ConnectSQL().get_connection()
-    user = User(connection.cursor())
+    updated: bool = False
 
-    users = []
-    for id in user_ids:
-        found = user.get_by_id(id)
-        if found is not None:
-            users.append(found)
+    try:
+        user = User(connection.cursor())
+        user_exist = user.get_by_id(user_id)
+        # debug = ''
+        # if not user_exist:
+        #     updated = user.create(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
+        #     debug = f'updated {updated}'
+        
+        # else:
+        #     updated = user.update(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
+        #     debug = f'updated {updated}'
 
-    return jsonify(users)
+        # if updated:
+        #     connection.commit()
 
+        # result = {
+        #     'success': updated,
+        #     'debug': debug,
+        # }
 
-# @user_bp.route('/user', methods=['PUT'])
-# def edit():
-#     user_id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register = extract_user_request(request)
-
-#     result = User
-#     return jsonify({'result': result})
-
-# @user_bp.route('/user', methods=['DELETE'])
-# def delete():
-#     discord_id = request.args.get('discord_id')
-#     result = user.delete(discord_id)
-#     return jsonify({'result': result})
+        return jsonify(user_exist)
+    finally:
+        connection.close()

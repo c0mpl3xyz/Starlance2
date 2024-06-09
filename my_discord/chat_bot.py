@@ -10,12 +10,12 @@ from usecases.get_jobs_by_user_roles import GetJobsByUserRoles
 from usecases.get_company_jobs import GetCompanyJobs
 from utils.error_message_enums import ErrorMessageEnum, MessageEnum
 from utils.enums import Enums
-from embeds import UserEmbed
 from datetime import datetime
 from usecases.user_reviews import *
 from usecases.user_contents import *
 from views import LogInView
 from usecases.company_contents import GetCompanyContentView
+from usecases.user_status import GetUserStatus
 
 # from usecases.get_company_jobs import GetCompanyJobs
 load_dotenv()
@@ -146,6 +146,23 @@ async def my_all_jobs(interaction: discord.Interaction):
             for view in job_views:
                 view.message = await interaction.user.send(embed=view.embed, view=view)
         return await interaction.response.send_message(f'Job list sent to <@{interaction.user.id}>', ephemeral=True)
+    else:
+        return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+
+@client.tree.command(name='my_status')
+async def my_status(interaction: discord.Interaction):
+    if await is_dm(interaction):
+        return
+
+    # TODO: change it not
+    if not is_influencer(interaction):
+        user_views = GetUserStatus().execute(interaction.user.id)
+        if user_views is None or len(user_views) == 0:
+            await interaction.user.send(ErrorMessageEnum.NO_USER.value)
+        else:
+            for view in user_views:
+                view.message = await interaction.user.send(embed=view.embed, view=view)
+        return await interaction.response.send_message(f'User status sent to <@{interaction.user.id}>', ephemeral=True)
     else:
         return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
 

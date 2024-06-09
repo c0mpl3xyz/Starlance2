@@ -11,19 +11,18 @@ class LoginEmbed(Embed):
         self.add_field(name=f'Login to Facebook with discord user: <{user_name}>', value=user_name, inline=False)
 
 class UserEmbed(Embed):
-     def __init__(self, user_id, user_name):
-        self.user_id = user_id
+     def __init__(self, user_data):
         super().__init__(
             title='User Status',
             color = discord.Color.random()
             )
         
-        self.add_field(name='Name', value=user_name, inline=False)
-        self.add_field(name="Content count", value='1')
-        self.add_field(name="Like count", value='0')
-        self.add_field(name="View count", value='3')
-        self.add_field(name="Comment count", value='0')
-        self.add_field(name="Points", value='4')
+        self.add_field(name='User', value=f'<@{user_data['user_id']}>', inline=False)
+        self.add_field(name="Total Points Of Lifetime", value=user_data['total_points'])
+        self.add_field(name="Available Points", value=user_data['points'])
+        self.add_field(name="Register Number", value=user_data['register'])
+        self.add_field(name="Bank Name", value=user_data['bank_name'])
+        self.add_field(name="Bank Number", value=user_data['bank_number'])
 
 class ReviewEmbed(Embed):
      def __init__(self, data: dict):
