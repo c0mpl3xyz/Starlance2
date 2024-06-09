@@ -62,8 +62,8 @@ class GetCountsByJobIdsUserId():
         review = Review(cursor)
         results = review.count_by_job_ids_user_id(job_ids, user_id)
 
-        # result_dict = {}
-        # for result in results:
-        #     result_dict[result[0]] = result[2]
+        result_dict = {}
+        for result in results:
+            result_dict[result[0]] = result[2]
 
-        return results
+        return result_dict
