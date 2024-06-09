@@ -85,7 +85,7 @@ def bank_registration():
     finally:
         connection.close()
 
-@user_bp.route('/', methods=['GET'])
+@user_bp.route('/status', methods=['GET'])
 def get_user():
     user_id = request.args.get('user_id')
 
