@@ -76,24 +76,8 @@ def user_status():
 
     try:
         user = User(connection.cursor())
-        user_exist = user.get_by_id(user_id)
-        # debug = ''
-        # if not user_exist:
-        #     updated = user.create(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
-        #     debug = f'updated {updated}'
-        
-        # else:
-        #     updated = user.update(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
-        #     debug = f'updated {updated}'
+        user = user.get_by_id(user_id)
 
-        # if updated:
-        #     connection.commit()
-
-        # result = {
-        #     'success': updated,
-        #     'debug': debug,
-        # }
-
-        return jsonify(user_exist)
+        return jsonify(user)
     finally:
         connection.close()
