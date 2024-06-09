@@ -99,17 +99,9 @@ class Job:
         self.cursor.execute(query, (company_id, server_name, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, job_type, user_count)) # type: ignore
         return True
     
-    def update_status(self, job_id, data) -> bool:
-        update_query = "UPDATE Job SET "
-        update_params = []
-
-        if 'job_type' in data:
-            update_query += "type = %s, "
-            update_params.append(data['job_type'])
-
-        update_query = update_query.rstrip(", ") + " WHERE id = %s"
-        update_params.append(job_id)
-        self.cursor.execute(update_query, tuple(update_params)) # type: ignore
+    def update_status(self, job_id, job_type) -> bool:
+        query = "UPDATE Job SET type = %s WHERE id = %s"
+        self.cursor.execute(query, (job_type, job_id)) # type: ignore
         
         return True
     

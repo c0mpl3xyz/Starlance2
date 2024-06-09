@@ -36,7 +36,8 @@ def update_job(k):
         'job_id': k,
         'type': 'Ended'
     }
-    requests.put(URL + '/job/status', json=data)
+    response = requests.put(URL + '/job/status', json=data)
+    print(response)
 
 def get_shortcode(link):
     link = link.replace('https://www.instagram.com/reel/', '').replace('https://www.instagram.com/p/','')
