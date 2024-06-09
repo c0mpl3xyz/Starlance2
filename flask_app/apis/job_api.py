@@ -28,6 +28,35 @@ def extract_job_request(request):
 
     return job_id, discord_server_id, server_name, name, roles, budget, start_date, end_date, participation_date, duration, description, upload_link, requirements, job_type, user_count
 
+@job_bp.route('/status', methods=['PUT'])
+def upate_status():
+    job_id = request.json.get('job_id')
+    job_type = request.json.get('type')
+    connection = ConnectSQL().get_connection()
+    cursor = connection.cursor()
+    updated: bool = False
+    message: str = ''
+
+    try:
+        job = Job(cursor)
+        updated = job.update_status(job_id, job_type)
+
+        if updated:
+            connection.commit()
+            job_id = cursor.lastrowid
+            message = 'Job updated'
+        else:
+            message = 'Job not updated'
+            
+        result = {
+            'success': updated,
+            'job_id': job_id,
+            'message': message
+        }
+
+        return jsonify(result)
+    finally:
+        connection.close()
 @job_bp.route('/', methods=['PUT'])
 def upate_job():
     job_id, discord_id, _, name, roles, budget, start_date, end_date, participation_date, duration, description, upload_link, requirements, job_type, user_count = extract_job_request(request)
