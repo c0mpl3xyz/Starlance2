@@ -21,7 +21,7 @@ class User:
         self.cursor.execute(query, (id,)) # type: ignore
         return self.cursor.fetchone() # type: ignore
 
-    def create(self, id, fb_id=None, ig_id=None, tiktok_id=None, youtube_id=None, bank_name=None, bank_number=None, register=None) -> bool:
+    def create(self, id, total_points, points, bank_name=None, bank_number=None, register=None) -> bool:
         user = self.get_by_id(id)
 
         if user:
@@ -29,32 +29,24 @@ class User:
 
         # TODO: fill fb id and, Ig id
         query = """
-            INSERT INTO User (id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register)
+            INSERT INTO User (id, total_points, points, bank_name, bank_number, register)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
-        self.cursor.execute(query, (id, fb_id, ig_id, tiktok_id, youtube_id, bank_name, bank_number, register)) # type: ignore
+        self.cursor.execute(query, (id, total_points, points, bank_name, bank_number, register)) # type: ignore
 
         return True
     
-    def update(self, id, fb_id=None, ig_id=None, tiktok_id=None, youtube_id=None, bank_name=None, bank_number=None, register=None):
+    def update(self, id, total_points=None, points=None, bank_name=None, bank_number=None, register=None):
         update_query = "UPDATE User SET "
         update_params = []
 
-        if fb_id is not None:
-            update_query += "fb_id = %s, "
-            update_params.append(fb_id)
+        if total_points is not None:
+            update_query += "total_points = %s, "
+            update_params.append(total_points)
 
-        if ig_id is not None:
-            update_query += "ig_id = %s, "
-            update_params.append(ig_id)
-            
-        if tiktok_id is not None:
-            update_query += "tiktok_id = %s, "
-            update_params.append(tiktok_id)
-
-        if youtube_id is not None:
-            update_query += "youtube_id = %s, "
-            update_params.append(youtube_id)
+        if points is not None:
+            update_query += "points = %s, "
+            update_params.append(points)
 
         if bank_name is not None:
             update_query += "bank_name = %s, "
