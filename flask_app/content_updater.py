@@ -31,6 +31,15 @@ def update_content(k, data):
     data['content_id'] = k
     requests.put(URL + '/content/status', json=data)
 
+def update_user_point(data):
+    data = {
+        'user_id': data['user_id'],
+        'points': data['points']
+    }
+    response = requests.put(URL + '/user/status', json=data)
+
+    print(response.text)
+
 def update_job(k):
     data = {
         'job_id': k,
@@ -60,7 +69,6 @@ def content_updater():
 
         ig_token = ProIGToken()
         result = ig_token.filter_by_shortcodes(contents_dict)
-        print(f'{result=}')
         job_content_dict = {}
         for job in jobs:
             job_id = job[0]
@@ -115,12 +123,12 @@ def content_updater():
                         
                         v_2_v['active'] = 0
                         v_2_v['points'] = calculate_points(v_2_v)
+                        print(f'{v_2_v}')
                         update_content(k_2, v_2_v)
                         update_job(k)
-        
-    except Exception as e:
-        raise e
-
+                        update_user_point(v_2_v)
+    except Exception:
+        pass
 
 class ProIGToken():
     def __init__(self):

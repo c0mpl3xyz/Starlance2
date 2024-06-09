@@ -156,15 +156,16 @@ async def my_status(interaction: discord.Interaction):
 
     # TODO: change it not
     if not is_influencer(interaction):
+        await interaction.response.defer()
         user_views = GetUserStatus().execute(interaction.user.id)
         if user_views is None or len(user_views) == 0:
             await interaction.user.send(ErrorMessageEnum.NO_USER.value)
         else:
             for view in user_views:
                 view.message = await interaction.user.send(embed=view.embed, view=view)
-        return await interaction.response.send_message(f'User status sent to <@{interaction.user.id}>', ephemeral=True)
+        return await interaction.followup.send(f'User status sent to <@{interaction.user.id}>', ephemeral=True)
     else:
-        return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+        return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
 
 @client.tree.command(name='company_job_add')
 async def company_job_add(interaction: discord.Interaction):

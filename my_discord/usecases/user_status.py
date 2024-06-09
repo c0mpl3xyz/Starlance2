@@ -14,9 +14,8 @@ class GetUserStatus():
         print(response.text)
         print(response.json())
 
-        users = []
         JSON = response.json()
-        for user_json in JSON:
-            user = user_mappings(user_json)
-            users.append(UserView(user))
-        return users
+        if JSON is None:
+            return []
+        user = user_mappings(JSON)
+        return [UserView(user)]

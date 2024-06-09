@@ -40,14 +40,10 @@ class User:
 
         return True
     
-    def update(self, id, total_points=None, points=None, bank_name=None, bank_number=None, register=None):
+    def update(self, id, points=None, bank_name=None, bank_number=None, register=None):
         update_query = "UPDATE User SET "
         update_params = []
-
-        if total_points is not None:
-            update_query += "total_points = %s, "
-            update_params.append(total_points)
-
+        
         if points is not None:
             update_query += "points = %s, "
             update_params.append(points)
