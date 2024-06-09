@@ -37,7 +37,7 @@ def user_update():
         result = {}
         user_obj = user.get_by_id(user_id)
         if user_obj:
-            total_points += user_obj[1]
+            total_points = user_obj[1] + points
             points += user_obj[2]
             updated = user.update(user_id, points=points, bank_name=bank_name, bank_number=bank_number, register=register)
             debug = f'updated {updated}'
