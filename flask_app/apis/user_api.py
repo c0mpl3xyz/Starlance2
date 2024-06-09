@@ -28,7 +28,7 @@ def extract_user_request(request):
 
 @user_bp.route('/bank_register', methods=['POST'])
 def bank_registration():
-    user_id, _, _, bank_name, bank_number, register = extract_user_request(request)
+    user_id, total_points, points, bank_name, bank_number, register = extract_user_request(request)
 
     connection = ConnectSQL().get_connection()
     updated: bool = False
@@ -42,7 +42,7 @@ def bank_registration():
             debug = f'updated {updated}'
         
         else:
-            updated = user.update(user_id, bank_name=bank_name, bank_number=bank_number, register=register)
+            updated = user.update(user_id, total_points=total_points, points=points, bank_name=bank_name, bank_number=bank_number, register=register)
             debug = f'updated {updated}'
 
         if updated:
