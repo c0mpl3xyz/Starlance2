@@ -10,9 +10,10 @@ class GetUserStatus():
         data = {
             'user_id': user_id
         }
+
+        print(type(user_id))
         response = requests.get(URL + '/user/status', json=data)
         print(response.text)
-        print(response.json())
 
         JSON = response.json()
         if JSON is None:

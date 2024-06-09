@@ -93,4 +93,9 @@ def get_user():
     user = User(connection.cursor())
 
     data = user.get_by_id(user_id)
+    data = {
+        'result': data,
+        'debug': True
+    }
+
     return jsonify(data)
