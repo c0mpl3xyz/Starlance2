@@ -110,7 +110,6 @@ class Job:
         update_query = update_query.rstrip(", ") + " WHERE id = %s"
         update_params.append(job_id)
         self.cursor.execute(update_query, tuple(update_params)) # type: ignore
-        self.cursor.fetchall() # type: ignore
         
         return True
     
