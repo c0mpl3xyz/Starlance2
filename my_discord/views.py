@@ -83,7 +83,7 @@ class JobView(discord.ui.View):
         self.stop()
 
     async def review_button_callback(self, interaction: discord.Interaction):
-        await interaction.response.defer()
+        # await interaction.response.defer()
         from modal import ReviewUserModal
 
         data = {
@@ -91,11 +91,12 @@ class JobView(discord.ui.View):
             'job_ids': [self.job_data['job_id']]
         }
 
-        print(type(self.job_data['job_id']))
-        print(f'{data=}')
+        DICT = {}
         response = requests.get(URL + '/review/not_approved_count', json=data)
-        DICT = response.json()
-        print(f'{DICT=}')
+
+        if response:
+            DICT = response.json()
+
         if str(self.job_data['job_id']) in DICT.keys():
             self.review_button.label = 'Review request is already sent'
             self.review_button.disabled = True
@@ -103,7 +104,7 @@ class JobView(discord.ui.View):
         else:
             register_job = RegisterJob().get_by_user_job(interaction.user.id, self.job_data['job_id'])
             modal = ReviewUserModal(self.bot, interaction.user.id, register_job['id'], self.job_data, 'Pending', self.company)
-            await interaction.followup.send(modal)
+            await interaction.response.send_modal(modal)
             await modal.wait()
 
             self.review_button.label = 'Review request sent'
@@ -285,10 +286,10 @@ class ReviewView(discord.ui.View):
 
     async def review_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewUserModal
-        await interaction.response.defer()
+        # await interaction.response.defer()
         job_data = GetJobById(self.review_data['job_id']).execute()
         modal = ReviewUserModal(self.bot, interaction.user.id, self.review_data['job_register_id'], job_data, 'Pending', self.company)
-        await interaction.followup.send(modal)
+        await interaction.response.send_modal(modal)
         await modal.wait()
         self.review_button.label = 'Review request sent'
         self.review_button.disabled = True
@@ -298,14 +299,14 @@ class ReviewView(discord.ui.View):
     #TODO: add rejected message to influencer
     async def reject_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewRejectModal
-        interaction.response.defer()
+        # interaction.response.defer()
         review = Review() 
         
         response = review.update(self.review_data['id'], link=self.review_data['link'], review_type='Rejected', descripton=self.review_data['description'])
         if response['success']:
             self.review_data['type'] = 'Rejected'
             modal = ReviewRejectModal()
-            await interaction.followup.send(modal)
+            await interaction.response.send_modal(modal)
             await modal.wait()
             self.review_data['description'] = modal.description.value
 

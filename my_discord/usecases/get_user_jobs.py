@@ -9,14 +9,12 @@ class GetUserJobViews:
                 'user_id': user_id,
             }
 
-        print(f'{data=}')
         response = requests.get(URL + '/job_register/user', json=data)
         JSON = response.json()
         
         job_ids = [job[0] for job in JSON]
         data['job_ids'] = job_ids
         response = requests.get(URL + '/review/not_approved_count', json=data)
-
         review_counts = {}
         if response:
             review_counts = response.json()
