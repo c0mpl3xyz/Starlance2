@@ -91,6 +91,7 @@ class JobView(discord.ui.View):
             'job_ids': [self.job_data['job_id']]
         }
 
+        print(type(self.job_data['job_id']))
         print(f'{data=}')
         response = requests.get(URL + '/review/not_approved_count', json=data)
         DICT = response.json()

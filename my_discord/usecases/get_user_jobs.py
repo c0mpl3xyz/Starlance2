@@ -9,6 +9,7 @@ class GetUserJobViews:
                 'user_id': user_id,
             }
 
+        print(f'{data=}')
         response = requests.get(URL + '/job_register/user', json=data)
         JSON = response.json()
         
