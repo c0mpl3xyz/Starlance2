@@ -21,7 +21,7 @@ class User:
         self.cursor.execute(query, (id,)) # type: ignore
         return self.cursor.fetchone() # type: ignore
 
-    def create(self, id, total_points, points, bank_name=None, bank_number=None, register=None) -> bool:
+    def create(self, id, total_points=None, points=None, bank_name=None, bank_number=None, register=None) -> bool:
         user = self.get_by_id(id)
 
         if user:
