@@ -17,7 +17,7 @@ class UserEmbed(Embed):
             color = discord.Color.random()
             )
         
-        self.add_field(name='User', value=f'<@{user_data['user_id']}>', inline=False)
+        self.add_field(name='User', value=f'<@{user_data["user_id"]}>', inline=False)
         self.add_field(name="Total Points Of Lifetime", value=user_data['total_points'])
         self.add_field(name="Available Points", value=user_data['points'])
         self.add_field(name="Register Number", value=user_data['register'])

@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from sql_db.review import Review
 from usecases.get_review import *
+from sql_db.user import User
 
 review_bp = Blueprint('review', __name__, url_prefix='/review')
 
@@ -59,8 +60,12 @@ def create_review():
     created: bool = False
     review_id = None
     message: str = ''
-
     try:
+        user = User(cursor)
+        user_exists = user.exists(user_id)
+
+        if not user_exists:
+            user.create(user_id)
         review = Review(cursor)
         created = review.create(job_register_id, job_id, job_name, job_description, user_id, server_id, server_name, link, review_type, description)
         if created:
