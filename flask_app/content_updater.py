@@ -1,5 +1,5 @@
-from instagram.api_calls import *
-from instagram.pro_ig_token import ProIGToken
+from flask_app.instagram.api_calls import *
+from flask_app.instagram.pro_ig_token import ProIGToken
 
 def content_updater():
     try:
