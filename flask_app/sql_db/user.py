@@ -30,7 +30,7 @@ class User:
         # TODO: fill fb id and, Ig id
         query = """
             INSERT INTO User (id, total_points, points, bank_name, bank_number, register)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
         self.cursor.execute(query, (id, total_points, points, bank_name, bank_number, register)) # type: ignore
 
