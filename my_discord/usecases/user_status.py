@@ -11,6 +11,7 @@ class GetUserStatus():
             'user_id': user_id
         }
         response = requests.get(URL + '/user/status', json=data)
+        print(response.text)
         print(response.json())
 
         users = []

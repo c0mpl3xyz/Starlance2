@@ -67,7 +67,7 @@ def get_user():
     data = user.get_by_id(user_id)
     return jsonify(data)
 
-@user_bp.route('/status', methods=['PUT'])
+@user_bp.route('/status', methods=['GET'])
 def user_status():
     user_id, total_points, points, bank_name, bank_number, register = extract_user_request(request)
 
