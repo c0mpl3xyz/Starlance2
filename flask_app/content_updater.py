@@ -36,8 +36,7 @@ def update_job(k):
         'job_id': k,
         'type': 'Ended'
     }
-    response = requests.put(URL + '/job/status', json=data)
-    print(response)
+    requests.put(URL + '/job/status', json=data)
 
 def get_shortcode(link):
     link = link.replace('https://www.instagram.com/reel/', '').replace('https://www.instagram.com/p/','')
@@ -49,6 +48,9 @@ def get_shortcode(link):
 def cal_percent(a, b):
     return a / b
 
+def calculate_points(data):
+    return data['initial_plays']
+
 def content_updater():
     try:
         jobs = get_jobs()
@@ -58,6 +60,7 @@ def content_updater():
 
         ig_token = ProIGToken()
         result = ig_token.filter_by_shortcodes(contents_dict)
+        print(f'{result=}')
         job_content_dict = {}
         for job in jobs:
             job_id = job[0]
@@ -91,8 +94,8 @@ def content_updater():
             if total < total_points:
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():
-                        print(f'first {v_2_v=}')
                         v_2_v['active'] = 1
+                        v_2_v['points'] = calculate_points(v_2_v)
                         update_content(k_2, v_2_v)
             else:
                 diff = total - total_points
@@ -101,33 +104,19 @@ def content_updater():
 
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():
-                        v_2_v['initial_plays'] = v_2_v['initial_plays'] - round(buhel * v_2_v['initial_plays'] / v_2_v['total_plays'])
-                        v_2_v['replays'] = v_2_v['replays'] - round(buhel * v_2_v['replays'] / v_2_v['total_plays'])
-                        v_2_v['account_reach'] = v_2_v['initial_plays'] + v_2_v['replays'] 
-                        v_2_v['total_plays'] = v_2_v['total_plays'] - round(buhel)
+                        value = 0
                         if uldegdel != 0:
-                            v_2_v['initial_plays'] = v_2_v['initial_plays'] - round(uldegdel * v_2_v['initial_plays'] / v_2_v['total_plays'])
-                            v_2_v['replays'] = v_2_v['replays'] - round(uldegdel * v_2_v['replays'] / v_2_v['total_plays'])
-                            v_2_v['account_reach'] = v_2_v['initial_plays'] + v_2_v['replays'] 
-                            v_2_v['total_plays'] = v_2_v['total_plays'] - round(uldegdel)
-                            uldegdel = uldegdel - 1
-                        print(f'second {v_2_v=}')
+                            value += 1
+                        v_2_v['initial_plays'] = v_2_v['initial_plays'] - round((buhel + uldegdel) * v_2_v['initial_plays'] / v_2_v['total_plays'])
+                        v_2_v['replays'] = v_2_v['replays'] - round((buhel + uldegdel) * v_2_v['replays'] / v_2_v['total_plays'])
+                        v_2_v['account_reach'] = v_2_v['initial_plays'] - v_2_v['replays']
+                        v_2_v['total_plays'] = v_2_v['total_plays'] - round((buhel + uldegdel))
+                        uldegdel = uldegdel - 1
+                        
                         v_2_v['active'] = 0
+                        v_2_v['points'] = calculate_points(v_2_v)
                         update_content(k_2, v_2_v)
                         update_job(k)
-                    
-
-        print(f'{job_content_dict=}')
-        # for k, v in result.items():
-        #     if v[2] == jobs[0]:
-        #         if jobs[0] not in job_id_dict:
-        #             job_id_dict[jobs[0]] = []
-        #         job_id_dict[jobs[0]].append({k:v})
-
-        # for k, v in result.items():
-        #     v['content_id'] = k
-        #     update_content(v)
-        #     pass
         
     except Exception as e:
         raise e
@@ -232,7 +221,7 @@ class ProIGToken():
                     if insight['name'] == 'total_interactions':
                         new_data['total_interactions'] = insight['values'][0]['value']
 
-                new_data['replays'] = new_data['account_reach'] - new_data['initial_plays']
+                new_data['replays'] = new_data['initial_plays'] - new_data['account_reach']
                 new_data['total_plays'] = new_data['initial_plays'] + new_data['replays']
                 new_data['points'] = 0 # calculate points
                 new_data['engagement'] = 0 # calculate engagement
