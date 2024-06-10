@@ -26,13 +26,16 @@ class LogInView(discord.ui.View):
 
 class CollectView(discord.ui.View):
     def __init__(self, user_data, bot, points):
+        super().__init__()
         self.user_data = user_data
+        self.message = None
         self.bot = bot
         self.points = points
         self.embed = CollectEmbed(user_data, points)
 
         self.collect_button = discord.ui.Button(label=f"Uprove Collect request: {user_data['points']}", style=discord.ButtonStyle.green, emoji='✨')
         self.collect_button.callback = self.collect_button_callback
+        self.add_item(self.collect_button)
 
     async def collect_button_callback(self, interaction: discord.Interaction):
         collected = UpdateUserPoints().execute(self.user_data['user_id'], self.points)
@@ -42,6 +45,13 @@ class CollectView(discord.ui.View):
             await interaction.response.edit_message(view=self)
         else:
             await interaction.response.send_message('Collection failed')
+    
+    async def on_timeout(self):
+        self.clear_items()
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command /status', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button.disabled = True
+        self.add_item(timeout_button)
+        await self.message.edit(view=self)
 
 class UserView(discord.ui.View):
     def __init__(self, user_data, bot):
@@ -67,7 +77,7 @@ class UserView(discord.ui.View):
 
         self.collect_button.label = 'Collect request sent'
         self.collect_button.disabled = True
-        await interaction.response.edit_message(view=self)
+        await interaction.message.edit(view=self)
         self.stop()
 
     async def on_timeout(self):

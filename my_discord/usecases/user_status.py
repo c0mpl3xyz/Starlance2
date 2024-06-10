@@ -5,7 +5,7 @@ load_dotenv()
 URL = os.getenv('URL')
 
 class GetUserStatus():
-    def execute(self, user_id):
+    def execute(self, user_id, bot):
         from views import UserView
         data = {
             'user_id': user_id
@@ -16,7 +16,7 @@ class GetUserStatus():
         if JSON is None:
             return []
         user = user_mappings(JSON)
-        return [UserView(user)]
+        return [UserView(user, bot)]
     
 class UpdateUserPoints():
     def execute(self, user_id, points):

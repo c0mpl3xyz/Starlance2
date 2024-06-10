@@ -157,7 +157,7 @@ async def my_status(interaction: discord.Interaction):
     # TODO: change it not
     if not is_influencer(interaction):
         await interaction.response.defer()
-        user_views = GetUserStatus().execute(interaction.user.id)
+        user_views = GetUserStatus().execute(interaction.user.id, client)
         if user_views is None or len(user_views) == 0:
             await interaction.user.send(ErrorMessageEnum.NO_USER.value)
         else:

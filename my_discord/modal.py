@@ -338,7 +338,7 @@ class UserCollectModal(Modal, title='Collect User Points'):
         messages = []
         if not points.isnumeric():
             messages.append(f'You entered this {points}. And this is not a valid number')
-        elif int(points) < user_points:
+        if points.isnumeric() and int(points) < user_points:
             messages.append(f'Your availabled Points: {user_points}, You can\'t collect more than this!')
         return messages
 
@@ -347,6 +347,7 @@ class UserCollectModal(Modal, title='Collect User Points'):
         from views import CollectView
         points = str(self.points)
         messages = self.validate(self.user_data['points'], points)
+        print(messages)
         if len(messages):
             await interaction.followup.send('User collect points failed')
             for message in messages:
