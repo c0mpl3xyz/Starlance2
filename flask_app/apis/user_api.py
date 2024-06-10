@@ -87,15 +87,10 @@ def bank_registration():
 
 @user_bp.route('/status', methods=['GET'])
 def get_user():
-    user_id = request.args.get('user_id')
+    user_id = request.json.get('user_id')
 
     connection = ConnectSQL().get_connection()
     user = User(connection.cursor())
 
     data = user.get_by_id(user_id)
-    data = {
-        'result': data,
-        'debug': True
-    }
-
     return jsonify(data)
