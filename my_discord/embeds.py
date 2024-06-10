@@ -24,6 +24,19 @@ class UserEmbed(Embed):
         self.add_field(name="Bank Name", value=user_data['bank_name'])
         self.add_field(name="Bank Number", value=user_data['bank_number'])
 
+class CollectEmbed(Embed):
+     def __init__(self, user_data, points):
+        super().__init__(
+            title='User Status',
+            color = discord.Color.random()
+            )
+        
+        self.add_field(name='User', value=f'<@{user_data["user_id"]}>', inline=False)
+        self.add_field(name="Register Number", value=user_data['register'])
+        self.add_field(name="Bank Name", value=user_data['bank_name'])
+        self.add_field(name="Bank Number", value=user_data['bank_number'])
+        self.add_field(name="Collect points", value=points)
+
 class ReviewEmbed(Embed):
      def __init__(self, data: dict):
         self.data = data

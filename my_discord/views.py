@@ -6,7 +6,8 @@ from usecases.register_job import RegisterJob
 from usecases.review import Review
 from usecases.get_job_by_id import GetJobById
 from usecases.user_reviews import GetUserReview, UpdateReview
-from embeds import ApproveEmbed, ReviewEmbed, UserEmbed
+from usecases.user_status import UpdateUserPoints
+from embeds import ApproveEmbed, ReviewEmbed, UserEmbed, CollectEmbed
 from utils.enums import Enums
 
 URL = os.getenv('URL')
@@ -23,24 +24,50 @@ class LogInView(discord.ui.View):
     async def on_timeout(self):
         await self.message.edit(content="Link timed out", view=None)
 
+class CollectView(discord.ui.View):
+    def __init__(self, user_data, bot, points):
+        self.user_data = user_data
+        self.bot = bot
+        self.points = points
+        self.embed = CollectEmbed(user_data, points)
+
+        self.collect_button = discord.ui.Button(label=f"Uprove Collect request: {user_data['points']}", style=discord.ButtonStyle.green, emoji='✨')
+        self.collect_button.callback = self.collect_button_callback
+
+    async def collect_button_callback(self, interaction: discord.Interaction):
+        collected = UpdateUserPoints().execute(self.user_data['user_id'], self.points)
+        if collected:
+            self.collect_button.label = 'Approved'
+            self.collect_button.disabled = True
+            await interaction.response.edit_message(view=self)
+        else:
+            await interaction.response.send_message('Collection failed')
+
 class UserView(discord.ui.View):
-    def __init__(self, user_data):
+    def __init__(self, user_data, bot):
+        self.user_data = user_data
+        self.bot = bot
         self.embed = UserEmbed(user_data)
         super().__init__()
-        self.collect_button = discord.ui.Button(label="Collect Points", style=discord.ButtonStyle.green, emoji='✨')
+        self.collect_button = discord.ui.Button(label=f"Collect Points: {user_data['points']}", style=discord.ButtonStyle.green, emoji='✨')
         self.collect_button.callback = self.collect_button_callback
         collectable = user_data['points'] > 0 #TODO: add threshold
         if not collectable:
-            self.collect_button.label = 'No Points to collect'
+            self.collect_button.label = 'No Points to collect: 0'
             self.collect_button.disabled = True
         self.add_item(self.collect_button)
 
     async def collect_button_callback(self, interaction: discord.Interaction):
-        await interaction.response.defer()
-        register_job = RegisterJob()
-        response = register_job.register(interaction.user.id, self.job_data['job_id'], 'Rejected')
-        if response['success']:
-            await interaction.message.delete()
+        from modal import UserCollectModal
+        # await interaction.response.defer()
+
+        modal = UserCollectModal(self.user_data, self.bot)
+        await interaction.response.send_modal(modal)
+        await modal.wait()
+
+        self.collect_button.label = 'Collect request sent'
+        self.collect_button.disabled = True
+        await interaction.response.edit_message(view=self)
         self.stop()
 
     async def on_timeout(self):

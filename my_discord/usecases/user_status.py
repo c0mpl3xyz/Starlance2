@@ -17,3 +17,12 @@ class GetUserStatus():
             return []
         user = user_mappings(JSON)
         return [UserView(user)]
+    
+class UpdateUserPoints():
+    def execute(self, user_id, points):
+        data = {
+            'user_id': user_id,
+            'points': points
+        }
+        JSON = requests.put(URL + '/user/points', json=data).json()
+        return JSON['success']

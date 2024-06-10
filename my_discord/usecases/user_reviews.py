@@ -73,8 +73,7 @@ class GetServerApprovementView:
                 job_data['type'] = job_register['type']
 
                 reviews.append(ApprovementJobView(embed_data, job_data, bot))
-        return reviews
-    
+        return reviews    
 
 class UpdateReview:
     def execute(self, review_data):        

@@ -31,13 +31,13 @@ def update_content(k, data):
     data['content_id'] = k
     requests.put(URL + '/content/status', json=data)
 
-def update_user_point(data):
+def update_user_point(user_id, data):
     data = {
-        'user_id': data['user_id'],
+        'user_id': user_id,
         'points': data['points']
     }
-    response = requests.put(URL + '/user/status', json=data)
-
+    print(f'{data=}')
+    response = requests.put(URL + '/user', json=data)
     print(response.text)
 
 def update_job(k):
@@ -58,13 +58,14 @@ def cal_percent(a, b):
     return a / b
 
 def calculate_points(data):
-    return data['initial_plays']
+    return data['initial_plays']    
 
 def content_updater():
     try:
         jobs = get_jobs()
         job_ids = [job[0] for job in jobs]
         contents = get_contents_by_job_ids(job_ids)
+        contents_real_dict = {content[0]: content for content in contents}
         contents_dict = {get_shortcode(content[6]): content[0] for content in contents if get_shortcode(content[6]) is not None}
 
         ig_token = ProIGToken()
@@ -126,8 +127,10 @@ def content_updater():
                         print(f'{v_2_v}')
                         update_content(k_2, v_2_v)
                         update_job(k)
-                        update_user_point(v_2_v)
-    except Exception:
+                        user_id = contents_real_dict[k_2][3]
+                        update_user_point(user_id, v_2_v)
+    except Exception as e:
+        # raise e
         pass
 
 class ProIGToken():
@@ -160,7 +163,7 @@ class ProIGToken():
 
     def get_media_list(self, url=None):
         if url is None:
-            url = f'https://graph.facebook.com/v20.0/{IG_ID}?fields=media.limit(10){{shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares)}}&access_token={IG_TOKEN}'
+            url = f'https://graph.facebook.com/v20.0/{IG_ID}?fields=media.limit(100){{shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares)}}&access_token={IG_TOKEN}'
 
         response = requests.get(url)
         return response.json()
@@ -198,7 +201,7 @@ class ProIGToken():
 
         return my_result
 
-    def get_media_dict(self, url=None) -> dict:
+    def get_media_dict(self, url=None):
         media = self.get_media_list(url)
         if url is None:
             media = media['media']
