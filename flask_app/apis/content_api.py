@@ -20,9 +20,10 @@ def extract_content_status(request):
     total_interactions = request.json.get('total_interactions')
     points = request.json.get('points')
     engagement = request.json.get('engagement')
+    engagement_rate = request.json.get('engagement_rate')
     active = request.json.get('active')
 
-    return content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, active
+    return content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, engagement_rate, active
 
 def extract_content_request(request):
     content_id = request.json.get('id')
@@ -103,7 +104,7 @@ def upate_content():
 
 @content_bp.route('/status', methods=['PUT'])
 def update_content_status():
-    content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, active = extract_content_status(request)
+    content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, engagement_rate, active = extract_content_status(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -112,7 +113,7 @@ def update_content_status():
 
     try:
         content = Content(cursor)
-        updated = content.update_status(content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, active)
+        updated = content.update_status(content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, engagement_rate, active)
         if updated:
             connection.commit()
             content_id = cursor.lastrowid
