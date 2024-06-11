@@ -55,7 +55,7 @@ def user_update():
         connection.close()
 
 @user_bp.route('/points', methods=['PUT'])
-def user_update():
+def user_update_points():
     user_id, points, bank_name, bank_number, register = extract_user_request(request)
     connection = ConnectSQL().get_connection()
     updated: bool = False
