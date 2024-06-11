@@ -1,5 +1,5 @@
 import requests, os
-from mappings.mappings import review_mappings, job_mapping, job_register_mapping
+from mappings.mappings import review_mappings, job_mapping, job_register_mapping, collect_mapping, user_mappings
 import discord
 from utils.enums import Enums
 URL = os.getenv('URL')
@@ -42,6 +42,19 @@ class GetServerReviewView:
         response = requests.get(URL + '/review/company_all')
         reviews = [ReviewView(review_mappings(review), bot, company=True) for review in response.json()]
         return reviews
+
+class GetServerCollectView():
+    def execute(self, bot):
+        from views import CollectView
+        JSON = requests.get(URL + '/collect/server').json()
+
+        collects = []
+        for collect_json in JSON:
+            collect = collect_mapping(collect_json)
+            user = user_mappings(requests.get(URL + '/user/status', json={'user_id': collect['user_id']}).json())
+            view = CollectView(user, bot, collect['collect_id'], collect['points'])
+            collects.append(view)
+        return collects
 
 class GetServerApprovementView:
     def execute(self, bot):

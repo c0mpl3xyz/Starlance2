@@ -24,5 +24,6 @@ class UpdateUserPoints():
             'user_id': user_id,
             'points': points
         }
-        JSON = requests.put(URL + '/user/points', json=data).json()
+        response = requests.put(URL + '/user/points', json=data)
+        JSON = response.json()
         return JSON['success']

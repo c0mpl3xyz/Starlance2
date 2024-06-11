@@ -310,6 +310,32 @@ async def server_approves(interaction: discord.Interaction):
         await interaction.followup.send(f'Approvement list sent to <#{channel.id}>', ephemeral=True)
 
 
+@client.tree.command(name='server_collects')
+async def server_collects(interaction: discord.Interaction):
+    if await is_dm(interaction):
+        return
+
+    if is_influencer(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+    
+    if not is_main_server(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+    
+    await interaction.response.defer(ephemeral=True)
+    collect_views = GetServerCollectView().execute(client)
+    if collect_views is None or len(collect_views) == 0:
+        try:
+            await interaction.followup.send(ErrorMessageEnum.NO_COLLECT.value + f'<@{interaction.user.id}>', ephemeral=True)
+        except discord.errors.InteractionResponded:
+            await interaction.followup.send(ErrorMessageEnum.NO_COLLECT.value + f'<@{interaction.user.id}>', ephemeral=True)
+    else:
+        channel = discord.utils.get(interaction.guild.channels, name=Enums.COLLECT.value)
+        if not channel:
+            channel = interaction.channel
+        for view in collect_views:
+            view.message = await interaction.channel.send(embed=view.embed, view=view)
+        await interaction.followup.send(f'Collect request list sent to <#{channel.id}>', ephemeral=True)
+
 # @client.tree.command(name='test_embed')
 # async def test_embed(interaction: discord.Interaction):
 #     some_url = "https://fallendeity.github.io/discord.py-masterclass/"

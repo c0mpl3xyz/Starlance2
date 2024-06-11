@@ -38,7 +38,6 @@ def update_user_point(user_id, data):
     }
     print(f'{data=}')
     response = requests.put(URL + '/user', json=data)
-    print(response.text)
 
 def update_job(k):
     data = {

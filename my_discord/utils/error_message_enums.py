@@ -8,6 +8,7 @@ class ErrorMessageEnum(Enum):
     NO_JOB =  'You have no jobs registered'
     NO_REVIEWS =  'You have no reviews registered'
     NO_APPROVES =  'There is no approvements'
+    NO_COLLECT =  'There is no collects'
     NO_JOB_ROLES = 'There is no new jobs on your roles yet'
     NO_CONTENT = 'There is no contents'
     NO_USER = 'You are new user, so you don\'t have points'

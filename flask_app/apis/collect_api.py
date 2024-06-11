@@ -26,17 +26,20 @@ def update():
 
     try:
         collect = Collect(cursor)
-        user = User(cursor)
-        user_data = user.get_by_id(user_id)
-        user.update(user_id, points=user_data[2] - points)
-
-        updated = collect.update(collect_id, collect_type='Approved')
-        if updated:
-            connection.commit()
-            collect_id = cursor.lastrowid
-            message = 'collect updated'
+        collects = collect.get_by_user_id(user_id)
+        if not len(collects):
+            message = 'already collected'
         else:
-            message = 'collect not updated'
+            user = User(cursor)
+            user_data = user.get_by_id(user_id)
+            user.update(user_id, points=user_data[2] - points)
+
+            updated = collect.update(collect_id, collect_type='Approved')
+            if updated:
+                connection.commit()
+                message = 'collect updated'
+            else:
+                message = 'collect not updated'
             
         result = {
             'success': updated,

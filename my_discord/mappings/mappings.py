@@ -113,4 +113,12 @@ def content_mappings(data: list):
         'active': data[19],
     }
 
-    return content_dict
+def collect_mapping(data: list):
+    collect_dict = {
+        'collect_id': data[0],
+        'user_id': data[1],
+        'points': data[2],
+        'type': data[3],
+    }
+
+    return collect_dict

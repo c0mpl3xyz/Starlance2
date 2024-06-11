@@ -329,6 +329,7 @@ class ReviewRejectModal(Modal, title='Description'):
 class UserCollectModal(Modal, title='Collect User Points'):
     def __init__(self, user_data, bot):
         super().__init__()
+        self.requested = False
         self.user_data = user_data
         self.bot = bot
         self.valid = False
@@ -337,8 +338,6 @@ class UserCollectModal(Modal, title='Collect User Points'):
 
     def validate(self, user_points: int, points: str):
         messages = []
-        print(f'{user_points=}')
-        print(f'{points=}')
         if not points.isnumeric():
             messages.append(f'You entered this {points}. And this is not a valid number')
         if points.isnumeric() and int(points) > user_points:
@@ -356,10 +355,23 @@ class UserCollectModal(Modal, title='Collect User Points'):
                 await interaction.channel.send(message)
         else:
             self.valid = True
-            guild = self.bot.get_guild(Enums.GUILD_ID.value)
-            channel = discord.utils.get(guild.channels, name=Enums.COLLECT.value)
-            collect_view = CollectView(self.user_data, self.bot, int(points))
-            collect_view.message = await channel.send(embed=collect_view.embed, view=collect_view)
+            data = {
+                'user_id': self.user_data['user_id'],
+                'points': int(points)
+            }
+
+            response = requests.post(URL + '/collect', json=data)
+            response = response.json()
+            print(f'collect id: {response}')
+            if response['success']:
+                collect_id = response['collect_id']
+                print(f'{collect_id=}')
+                guild = self.bot.get_guild(Enums.GUILD_ID.value)
+                channel = discord.utils.get(guild.channels, name=Enums.COLLECT.value)            
+                collect_view = CollectView(self.user_data, self.bot, collect_id, int(points))
+                collect_view.message = await channel.send(embed=collect_view.embed, view=collect_view)
+            else:
+                self.requested = True
     
     # async def wait_for_submit(self):
     #     await self._event.wait()  # Wait until the event is set

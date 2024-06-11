@@ -25,9 +25,10 @@ class LogInView(discord.ui.View):
         await self.message.edit(content="Link timed out", view=None)
 
 class CollectView(discord.ui.View):
-    def __init__(self, user_data, bot, points):
+    def __init__(self, user_data, bot, collect_id, points):
         super().__init__()
         self.user_data = user_data
+        self.collect_id = collect_id
         self.message = None
         self.bot = bot
         self.points = points
@@ -38,13 +39,19 @@ class CollectView(discord.ui.View):
         self.add_item(self.collect_button)
 
     async def collect_button_callback(self, interaction: discord.Interaction):
-        collected = UpdateUserPoints().execute(self.user_data['user_id'], self.points)
-        if collected:
-            self.collect_button.label = 'Approved'
-            self.collect_button.disabled = True
-            await interaction.response.edit_message(view=self)
-        else:
-            await interaction.response.send_message('Collection failed')
+        # collected = UpdateUserPoints().execute(self.user_data['user_id'], self.points)
+        self.collect_button.label = 'Approved'
+        self.collect_button.disabled = True
+        await interaction.response.edit_message(view=self)
+
+        data = {
+            'collect_id': self.collect_id,
+            'user_id': self.user_data['user_id'],
+            'points': self.points
+        }
+
+        print(f'{data=}')
+        requests.put(URL + '/collect', json=data)
     
     async def on_timeout(self):
         self.clear_items()
@@ -65,15 +72,27 @@ class UserView(discord.ui.View):
         if not collectable:
             self.collect_button.label = 'No Points to collect: 0'
             self.collect_button.disabled = True
+        else:
+            print(f"collectable user: {user_data['user_id']}")
+            result: list = requests.get(URL + '/collect/user', json={'user_id': user_data['user_id']}).json()
+            if len(result):
+                self.collect_button.label = 'Collect request is already sent'
+                self.collect_button.disabled = True
         self.add_item(self.collect_button)
 
     async def collect_button_callback(self, interaction: discord.Interaction):
         from modal import UserCollectModal
         # await interaction.response.defer()
-
         modal = UserCollectModal(self.user_data, self.bot)
         await interaction.response.send_modal(modal)
         await modal.wait()
+
+        if modal.requested:
+            self.collect_button.label = 'Collect request already sent'
+            self.collect_button.disabled = True
+            await interaction.message.edit(view=self)
+            self.stop()
+            return
 
         if modal.valid:
             self.collect_button.label = 'Collect request sent'
