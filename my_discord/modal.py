@@ -331,14 +331,17 @@ class UserCollectModal(Modal, title='Collect User Points'):
         super().__init__()
         self.user_data = user_data
         self.bot = bot
+        self.valid = False
         self.points = TextInput(label="Points to collect", placeholder='Input your points to collect', required=True, style=discord.TextStyle.short)
         self.add_item(self.points)
 
     def validate(self, user_points: int, points: str):
         messages = []
+        print(f'{user_points=}')
+        print(f'{points=}')
         if not points.isnumeric():
             messages.append(f'You entered this {points}. And this is not a valid number')
-        if points.isnumeric() and int(points) < user_points:
+        if points.isnumeric() and int(points) > user_points:
             messages.append(f'Your availabled Points: {user_points}, You can\'t collect more than this!')
         return messages
 
@@ -347,15 +350,15 @@ class UserCollectModal(Modal, title='Collect User Points'):
         from views import CollectView
         points = str(self.points)
         messages = self.validate(self.user_data['points'], points)
-        print(messages)
         if len(messages):
             await interaction.followup.send('User collect points failed')
             for message in messages:
                 await interaction.channel.send(message)
         else:
+            self.valid = True
             guild = self.bot.get_guild(Enums.GUILD_ID.value)
             channel = discord.utils.get(guild.channels, name=Enums.COLLECT.value)
-            collect_view = CollectView(self.user_data, self.bot, points)
+            collect_view = CollectView(self.user_data, self.bot, int(points))
             collect_view.message = await channel.send(embed=collect_view.embed, view=collect_view)
     
     # async def wait_for_submit(self):

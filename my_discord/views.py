@@ -75,10 +75,11 @@ class UserView(discord.ui.View):
         await interaction.response.send_modal(modal)
         await modal.wait()
 
-        self.collect_button.label = 'Collect request sent'
-        self.collect_button.disabled = True
-        await interaction.message.edit(view=self)
-        self.stop()
+        if modal.valid:
+            self.collect_button.label = 'Collect request sent'
+            self.collect_button.disabled = True
+            await interaction.message.edit(view=self)
+            self.stop()
 
     async def on_timeout(self):
         self.clear_items()
