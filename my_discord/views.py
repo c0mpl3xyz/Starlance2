@@ -40,9 +40,7 @@ class CollectView(discord.ui.View):
 
     async def collect_button_callback(self, interaction: discord.Interaction):
         # collected = UpdateUserPoints().execute(self.user_data['user_id'], self.points)
-        self.collect_button.label = 'Approved'
-        self.collect_button.disabled = True
-        await interaction.response.edit_message(view=self)
+        await interaction.response.defer()
 
         data = {
             'collect_id': self.collect_id,
@@ -50,8 +48,21 @@ class CollectView(discord.ui.View):
             'points': self.points
         }
 
-        print(f'{data=}')
-        requests.put(URL + '/collect', json=data)
+        response = requests.put(URL + '/collect', json=data).json()
+        if response['success']:
+            self.collect_button.label = 'Approved'
+            self.collect_button.disabled = True
+            await interaction.message.edit(view=self)
+            guild_id = Enums.GUILD_ID.value
+            guild = self.bot.get_guild(guild_id)
+            user = discord.utils.get(guild.members, id=self.user_data['user_id'])
+            self.message = await user.send('Your points are collected', view=self)
+        else:
+            self.collect_button.label = 'Already approved'
+            self.collect_button.disabled = True
+            self.message = await interaction.message.edit(embed=self.embed, view=self)
+        
+        self.stop()
     
     async def on_timeout(self):
         self.clear_items()
