@@ -68,7 +68,7 @@ def create():
             
         result = {
             'success': created,
-            'review_id': collect_id,
+            'collect_id': collect_id,
             'message': message
         }
 
