@@ -40,6 +40,20 @@ class User:
 
         return True
     
+    def update_points(self, id, points):
+        update_query = "UPDATE User SET "
+        update_params = []
+
+        if points is not None:
+            update_query += "points = %s, "
+            update_params.append(points)
+
+        update_query = update_query.rstrip(", ") + " WHERE id = %s"
+        update_params.append(id)
+        self.cursor.execute(update_query, tuple(update_params,)) # type: ignore
+        self.cursor.fetchall() # type: ignore
+        
+        return True
     def update(self, id, total_points=None, points=None, bank_name=None, bank_number=None, register=None):
         update_query = "UPDATE User SET "
         update_params = []

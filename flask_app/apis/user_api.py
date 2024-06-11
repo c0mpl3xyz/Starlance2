@@ -54,6 +54,33 @@ def user_update():
     finally:
         connection.close()
 
+@user_bp.route('/points', methods=['PUT'])
+def user_update():
+    user_id, points, bank_name, bank_number, register = extract_user_request(request)
+    connection = ConnectSQL().get_connection()
+    updated: bool = False
+
+    try:
+        user = User(connection.cursor())
+        result = {}
+        user_obj = user.get_by_id(user_id)
+        if user_obj:
+            points = user_obj[2] - points
+            updated = user.update_points(user_id, points)
+            debug = f'updated {updated}'
+
+            if updated:
+                connection.commit()
+
+            result = {
+                'success': updated,
+                'debug': debug,
+            }
+
+        return jsonify(result)
+    finally:
+        connection.close()
+
 @user_bp.route('/bank_register', methods=['POST'])
 def bank_registration():
     user_id, points, bank_name, bank_number, register = extract_user_request(request)
