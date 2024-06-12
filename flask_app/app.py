@@ -1,4 +1,4 @@
-import os
+import os, threading
 from apis.user_api import user_bp
 from apis.token_api import token_bp
 from apis.job_api import job_bp
@@ -30,8 +30,11 @@ app.register_blueprint(content_bp)
 app.register_blueprint(review_bp)
 app.register_blueprint(collect_bp)
 
+def start_background_task():
+    background_thread = threading.Thread(target=content_updater)
+    background_thread.daemon = True
+    background_thread.start()
+
 if __name__ == '__main__':
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(content_updater, 'interval', minutes=1)
-    scheduler.start()
+    start_background_task()
     app.run(ssl_context=('key/cert.pem', 'key/key.pem'), debug=True, host='0.0.0.0', port=9000, threaded=True)
