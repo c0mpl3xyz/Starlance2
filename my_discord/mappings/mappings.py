@@ -110,8 +110,11 @@ def content_mappings(data: list):
         'total_interactions': data[16],
         'points': data[17],
         'engagement': data[18],
-        'active': data[19],
+        'engagement_rate': data[19],
+        'active': data[20],
     }
+
+    return content_dict
 
 def collect_mapping(data: list):
     collect_dict = {

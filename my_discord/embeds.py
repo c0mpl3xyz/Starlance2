@@ -89,6 +89,8 @@ class ContentEmbed(Embed):
             self.add_field(name='Total interaction', value=content_data['total_interactions'])
         if 'engagement' in content_data:
             self.add_field(name='Engagements', value=content_data['engagement'])
+        if 'engagement_rate' in content_data:
+            self.add_field(name='Engagement Rate', value=content_data['engagement_rate'])
         if 'active' in content_data:
             self.add_field(name='Active', value=content_data['active'])
         if 'points' in content_data:

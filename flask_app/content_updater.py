@@ -55,8 +55,12 @@ def get_shortcode(link):
 def cal_percent(a, b):
     return a / b
 
-def calculate_points(data):
-    return data['initial_plays']    
+def calculate_replays(initial_plays, replays):
+    rate = replays / initial_plays
+    if rate <= 0.7:
+        return initial_plays
+
+    return int(initial_plays * 0.7)    
 
 def content_updater():
     try:
@@ -95,34 +99,31 @@ def content_updater():
             total = 0
             for v_2 in v:
                 for _, v_2_v in v_2.items():
-                    total += v_2_v['total_plays']
+                    total += v_2_v['points']
 
             total_points = job_budgets[k][0]/10
             if total < total_points:
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():
                         v_2_v['active'] = 1
-                        v_2_v['points'] = calculate_points(v_2_v)
+                        # v_2_v['points'] = calculate_points(v_2_v['initial_plays'], v_2_v['replays'])
                         update_content(k_2, v_2_v)
             else:
                 diff = total - total_points
                 buhel = diff / float(len(v))
                 uldegdel = diff % len(v)
-
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():
-                        value = 0
-                        if uldegdel != 0:
-                            value += 1
-                        v_2_v['initial_plays'] = v_2_v['initial_plays'] - round((buhel + uldegdel) * v_2_v['initial_plays'] / v_2_v['total_plays'])
-                        v_2_v['replays'] = v_2_v['replays'] - round((buhel + uldegdel) * v_2_v['replays'] / v_2_v['total_plays'])
-                        v_2_v['account_reach'] = v_2_v['initial_plays'] - v_2_v['replays']
-                        v_2_v['total_plays'] = v_2_v['total_plays'] - round((buhel + uldegdel))
-                        uldegdel = uldegdel - 1
+                        perc = v_2_v['points'] / total_points
+                        # v_2_v['initial_plays'] = v_2_v['initial_plays'] - round((buhel + uldegdel) * v_2_v['initial_plays'] / v_2_v['total_plays'])
+                        # v_2_v['replays'] = v_2_v['replays'] - round((buhel + uldegdel) * v_2_v['replays'] / v_2_v['total_plays'])
+                        # v_2_v['account_reach'] = v_2_v['initial_plays'] - v_2_v['replays']
+                        # v_2_v['total_plays'] = v_2_v['total_plays'] - round((buhel + uldegdel))
                         
-                        v_2_v['active'] = 0
-                        v_2_v['points'] = calculate_points(v_2_v)
-                        print(f'{v_2_v}')
+                        # v_2_v['active'] = 0
+                        # v_2_v['replays'] = calculate_replays(v_2_v['initial_plays'], v_2_v['replays'])
+
+                        v_2_v['points'] = v_2_v ['points'] - (diff - math.floor(v_2_v ['points'] * perc))
                         update_content(k_2, v_2_v)
                         update_job(k)
                         user_id = contents_real_dict[k_2][3]
@@ -232,8 +233,10 @@ class ProIGToken():
 
                 new_data['replays'] = new_data['initial_plays'] - new_data['account_reach']
                 new_data['total_plays'] = new_data['initial_plays'] + new_data['replays']
-                new_data['points'] = 0 # calculate points
-                new_data['engagement'] = 0 # calculate engagement
+                new_data['replays'] = calculate_replays(new_data['initial_plays'], new_data['replays'])
+                new_data['points'] = new_data['initial_plays'] + new_data['replays']
+                new_data['engagement'] = new_data['total_interactions']
+                new_data['engagement_rate'] = new_data['total_interactions'] / new_data['account_reach'] * 100.0
                 my_data[data['shortcode']] = new_data
         next_url = None
         if 'next' in media['paging']:
