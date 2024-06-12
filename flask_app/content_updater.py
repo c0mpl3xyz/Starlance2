@@ -116,8 +116,6 @@ def content_updater():
                         update_content(k_2, v_2_v)
             else:
                 diff = total - total_points
-                buhel = diff / float(len(v))
-                uldegdel = diff % len(v)
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():
                         perc = v_2_v['points'] / total_points
