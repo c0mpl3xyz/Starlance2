@@ -1,4 +1,9 @@
-import os, threading
+# app.py
+import os
+from flask import Flask
+from dotenv import load_dotenv
+from apscheduler.schedulers.background import BackgroundScheduler
+from content_updater import content_updater
 from apis.user_api import user_bp
 from apis.token_api import token_bp
 from apis.job_api import job_bp
@@ -6,11 +11,7 @@ from apis.job_register_api import job_register_bp
 from apis.content_api import content_bp
 from apis.review_api import review_bp
 from apis.collect_api import collect_bp
-from content_updater import content_updater
-from apscheduler.schedulers.background import BackgroundScheduler
 
-from flask import Flask
-from dotenv import load_dotenv
 load_dotenv()
 
 APP_ID = os.getenv('APP_ID')
@@ -32,10 +33,9 @@ app.register_blueprint(collect_bp)
 
 def start_background_task():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(content_updater, 'interval', seconds=10)  # Adjust the interval as needed
+    scheduler.add_job(content_updater, 'interval', seconds=30)  # Adjust the interval as needed
     scheduler.start()
 
-start_background_task()
-
 if __name__ == '__main__':
+    start_background_task()
     app.run(ssl_context=('key/cert.pem', 'key/key.pem'), debug=True, host='0.0.0.0', port=9000, threaded=True)
