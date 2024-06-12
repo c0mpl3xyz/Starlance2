@@ -128,10 +128,10 @@ def content_updater():
                             user_id = contents_real_dict[k_2][3]
                             update_user_point(user_id, v_2_v)
         except Exception as e:
-            # raise e
+            raise e
             pass
         
-        time.sleep(300)
+        time.sleep(10)
 
 class ProIGToken():
     def __init__(self):
