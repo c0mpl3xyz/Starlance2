@@ -22,20 +22,21 @@ API_VERSION = os.getenv('API_VERSION')
 API_PREFIX = os.getenv('API_PREFIX')
 URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
 
-app = Flask(__name__)
-app.register_blueprint(user_bp)
-app.register_blueprint(token_bp)
-app.register_blueprint(job_bp)
-app.register_blueprint(job_register_bp)
-app.register_blueprint(content_bp)
-app.register_blueprint(review_bp)
-app.register_blueprint(collect_bp)
-
-def start_background_task():
+def create_app():
+    app = Flask(__name__)
+    app.register_blueprint(user_bp)
+    app.register_blueprint(token_bp)
+    app.register_blueprint(job_bp)
+    app.register_blueprint(job_register_bp)
+    app.register_blueprint(content_bp)
+    app.register_blueprint(review_bp)
+    app.register_blueprint(collect_bp)
+    app.config['THREADED'] = True
+    
     scheduler = BackgroundScheduler()
-    scheduler.add_job(content_updater, 'interval', seconds=30)  # Adjust the interval as needed
+    scheduler.add_job(content_updater, 'interval', seconds=10)  # Adjust the interval as needed
     scheduler.start()
 
-if __name__ == '__main__':
-    start_background_task()
-    app.run(ssl_context=('key/cert.pem', 'key/key.pem'), debug=True, host='0.0.0.0', port=9000, threaded=True)
+    return app
+
+app = create_app()
