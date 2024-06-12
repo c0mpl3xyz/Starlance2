@@ -74,12 +74,13 @@ class CollectView(discord.ui.View):
 class UserView(discord.ui.View):
     def __init__(self, user_data, bot):
         self.user_data = user_data
+        self.message = None
         self.bot = bot
         self.embed = UserEmbed(user_data)
         super().__init__()
         self.collect_button = discord.ui.Button(label=f"Collect Points: {user_data['points']}", style=discord.ButtonStyle.green, emoji='✨')
         self.collect_button.callback = self.collect_button_callback
-        collectable = user_data['points'] > 0 #TODO: add threshold
+        collectable = user_data['points'] > 2000 #TODO: add threshold
         if not collectable:
             self.collect_button.label = 'No Points to collect: 0'
             self.collect_button.disabled = True

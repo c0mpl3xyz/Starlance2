@@ -13,11 +13,16 @@ URL = os.getenv('URL')
 class JobModal(Modal, title="Job registration"):
     def __init__(self, bot, roles, budget, url, name=None, start_date=None, duration=7, upload_link=None):
         self.bot = bot
+        self.finished = False
         self.url = url
         self.roles = roles
         self.budget = budget
+        
+        timezone = pytz.timezone('Asia/Ulaanbaatar')
+        date = datetime.now(timezone)
+        default_start_date = date.strftime('%Y/%m/%d')
         self.name = TextInput(label="Job Name", placeholder="Your job name here", default=name, required=True)
-        self.start_date = TextInput(label="Start Date", placeholder="YYYY/MM/DD", default=start_date, required=True)
+        self.start_date = TextInput(label="Start Date", placeholder="YYYY/MM/DD", default=default_start_date, required=True)
         # TODO make it number
         self.duration = TextInput(label="Duration", placeholder="days", required=True, default=duration, style=discord.TextStyle.short)
         self.upload_link = TextInput(label="We Transfer Upload link", placeholder="We transfer link here", default=upload_link, required=True)
@@ -38,9 +43,8 @@ class JobModal(Modal, title="Job registration"):
     def validate(self, start_date_string, duration):
         validator = Validator()
         messages = []
-        # timezone = pytz.timezone('Asia/Ulaanbaatar')
-
-        date = datetime.now()
+        timezone = pytz.timezone('Asia/Ulaanbaatar')
+        date = datetime.now(timezone)
         today = datetime(date.year, date.month, date.day)
         if not validator.date_validator(start_date_string):
             messages.append('Start date is invalid')
@@ -96,6 +100,7 @@ class JobModal(Modal, title="Job registration"):
         #     await channel.send(message)
         
         if success:
+            self.finished = True
             user_job_view = JobView(data, self.bot)
             company_job_view = JobView(data, self.bot, company=True)
             company_job_view.message = await interaction.followup.send('New Job added', embed=company_job_view.embed, view=company_job_view)

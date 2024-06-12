@@ -4,10 +4,11 @@ from discord.ui import Select, View
 from modal import JobModal, BankRegistrationModal, SocialRegisterModal
 from utils.enums import Enums
 
-class SelectRoles(Select):  
+class SelectRoles(Select):
     def __init__(self, bot, roles, url):
         self.bot = bot
         self.url = url
+        self.message = None
         # roles = self.clean_roles(roles)
         options = [discord.SelectOption(label=role, description='') for role in roles[:25]]
         super().__init__(options = options, placeholder='Please select roles', min_values=1, max_values=len(roles))
@@ -15,9 +16,10 @@ class SelectRoles(Select):
     async def callback(self, interaction: discord.Interaction) -> Any:
         roles = self.values
         view = View()
-        view.add_item(SelectBudget(self.bot, roles, self.url))
-        success = await interaction.response.send_message('Select budget', view=view)
-        await interaction.message.delete()
+        select = SelectBudget(self.bot, roles, self.url)
+        select.select_roles_message = self.message
+        view.add_item(select)
+        select.select_budget_message = await interaction.response.send_message('Select budget', view=view)
         return success
     
     def clean_roles(self, roles):
@@ -29,6 +31,9 @@ class SelectBudget(Select):
         self.bot = bot
         self.roles = roles
         self.url = url
+        self.finished = False
+        self.select_roles_message = None
+        self.select_budget_message = None
 
         cashes = list(range(1000000, 6000000, 250000))
         options = [discord.SelectOption(label=str(f"{cash:,}") + ' ₮', description='') for cash in cashes[:25]]
@@ -36,7 +41,12 @@ class SelectBudget(Select):
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         budget = self.values[0].split(' ')[0].replace(',', '')
-        await interaction.response.send_modal(JobModal(self.bot, self.roles, int(budget), self.url))
+        job_modal = JobModal(self.bot, self.roles, int(budget), self.url)
+        await interaction.response.send_modal(job_modal)
+        await job_modal.wait()
+        if job_modal.finished:
+            self.select_budget_message.delete()
+            self.select_roles_message.delete()
     
 class UploadLinkSelect(Select):
     def __init__(self, bot, user_id, job_id, server_id, job_register_id, review_id, edit=False):
