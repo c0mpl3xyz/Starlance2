@@ -60,7 +60,13 @@ def calculate_replays(initial_plays, replays):
     if rate <= 0.7:
         return initial_plays
 
-    return int(initial_plays * 0.7)    
+    return int(initial_plays * 0.7)
+
+def calculate_replays_points(points):
+    return math.floor(points * 0.7 / 1.7)
+
+def calculate_initial_plays_points(points):
+    return math.floor(points * 1 / 1.7)
 
 def content_updater():
     try:
@@ -115,15 +121,9 @@ def content_updater():
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():
                         perc = v_2_v['points'] / total_points
-                        # v_2_v['initial_plays'] = v_2_v['initial_plays'] - round((buhel + uldegdel) * v_2_v['initial_plays'] / v_2_v['total_plays'])
-                        # v_2_v['replays'] = v_2_v['replays'] - round((buhel + uldegdel) * v_2_v['replays'] / v_2_v['total_plays'])
-                        # v_2_v['account_reach'] = v_2_v['initial_plays'] - v_2_v['replays']
-                        # v_2_v['total_plays'] = v_2_v['total_plays'] - round((buhel + uldegdel))
-                        
-                        # v_2_v['active'] = 0
-                        # v_2_v['replays'] = calculate_replays(v_2_v['initial_plays'], v_2_v['replays'])
-
                         v_2_v['points'] = v_2_v ['points'] - (diff - math.floor(v_2_v ['points'] * perc))
+                        v_2_v['initial_plays'] = calculate_initial_plays_points(v_2_v['points'])
+                        v_2_v['replays'] = calculate_replays_points(v_2_v['points'])
                         update_content(k_2, v_2_v)
                         update_job(k)
                         user_id = contents_real_dict[k_2][3]
