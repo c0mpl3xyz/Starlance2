@@ -97,7 +97,6 @@ async def my_contents(interaction: discord.Interaction):
     roles = is_dm(interaction)
 
     if is_influencer(roles):
-        await interaction.followup.send(ephemeral=True)
         content_views = GetUserContentView().execute(interaction.user.id, client)
         if content_views is None or len(content_views) == 0:
             await interaction.followup.send(ErrorMessageEnum.NO_CONTENT.value + f'<@{interaction.user.id}>', ephemeral=True)
@@ -127,11 +126,10 @@ async def my_reviews(interaction: discord.Interaction):
 
 @client.tree.command(name='my_all_jobs')
 async def my_all_jobs(interaction: discord.Interaction):
-    await interaction.user.send(ErrorMessageEnum.NO_JOB_ROLES.value)
+    await interaction.response.defer()
     roles = is_dm(interaction)
 
     if is_influencer(roles):
-        roles = [role.name for role in interaction.user.roles]
         job_views = GetJobsByUserRoles().execute(interaction.user.id, roles, client)
         if job_views is None or len(job_views) == 0:
             await interaction.user.send(ErrorMessageEnum.NO_JOB_ROLES.value)
@@ -171,7 +169,6 @@ async def company_job_add(interaction: discord.Interaction):
     
     else:
         view = View()
-        roles = [role.name for role in interaction.user.roles]
         select = SelectRoles(client, roles, URL)
         view.add_item(select)
         channel = discord.utils.get(interaction.guild.channels, name=Enums.JOB.value)
