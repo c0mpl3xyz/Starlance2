@@ -69,69 +69,65 @@ def calculate_initial_plays_points(points):
     return math.floor(points * 1 / 1.7)
 
 def content_updater():
-    while True:
-        try:
-            jobs = get_jobs()
-            job_ids = [job[0] for job in jobs]
-            contents = get_contents_by_job_ids(job_ids)
-            contents_real_dict = {content[0]: content for content in contents}
-            contents_dict = {get_shortcode(content[6]): content[0] for content in contents if get_shortcode(content[6]) is not None}
+    try:
+        jobs = get_jobs()
+        job_ids = [job[0] for job in jobs]
+        contents = get_contents_by_job_ids(job_ids)
+        contents_real_dict = {content[0]: content for content in contents}
+        contents_dict = {get_shortcode(content[6]): content[0] for content in contents if get_shortcode(content[6]) is not None}
 
-            ig_token = ProIGToken()
-            result = ig_token.filter_by_shortcodes(contents_dict)
-            job_content_dict = {}
-            for job in jobs:
-                job_id = job[0]
-                # Find all contents that match the job ID
-                matching_contents = [content[0] for content in contents if content[2] == job_id]
-                job_content_dict[job_id] = matching_contents
+        ig_token = ProIGToken()
+        result = ig_token.filter_by_shortcodes(contents_dict)
+        job_content_dict = {}
+        for job in jobs:
+            job_id = job[0]
+            # Find all contents that match the job ID
+            matching_contents = [content[0] for content in contents if content[2] == job_id]
+            job_content_dict[job_id] = matching_contents
 
-            job_budgets = {job[0]: [job[5], False] for job in jobs}
-            remove_keys = []
-            for k, v in job_content_dict.items():
-                if not len(v):
-                    remove_keys.append(k)
-                    continue
-                new_contents = []
-                for c_id in v:
-                    if c_id in result.keys():
-                        new_contents.append({c_id: result[c_id]})
-                job_content_dict[k] = new_contents
+        job_budgets = {job[0]: [job[5], False] for job in jobs}
+        remove_keys = []
+        for k, v in job_content_dict.items():
+            if not len(v):
+                remove_keys.append(k)
+                continue
+            new_contents = []
+            for c_id in v:
+                if c_id in result.keys():
+                    new_contents.append({c_id: result[c_id]})
+            job_content_dict[k] = new_contents
 
-            for k in remove_keys:
-                del job_content_dict[k]
-                del job_budgets[k]
+        for k in remove_keys:
+            del job_content_dict[k]
+            del job_budgets[k]
 
-            for k, v in job_content_dict.items():
-                total = 0
+        for k, v in job_content_dict.items():
+            total = 0
+            for v_2 in v:
+                for _, v_2_v in v_2.items():
+                    total += v_2_v['points']
+
+            total_points = job_budgets[k][0]/10
+            if total < total_points:
                 for v_2 in v:
-                    for _, v_2_v in v_2.items():
-                        total += v_2_v['points']
-
-                total_points = job_budgets[k][0]/10
-                if total < total_points:
-                    for v_2 in v:
-                        for k_2, v_2_v in v_2.items():
-                            v_2_v['active'] = 1
-                            # v_2_v['points'] = calculate_points(v_2_v['initial_plays'], v_2_v['replays'])
-                            update_content(k_2, v_2_v)
-                else:
-                    diff = total - total_points
-                    for v_2 in v:
-                        for k_2, v_2_v in v_2.items():
-                            perc = v_2_v['points'] / total_points
-                            v_2_v['points'] = v_2_v ['points'] - (diff - math.floor(v_2_v ['points'] * perc))
-                            v_2_v['initial_plays'] = calculate_initial_plays_points(v_2_v['points'])
-                            v_2_v['replays'] = calculate_replays_points(v_2_v['points'])
-                            update_content(k_2, v_2_v)
-                            update_job(k)
-                            user_id = contents_real_dict[k_2][3]
-                            update_user_point(user_id, v_2_v)
-        except Exception as e:
-            raise e
-            pass
-        
-        time.sleep(10)
+                    for k_2, v_2_v in v_2.items():
+                        v_2_v['active'] = 1
+                        # v_2_v['points'] = calculate_points(v_2_v['initial_plays'], v_2_v['replays'])
+                        update_content(k_2, v_2_v)
+            else:
+                diff = total - total_points
+                for v_2 in v:
+                    for k_2, v_2_v in v_2.items():
+                        perc = v_2_v['points'] / total_points
+                        v_2_v['points'] = v_2_v ['points'] - (diff - math.floor(v_2_v ['points'] * perc))
+                        v_2_v['initial_plays'] = calculate_initial_plays_points(v_2_v['points'])
+                        v_2_v['replays'] = calculate_replays_points(v_2_v['points'])
+                        update_content(k_2, v_2_v)
+                        update_job(k)
+                        user_id = contents_real_dict[k_2][3]
+                        update_user_point(user_id, v_2_v)
+    except Exception as e:
+        raise e
 
 class ProIGToken():
     def __init__(self):

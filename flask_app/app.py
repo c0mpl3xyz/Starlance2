@@ -31,10 +31,11 @@ app.register_blueprint(review_bp)
 app.register_blueprint(collect_bp)
 
 def start_background_task():
-    background_thread = threading.Thread(target=content_updater)
-    background_thread.daemon = True
-    background_thread.start()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(content_updater, 'interval', seconds=10)  # Adjust the interval as needed
+    scheduler.start()
+
+start_background_task()
 
 if __name__ == '__main__':
-    start_background_task()
     app.run(ssl_context=('key/cert.pem', 'key/key.pem'), debug=True, host='0.0.0.0', port=9000, threaded=True)
