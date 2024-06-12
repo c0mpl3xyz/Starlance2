@@ -31,7 +31,7 @@ def is_main_server(intearaction) -> bool:
     return intearaction.guild.id == Enums.GUILD_ID.value
 
 def is_influencer(roles):
-    return 'Influencer' in roles
+    return '@everyone' in roles
 
 def is_dm(interaction):
     try:
@@ -66,8 +66,7 @@ async def bank_register(interaction: discord.Interaction):
     await interaction.response.defer()
     roles = is_dm(interaction)
     
-     # TODO: add not
-    if is_influencer(roles):
+    if not is_influencer(roles):
         return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
     
     view = discord.ui.View()
@@ -80,8 +79,7 @@ async def my_jobs(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
     
-    # TODO: change it not
-    if not is_influencer(roles):
+    if is_influencer(roles):
         job_views = GetUserJobViews().execute(interaction.user.id, client)
         if job_views is None or len(job_views) == 0:
             await interaction.followup.send(ErrorMessageEnum.NO_JOB.value + f'<@{interaction.user.id}>', ephemeral=True)
@@ -98,8 +96,7 @@ async def my_contents(interaction: discord.Interaction):
     await interaction.response.defer()
     roles = is_dm(interaction)
 
-     # TODO: change it not
-    if not is_influencer(roles):
+    if is_influencer(roles):
         await interaction.followup.send(ephemeral=True)
         content_views = GetUserContentView().execute(interaction.user.id, client)
         if content_views is None or len(content_views) == 0:
@@ -117,8 +114,7 @@ async def my_reviews(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
 
-     # TODO: change it not
-    if not is_influencer(roles):
+    if is_influencer(roles):
         review_views = GetUserReviewView().execute(interaction.user.id, client)
         if review_views is None or len(review_views) == 0:
             await interaction.followup.send(ErrorMessageEnum.NO_REVIEWS.value + f'<@{interaction.user.id}>', ephemeral=True)
@@ -134,8 +130,7 @@ async def my_all_jobs(interaction: discord.Interaction):
     await interaction.user.send(ErrorMessageEnum.NO_JOB_ROLES.value)
     roles = is_dm(interaction)
 
-    # TODO: change it not
-    if not is_influencer(roles):
+    if is_influencer(roles):
         roles = [role.name for role in interaction.user.roles]
         job_views = GetJobsByUserRoles().execute(interaction.user.id, roles, client)
         if job_views is None or len(job_views) == 0:
@@ -152,8 +147,7 @@ async def my_status(interaction: discord.Interaction):
     await interaction.response.defer()
     roles = is_dm(interaction)
 
-    # TODO: change it not
-    if not is_influencer(roles):
+    if is_influencer(roles):
         user_views = GetUserStatus().execute(interaction.user.id, client)
         if user_views is None or len(user_views) == 0:
             await interaction.user.send(ErrorMessageEnum.NO_USER.value)
@@ -169,55 +163,60 @@ async def company_job_add(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
     
-    if is_main_server(interaction):
-        return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
-
     if is_influencer(roles):
         return await interaction.followup.send(ErrorMessageEnum.NOT_COMPANY.value + f' <@{interaction.user.id}>', ephemeral=True)
 
-    view = View()
-    roles = [role.name for role in interaction.user.roles]
-    select = SelectRoles(client, roles, URL)
-    view.add_item(select)
-    channel = discord.utils.get(interaction.guild.channels, name=Enums.JOB.value)
-    if not channel:
-        channel = interaction.channel
-    if channel:
-        select.message = await channel.send('Add new Job here \nSelect roles', view=view)
+    if is_main_server(interaction):
+        return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
+    
+    else:
+        view = View()
+        roles = [role.name for role in interaction.user.roles]
+        select = SelectRoles(client, roles, URL)
+        view.add_item(select)
+        channel = discord.utils.get(interaction.guild.channels, name=Enums.JOB.value)
+        if not channel:
+            channel = interaction.channel
+        if channel:
+            select.message = await channel.send('Add new Job here \nSelect roles', view=view)
 
-    await interaction.followup.send(f'Job add sent to <#{channel.id}>')
+        await interaction.followup.send(f'Job add sent to <#{channel.id}>')
 
 @client.tree.command(name='company_jobs')
 async def company_jobs(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
 
+    if is_influencer(roles):
+        return await interaction.followup.send(ErrorMessageEnum.NOT_COMPANY.value + f' <@{interaction.user.id}>', ephemeral=True)
+
     if is_main_server(interaction):
         return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
-    
-    if not is_influencer(roles):
-        job_views = GetCompanyJobs().execute(interaction.user.guild.id, client)
-        if job_views is None or len(job_views) == 0:
-            return await interaction.followup.send(ErrorMessageEnum.NO_JOB.value)
-        else:
-            channel = discord.utils.get(interaction.guild.channels, name=Enums.JOB.value)
-            if not channel:
-                channel = interaction.channel
-            for view in job_views:
-                view.message = await channel.send(embed=view.embed, view=view)
-        return await interaction.followup.send(f'Job list sent to <#{channel.id}>')
+
+    job_views = GetCompanyJobs().execute(interaction.user.guild.id, client)
+    if job_views is None or len(job_views) == 0:
+        return await interaction.followup.send(ErrorMessageEnum.NO_JOB.value)
     else:
-        return await interaction.followup.send(ErrorMessageEnum.NOT_COMPANY.value + f' <@{interaction.user.id}>', ephemeral=True)
+        channel = discord.utils.get(interaction.guild.channels, name=Enums.JOB.value)
+        if not channel:
+            channel = interaction.channel
+        for view in job_views:
+            view.message = await channel.send(embed=view.embed, view=view)
+    return await interaction.followup.send(f'Job list sent to <#{channel.id}>')
+        
 
 @client.tree.command(name='company_contents')
 async def company_contents(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
     
+    if is_influencer(roles):
+        return await interaction.followup.send(ErrorMessageEnum.NOT_COMPANY.value, ephemeral=True)
+
     if is_main_server(interaction):
         return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
 
-    if not is_influencer(roles):
+    else:
         content_views = GetCompanyContentView().execute(interaction.guild.id, client)
         if content_views is None or len(content_views) == 0:
             await interaction.followup.send(ErrorMessageEnum.NO_CONTENT.value + f'<@{interaction.user.id}>', ephemeral=True)
@@ -228,8 +227,6 @@ async def company_contents(interaction: discord.Interaction):
             for view in content_views:
                 view.message = await channel.send(embed=view.embed, view=view)
             await interaction.followup.send(f'Content list sent to <#{channel.id}>', ephemeral=True)
-    else:
-        await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
 
 @client.tree.command(name='server_reviews')
 async def server_reviews(interaction: discord.Interaction):
@@ -237,7 +234,7 @@ async def server_reviews(interaction: discord.Interaction):
     roles = is_dm(interaction)
 
     if is_influencer(roles):
-        return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     if not is_main_server(interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
@@ -259,7 +256,7 @@ async def server_contents(interaction: discord.Interaction):
     roles = is_dm(interaction)
 
     if is_influencer(roles):
-        return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     if not is_main_server(interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
@@ -281,7 +278,7 @@ async def server_approves(interaction: discord.Interaction):
     roles = is_dm(interaction)
 
     if is_influencer(roles):
-        return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     if not is_main_server(interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
@@ -307,7 +304,7 @@ async def server_collects(interaction: discord.Interaction):
     roles = is_dm(interaction)
 
     if is_influencer(roles):
-        return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     if not is_main_server(interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)

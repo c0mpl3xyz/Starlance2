@@ -19,8 +19,8 @@ class SelectRoles(Select):
         select = SelectBudget(self.bot, roles, self.url)
         select.select_roles_message = self.message
         view.add_item(select)
-        select.select_budget_message = await interaction.response.send_message('Select budget', view=view)
-        return success
+        await interaction.response.send_message('Select budget', view=view)
+        return
     
     def clean_roles(self, roles):
         roles = [role.lower().replace('job', '') for role in roles if '[job]' in role.lower()]
@@ -45,7 +45,6 @@ class SelectBudget(Select):
         await interaction.response.send_modal(job_modal)
         await job_modal.wait()
         if job_modal.finished:
-            self.select_budget_message.delete()
             self.select_roles_message.delete()
     
 class UploadLinkSelect(Select):
