@@ -31,6 +31,7 @@ def is_main_server(intearaction) -> bool:
     return intearaction.guild.id == Enums.GUILD_ID.value
 
 def is_influencer(roles):
+    # TODO: change to Influencer
     return '@everyone' in roles
 
 def is_dm(interaction):
