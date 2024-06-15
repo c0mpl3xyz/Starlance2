@@ -33,9 +33,9 @@ def create_app():
     app.register_blueprint(collect_bp)
     app.config['THREADED'] = True
     
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(content_updater, 'interval', seconds=10)  # Adjust the interval as needed
-    scheduler.start()
+    # scheduler = BackgroundScheduler()
+    # scheduler.add_job(content_updater, 'interval', seconds=10)  # Adjust the interval as needed
+    # scheduler.start()
 
     return app
 

@@ -32,7 +32,7 @@ def is_main_server(intearaction) -> bool:
 
 def is_influencer(roles):
     # TODO: change to Influencer
-    return '@everyone' in roles
+    return '@everyone2' in roles
 
 def is_dm(interaction):
     try:
