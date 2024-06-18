@@ -78,3 +78,16 @@ class SelectBankNames(Select):
     async def callback(self, interaction: discord.Interaction) -> Any:
         bank_name = self.values[0]
         return await interaction.response.send_modal(BankRegistrationModal(bank_name, self.url))
+
+class MessageRolesSelect(Select):
+    def __init__(self, url):
+        self.url = url
+        guild = self.bot.get_guild(Enums.GUILD_ID.value)
+        self.roles = [][:24]
+        options = [discord.SelectOption(label=role, description='') for role in self.roles[:24]]
+        super().__init__(options=options, placeholder='Please Select roles', min_values=1, max_values=len(self.roles))
+
+    async def callback(self, interaction: discord.Interaction) -> Any:
+        bank_name = self.values[0]
+        # TODO: send to all user
+        return await interaction.response.send_modal()

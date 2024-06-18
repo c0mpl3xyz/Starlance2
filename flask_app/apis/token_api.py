@@ -51,25 +51,24 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         access_token = JSON['access_token']
         duration = JSON['expires_in']
         token_type = JSON['token_type']
-        user_id = state['user_id']
+        server_id = state['server_id']
         message: Dict = {}
         debug = ''
-        user_exist = User(cursor).get_by_id(user_id)
-        debug = 'user exists'
-        if not user_exist:
-            created = True
-            debug = 'user not exists'
-            user_exist = User(cursor).create(user_id)
+        # user_exist = User(cursor).get_by_id(server_id)
+        # debug = 'user exists'
+        # if not user_exist:
+        #     created = True
+        #     debug = 'user not exists'
+        #     user_exist = AccessToken(cursor).create(server_id)
 
-        if user_exist:
-            token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
-
+        # if user_exist:
+        token_creation = AccessToken(cursor).add(access_token, server_id, duration, token_type)
 
     message = {
             'success': user_exist and token_creation,
             'token_created': token_creation,
             'access_token': check_token,
-            'user_created': created,
+            'server_created': created,
             'debug': debug,
             'data': data,
             'json': JSON

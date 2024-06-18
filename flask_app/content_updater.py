@@ -112,7 +112,6 @@ def content_updater():
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():
                         v_2_v['active'] = 1
-                        # v_2_v['points'] = calculate_points(v_2_v['initial_plays'], v_2_v['replays'])
                         update_content(k_2, v_2_v)
             else:
                 diff = total - total_points
@@ -159,7 +158,7 @@ class ProIGToken():
 
     def get_media_list(self, url=None):
         if url is None:
-            url = f'https://graph.facebook.com/v20.0/{IG_ID}?fields=media.limit(100){{shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares)}}&access_token={IG_TOKEN}'
+            url = f'https://graph.facebook.com/v20.0/{IG_ID}?fields=media.limit(100){{shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares,ig_reels_aggregated_all_plays_count,clips_replays_count){{name,values}}}}&access_token={IG_TOKEN}'
 
         response = requests.get(url)
         return response.json()
@@ -227,9 +226,13 @@ class ProIGToken():
                     
                     if insight['name'] == 'total_interactions':
                         new_data['total_interactions'] = insight['values'][0]['value']
+                    
+                    if insight['name'] == 'ig_reels_aggregated_all_plays_count':
+                        new_data['total_plays'] = insight['values'][0]['value']
+                    
+                    if insight['name'] == 'clips_replays_count':
+                        new_data['replays'] = insight['values'][0]['value']
 
-                new_data['replays'] = new_data['initial_plays'] - new_data['account_reach']
-                new_data['total_plays'] = new_data['initial_plays'] + new_data['replays']
                 new_data['replays'] = calculate_replays(new_data['initial_plays'], new_data['replays'])
                 new_data['points'] = new_data['initial_plays'] + new_data['replays']
                 new_data['engagement'] = new_data['total_interactions']

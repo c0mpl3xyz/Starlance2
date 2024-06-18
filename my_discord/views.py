@@ -13,13 +13,17 @@ from utils.enums import Enums
 URL = os.getenv('URL')
 
 class LogInView(discord.ui.View):
-    def __init__(self, user_id, user_name):
+    def __init__(self, guild_id, guild_name):
         from manual import get_manual_link
-        link = get_manual_link(user_id, user_name)
-        self.embed = LoginEmbed(user_name)
+        link = get_manual_link(guild_id, guild_name)
+        self.embed = LoginEmbed(guild_name)
         super().__init__()
         self.login_button = discord.ui.Button(label="Log in with Facebook", style=discord.ButtonStyle.url, url=link)
+        self.login_button.callback = self.login_button_callback
         self.add_item(self.login_button)
+
+    async def login_button_callback(self, interaction: discord.Interaction):
+        pass
 
     async def on_timeout(self):
         await self.message.edit(content="Link timed out", view=None)

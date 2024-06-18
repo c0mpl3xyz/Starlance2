@@ -2,13 +2,13 @@ import discord
 from discord import Embed
 
 class LoginEmbed(Embed):
-     def __init__(self, user_name):
+     def __init__(self, server_name):
         super().__init__(
             title='Login with Facebook',
             color = discord.Color.random()
             )
         
-        self.add_field(name=f'Login to Facebook with discord user: <{user_name}>', value=user_name, inline=False)
+        self.add_field(name=f'Login to Facebook with discord server: <{server_name}>', value=server_name, inline=False)
 
 class UserEmbed(Embed):
      def __init__(self, user_data):

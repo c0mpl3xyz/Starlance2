@@ -321,6 +321,32 @@ async def server_collects(interaction: discord.Interaction):
             view.message = await interaction.channel.send(embed=view.embed, view=view)
         await interaction.followup.send(f'Collect request list sent to <#{channel.id}>', ephemeral=True)
 
+@client.tree.command(name='server_message')
+async def server_message(interaction: discord.Interaction):
+    if await is_dm(interaction):
+        return
+
+    if is_influencer(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+    
+    if not is_main_server(interaction):
+        return await interaction.response.send_message(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+    
+    await interaction.response.defer(ephemeral=True)
+    collect_views = GetServerCollectView().execute(client)
+    if collect_views is None or len(collect_views) == 0:
+        try:
+            await interaction.followup.send(ErrorMessageEnum.NO_COLLECT.value + f'<@{interaction.user.id}>', ephemeral=True)
+        except discord.errors.InteractionResponded:
+            await interaction.followup.send(ErrorMessageEnum.NO_COLLECT.value + f'<@{interaction.user.id}>', ephemeral=True)
+    else:
+        channel = discord.utils.get(interaction.guild.channels, name=Enums.COLLECT.value)
+        if not channel:
+            channel = interaction.channel
+        for view in collect_views:
+            view.message = await interaction.channel.send(embed=view.embed, view=view)
+        await interaction.followup.send(f'Collect request list sent to <#{channel.id}>', ephemeral=True)
+
 # @client.tree.command(name='test_embed')
 # async def test_embed(interaction: discord.Interaction):
 #     some_url = "https://fallendeity.github.io/discord.py-masterclass/"
@@ -354,17 +380,21 @@ async def server_collects(interaction: discord.Interaction):
 #     response = 'Welcome'
 #     await message.channel.send(response)
 
-# @client.tree.command(name='login')
-# async def login(interaction: discord.Interaction):
-#     if await is_dm(interaction):
-#         return 
-    
-#     if not is_influencer(interaction):
-#         view = LogInView(interaction.user.id, interaction.user.name)
-#         await interaction.user.send('Login with Facebook', view=view, embed=view.embed)
-#         return await interaction.response.send_message(f'Log in link sent to user: <@{interaction.user.id}>', ephemeral=True)
-#     else:
-#         return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+@client.tree.command(name='company_login')
+async def login(interaction: discord.Interaction):
+    await interaction.response.defer()
+    if await is_dm(interaction):
+        return
 
+    if is_influencer(interaction):
+        return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+    
+    if is_main_server(interaction):
+        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+    
+    else:
+        view = LogInView(interaction.guild.id, interaction.guild.name)
+        await interaction.user.send('Login with Facebook', view=view, embed=view.embed)
+        return await interaction.followup.send(f'Log in link sent to user: <@{interaction.user.id}>', ephemeral=True)
 
 client.run(TOKEN)
