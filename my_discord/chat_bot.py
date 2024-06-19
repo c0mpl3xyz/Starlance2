@@ -48,6 +48,11 @@ def is_dm(interaction):
 
 @client.event
 async def on_message(message):
+    # Prevent the bot from responding to its own messages
+    if message.author == client.user:
+        return
+    
+    # Your response
     response = 'Welcome to the UGC Mongolia, Please contact UGC Mongolia server Admins'
     await message.channel.send(response)
 
