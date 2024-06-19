@@ -14,6 +14,7 @@ class Enums(Enum):
     REVIEW = 'review-video'
     JOB = 'jobs'
 
-    # TODO: change guild id
+    # 
+    #TODO: add rejected message to influencer change guild id
     GUILD_ID = 1212987222400307280
     # GUILD_ID = 617630064653238272

@@ -293,7 +293,6 @@ class ApprovementJobView(discord.ui.View):
         elif embed_data['type'] == 'Approved':
             self.add_item(self.approve_button)
 
-    #TODO: add rejected message to influencer
     async def reject_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
         register_job = RegisterJob()
@@ -399,8 +398,6 @@ class ReviewView(discord.ui.View):
         self.review_button.disabled = True
         await interaction.message.edit(view=self)
         
-
-    #TODO: add rejected message to influencer
     async def reject_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewRejectModal
         # interaction.response.defer()
