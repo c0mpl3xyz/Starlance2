@@ -10,6 +10,15 @@ class LoginEmbed(Embed):
         
         self.add_field(name=f'Login to Facebook with discord server: <{server_name}>', value=server_name, inline=False)
 
+class MessageEmbed(Embed):
+     def __init__(self, message_title, message):
+        super().__init__(
+            title=message_title,
+            color = discord.Color.random()
+            )
+        
+        self.add_field(name='Mesasage', value=message)
+
 class UserEmbed(Embed):
      def __init__(self, user_data):
         super().__init__(

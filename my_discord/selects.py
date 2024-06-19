@@ -4,19 +4,56 @@ from discord.ui import Select, View
 from modal import JobModal, BankRegistrationModal, SocialRegisterModal
 from utils.enums import Enums
 
+class MessageSelect(Select):
+    def __init__(self, bot, roles):
+        self.bot = bot
+        self.roles_message = None
+        roles = self.clean_roles(roles)
+        self.all_roles = 'All Roles'
+        roles = [self.all_roles] + roles
+        roles = roles[:25]
+        print(f'{roles=}')
+        options = [discord.SelectOption(label=role, description='') for role in roles]
+        super().__init__(options = options, placeholder='Please select roles', min_values=1, max_values=len(roles))
+
+    async def callback(self, interaction: discord.Interaction) -> Any:
+        from modal import MessageModal
+        roles = self.values
+        if self.all_roles in roles:
+            i = roles.index(self.all_roles)
+            roles[i] = 'Influencer'
+
+        modal = MessageModal(self.bot, roles=roles)
+        await interaction.response.send_modal(modal)
+        await modal.wait()
+
+        if modal.finished:
+            message = self.roles_message
+            await message.delete()
+        return
+    
+    def clean_roles(self, roles):
+        roles = [role.lower().replace('[job]', '').strip() for role in roles if '[job]' in role.lower()]
+        return roles[:25]
+    
 class SelectRoles(Select):
     def __init__(self, bot, roles, url):
         self.bot = bot
         self.url = url
         self.message = None
-        roles = ['@everyone'] + roles
+        roles = self.clean_roles(roles)
+        self.all_roles = 'All Roles'
+        roles = [self.all_roles] + roles
         roles = roles[:25]
-        # roles = self.clean_roles(roles)
         options = [discord.SelectOption(label=role, description='') for role in roles]
         super().__init__(options = options, placeholder='Please select roles', min_values=1, max_values=len(roles))
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         roles = self.values
+        if self.all_roles in roles:
+            i = roles.index(self.all_roles)
+            roles[i] = 'Influencer'
+
         view = View()
         select = SelectBudget(self.bot, roles, self.url)
         select.select_roles_message = self.message
@@ -25,7 +62,7 @@ class SelectRoles(Select):
         return
     
     def clean_roles(self, roles):
-        roles = [role.lower().replace('job', '') for role in roles if '[job]' in role.lower()]
+        roles = [role.lower().replace('[job]', '').strip() for role in roles if '[job]' in role.lower()]
         return roles[:25]
     
 class SelectBudget(Select):
@@ -37,7 +74,7 @@ class SelectBudget(Select):
         self.select_roles_message = None
         self.select_budget_message = None
 
-        cashes = list(range(1000000, 6000000, 250000))
+        cashes = list(range(2000000, 6000000, 250000))
         options = [discord.SelectOption(label=str(f"{cash:,}") + ' ₮', description='') for cash in cashes[:25]]
         super().__init__(options=options, placeholder='Please select Budget', min_values=1)
 
@@ -80,16 +117,3 @@ class SelectBankNames(Select):
     async def callback(self, interaction: discord.Interaction) -> Any:
         bank_name = self.values[0]
         return await interaction.response.send_modal(BankRegistrationModal(bank_name, self.url))
-
-class MessageRolesSelect(Select):
-    def __init__(self, url):
-        self.url = url
-        guild = self.bot.get_guild(Enums.GUILD_ID.value)
-        self.roles = [][:24]
-        options = [discord.SelectOption(label=role, description='') for role in self.roles[:24]]
-        super().__init__(options=options, placeholder='Please Select roles', min_values=1, max_values=len(self.roles))
-
-    async def callback(self, interaction: discord.Interaction) -> Any:
-        bank_name = self.values[0]
-        # TODO: send to all user
-        return await interaction.response.send_modal()

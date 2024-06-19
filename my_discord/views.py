@@ -26,7 +26,11 @@ class LogInView(discord.ui.View):
         pass
 
     async def on_timeout(self):
-        await self.message.edit(content="Link timed out", view=None)
+        self.clear_items()
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button.disabled = True
+        self.add_item(timeout_button)
+        await self.message.edit(view=self)
 
 class CollectView(discord.ui.View):
     def __init__(self, user_data, bot, collect_id, points):

@@ -114,16 +114,18 @@ class JobModal(Modal, title="Job registration"):
 
                 user_roles = set([role.name for role in user.roles])
                 intersection_set = user_roles & job_roles
-
-                if isinstance(user, discord.User) or isinstance(user, discord.Member):
-                    if list(intersection_set):
-                        dm_channel = user.dm_channel
-                        if not dm_channel:
-                            dm_channel = await user.create_dm()
-                        user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
-                    else:
-                        await interaction.followup.send(response['message'])
-                    return success
+                try:
+                    if isinstance(user, discord.User) or isinstance(user, discord.Member):
+                        if list(intersection_set):
+                            dm_channel = user.dm_channel
+                            if not dm_channel:
+                                dm_channel = await user.create_dm()
+                            user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
+                        else:
+                            await interaction.followup.send(response['message'])
+                        return success
+                except:
+                    pass
 
 class JobAdditionalModal(Modal, title='Additional Information'):
     def __init__(self, url):
@@ -143,6 +145,42 @@ class JobAdditionalModal(Modal, title='Additional Information'):
         }
 
         requests.put(self.url + '/job', json=data).json()
+
+class MessageModal(Modal, title='Message send'):
+    def __init__(self, bot, roles):
+        self.bot = bot
+        self.roles = roles
+        self.message_title = TextInput(label="Title", placeholder='UGC MONGOLIA', required=True)
+        self.message = TextInput(label="Message", placeholder='Enter message or announcement', required=True)
+        self.finished = False
+        super().__init__()
+        self.add_item(self.message)
+        self.add_item(self.message_title)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        from embeds import MessageEmbed
+        await interaction.response.defer()
+        embed = MessageEmbed(self.message_title, self.message)
+        self.roles
+        guild = self.bot.get_guild(Enums.GUILD_ID.value)
+
+        message_roles = set(self.roles)
+        for user in guild.members:
+            user_roles = set([role.name for role in user.roles])
+            intersection_set = user_roles & message_roles
+
+            try:
+                if isinstance(user, discord.User) or isinstance(user, discord.Member):
+                    if list(intersection_set):
+                        dm_channel = user.dm_channel
+                        if not dm_channel:
+                            dm_channel = await user.create_dm()
+                        await dm_channel.send(embed=embed)
+            except:
+                pass
+        self.finished = True
+        await interaction.followup.send('Message successfully sent')
+        self.stop()
 
 class ReviewUserModal(Modal, title='Review upload'):
     def __init__(self, bot, user_id, job_register_id, job_data: dict, review_type, company=False):
