@@ -47,6 +47,11 @@ def is_dm(interaction):
         return []
 
 @client.event
+async def on_message(message):
+    response = 'Welcome to the UGC Mongolia, Please contact UGC Mongolia server Admins'
+    await message.channel.send(response)
+
+@client.event
 async def on_ready():
     synced = await client.tree.sync()
     print(f'I\'m Ready\nCommands {str(len(synced))}')
@@ -391,18 +396,6 @@ async def server_message(interaction: discord.Interaction):
 #     embed.set_thumbnail(url="https://media.discordapp.net/attachments/1112418314581442650/1124819948317986926/db28bfb9bfcdd1f6.png")
 #     embed.set_footer(text="Footer", icon_url="https://cdn.discordapp.com/attachments/1112418314581442650/1124820375587528797/dc4b182a87ecee3d.png")
 #     await interaction.response.send_message(embed=embed)
-
-# @client.event
-# async def on_message(message):
-#     print(message.guild.id)
-#     if message.author == client.user:
-#         return
-#     if message.content.startswith('!'):
-#         await client.process_commands(message)
-#         return
-
-#     response = 'Welcome'
-#     await message.channel.send(response)
 
 # @client.tree.command(name='company_login')
 # async def login(interaction: discord.Interaction):
