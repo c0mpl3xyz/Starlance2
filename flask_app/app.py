@@ -45,6 +45,6 @@ if __name__ == '__main__':
     app.run(
         host='0.0.0.0', 
         port=9000, 
-        ssl_context=('cert.pem', 'key.pem'), 
+        ssl_context=('key/cert.pem', 'key/key.pem'), 
         threaded=True
     )
