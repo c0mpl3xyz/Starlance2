@@ -9,8 +9,10 @@ class SelectRoles(Select):
         self.bot = bot
         self.url = url
         self.message = None
+        roles = ['@everyone'] + roles
+        roles = roles[:25]
         # roles = self.clean_roles(roles)
-        options = [discord.SelectOption(label=role, description='') for role in roles[:25]]
+        options = [discord.SelectOption(label=role, description='') for role in roles]
         super().__init__(options = options, placeholder='Please select roles', min_values=1, max_values=len(roles))
 
     async def callback(self, interaction: discord.Interaction) -> Any:
