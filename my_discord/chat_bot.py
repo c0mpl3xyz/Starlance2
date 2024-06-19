@@ -32,7 +32,7 @@ def is_main_server(intearaction) -> bool:
 
 def is_influencer(roles):
     # TODO: change to Influencer
-    return '@everyone2' in roles
+    return 'Influencer' in roles
 
 def is_dm(interaction):
     try:
@@ -143,6 +143,8 @@ async def my_all_jobs(interaction: discord.Interaction):
 
 @client.tree.command(name='my_status')
 async def my_status(interaction: discord.Interaction):
+    print(interaction.guild.id)
+    print(interaction.guild.name)
     await interaction.response.defer()
     roles = is_dm(interaction)
 
