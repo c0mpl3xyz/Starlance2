@@ -45,7 +45,7 @@ class SelectBudget(Select):
         await interaction.response.send_modal(job_modal)
         await job_modal.wait()
         if job_modal.finished:
-            self.select_roles_message.delete()
+            await self.select_roles_message.delete()
     
 class UploadLinkSelect(Select):
     def __init__(self, bot, user_id, job_id, server_id, job_register_id, review_id, edit=False):
