@@ -79,14 +79,6 @@ def calculate_initial_plays_points(points):
 
 def content_updater():
     logging.info('Started updating contents')
-    logging.info(f'{URL=}')
-    logging.info(f'{API_VERSION=}')
-    logging.info(f'{APP_ID=}')
-    logging.info(f'{API_PREFIX=}')
-    logging.info(f'{URL_PREFIX=}')
-    logging.info(f'{IG_TOKEN=}')
-    logging.info(f'{IG_ID=}')
-    logging.info(f'{PERMISSIONS=}')
     try:
         ('Im alive!')
         jobs = get_jobs()
