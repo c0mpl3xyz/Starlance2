@@ -27,6 +27,13 @@ API_VERSION = os.getenv('API_VERSION')
 API_PREFIX = os.getenv('API_PREFIX')
 URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
 
+
+logging.info(f'{URL=}')
+logging.info(f'{API_VERSION=}')
+logging.info(f'{APP_ID=}')
+logging.info(f'{API_PREFIX=}')
+logging.info(f'{URL_PREFIX=}')
+
 def create_app():
     app = Flask(__name__)
     app.register_blueprint(user_bp)
@@ -41,7 +48,7 @@ def create_app():
     return app
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(content_updater, 'interval', minutes=5) 
+scheduler.add_job(content_updater, 'interval', seconds=5) 
 app = create_app()
 first = True
 

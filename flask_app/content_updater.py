@@ -24,6 +24,7 @@ def content_updater_2():
 
 def get_jobs():
     result = requests.get(URL + '/job/open_jobs')
+    print(result.text)
     return result.json()
 
 def get_contents_by_job_ids(job_ids):
@@ -78,6 +79,14 @@ def calculate_initial_plays_points(points):
 
 def content_updater():
     logging.info('Started updating contents')
+    logging.info(f'{URL=}')
+    logging.info(f'{API_VERSION=}')
+    logging.info(f'{APP_ID=}')
+    logging.info(f'{API_PREFIX=}')
+    logging.info(f'{URL_PREFIX=}')
+    logging.info(f'{IG_TOKEN=}')
+    logging.info(f'{IG_ID=}')
+    logging.info(f'{PERMISSIONS=}')
     try:
         ('Im alive!')
         jobs = get_jobs()
@@ -144,6 +153,7 @@ def content_updater():
         logging.info('Ended updating contents')
     except Exception as e:
         logging.error(f'Content updating failed: {str(e)}')
+        raise e
 
 class ProIGToken():
     def __init__(self):
