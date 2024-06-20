@@ -29,6 +29,9 @@ client = commands.Bot(command_prefix='!', intents=intents)
 
 def is_main_server(intearaction) -> bool:
     return intearaction.guild.id == Enums.GUILD_ID.value
+
+def is_our_company(intearaction) -> bool:
+    return intearaction.guild.id == Enums.OUR_COMPANY.value
     
 def is_influencer(roles):
     # TODO: change to Influencer
@@ -46,15 +49,20 @@ def is_dm(interaction):
     except AttributeError:
         return []
 
-@client.event
-async def on_message(message):
-    # Prevent the bot from responding to its own messages
-    if message.author == client.user:
-        return
+# @client.event
+# async def on_message(message):
+#     # Prevent the bot from responding to its own messages
+#     if message.author == client.user:
+#         return
     
-    # Your response
-    response = 'Welcome to the UGC Mongolia, Please contact UGC Mongolia server Admins'
-    await message.channel.send(response)
+#     # Check if the message is a DM
+#     response = 'Welcome to the UGC Mongolia, Please contact UGC Mongolia server Admins'
+#     try:
+#         if message.guild is None:
+#             # Your response
+#             await message.channel.send(response)
+#     except:
+#         await message.channel.send(response)
 
 @client.event
 async def on_ready():
@@ -257,7 +265,7 @@ async def server_reviews(interaction: discord.Interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
-        if not is_main_server(interaction):
+        if not is_our_company(interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
         
         review_views = GetServerReviewView().execute(client)
@@ -282,7 +290,7 @@ async def server_contents(interaction: discord.Interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
-        if not is_main_server(interaction):
+        if not is_our_company(interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
         
         content_views = GetServerContentView().execute(client)
@@ -307,7 +315,7 @@ async def server_approves(interaction: discord.Interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
-        if not is_main_server(interaction):
+        if not is_our_company(interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
         
         approve_views = GetServerApprovementView().execute(client)
@@ -317,7 +325,9 @@ async def server_approves(interaction: discord.Interaction):
             except discord.errors.InteractionResponded:
                 await interaction.followup.send(ErrorMessageEnum.NO_APPROVES.value + f'<@{interaction.user.id}>', ephemeral=True)
         else:
+            print(f'interaction.guild.channels {interaction.guild.channels}')
             channel = discord.utils.get(interaction.guild.channels, name=Enums.APPROVE_GUILD.value)
+            print(channel)
             if not channel:
                 channel = interaction.channel
             for view in approve_views:
@@ -336,7 +346,7 @@ async def server_collects(interaction: discord.Interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
-        if not is_main_server(interaction):
+        if not is_our_company(interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
         
         collect_views = GetServerCollectView().execute(client)
@@ -364,7 +374,7 @@ async def server_message(interaction: discord.Interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
     
     try:
-        if not is_main_server(interaction):
+        if not is_our_company(interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 
         else:

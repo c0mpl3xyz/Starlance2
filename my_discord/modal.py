@@ -213,8 +213,7 @@ class ReviewUserModal(Modal, title='Review upload'):
         if not self.company:
             data['link'] = str(self.link)
 
-        guild_id = Enums.GUILD_ID.value
-        guild = self.bot.get_guild(guild_id)
+        guild = self.bot.get_guild(data['discord_server_id'])
         if not guild:
             return await interaction.response.send_message('Failed this company doesn\'t exists')
         data['server_id'] = self.job_data['discord_server_id']
@@ -224,14 +223,16 @@ class ReviewUserModal(Modal, title='Review upload'):
         
         if response.json()['success']:
             data['id'] = response.json()['review_id']
-            channel_name = Enums.REVIEW.value
-            channel = discord.utils.get(guild.channels, name=channel_name)  # Replace 'general' with your channel name or ID
-            view = ReviewView(data, self.bot, company=True)
-            if channel:
-                view.message = await channel.send(embed=view.embed, view=view)
-        #     return await interaction.response.send_message('Successfully sent link to company')
-        # else:
-        #     return await interaction.response.send_message('Error has been accured please, try again')
+
+            our_guild = self.bot.get_guild(Enums.OUR_COMPANY.value)
+            print(f'{our_guild.name=}')
+            print(f'{our_guild.channels=}')
+            if our_guild:
+                channel = discord.utils.get(our_guild.channels, name=Enums.REVIEW.value)
+                print(f'{channel=}')
+                view = ReviewView(data, self.bot, company=True)
+                if channel:
+                    view.message = await channel.send(embed=view.embed, view=view)
                    
 class BankRegistrationModal(Modal, title='Bank Registration'):
     def __init__(self, bank_name, url):
@@ -350,7 +351,7 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             view_main = ContentView(review_data, content_data, self.bot, main=True)
             
             #await interaction.followup.send(message, embed=view.embed, view=view)
-            guild = self.bot.get_guild(Enums.GUILD_ID.value)
+            guild = self.bot.get_guild(Enums.OUR_COMPANY.value)
             channel = discord.utils.get(guild.channels, name=Enums.CONTENT.value)
             view_main.message = await channel.send(message, embed=view_main.embed, view=view_main)
 
@@ -409,7 +410,7 @@ class UserCollectModal(Modal, title='Collect User Points'):
             if response['success']:
                 collect_id = response['collect_id']
                 print(f'{collect_id=}')
-                guild = self.bot.get_guild(Enums.GUILD_ID.value)
+                guild = self.bot.get_guild(Enums.OUR_COMPANY.value)
                 channel = discord.utils.get(guild.channels, name=Enums.COLLECT.value)            
                 collect_view = CollectView(self.user_data, self.bot, collect_id, int(points))
                 collect_view.message = await channel.send(embed=collect_view.embed, view=collect_view)

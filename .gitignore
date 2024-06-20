@@ -167,3 +167,4 @@ instagram
 # zip
 *.zip
 .env
+:https

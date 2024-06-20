@@ -61,8 +61,7 @@ class CollectView(discord.ui.View):
             self.collect_button.label = 'Approved'
             self.collect_button.disabled = True
             await interaction.message.edit(view=self)
-            guild_id = Enums.GUILD_ID.value
-            guild = self.bot.get_guild(guild_id)
+            guild = self.bot.get_guild(Enums.GUILD_ID.value)
             user = discord.utils.get(guild.members, id=self.user_data['user_id'])
             self.message = await user.send('Your points are collected', view=self)
         else:
@@ -245,9 +244,9 @@ class JobView(discord.ui.View):
 
             self.job_data['type'] = 'Approved'            
             job_approve_view = ApprovementJobView(embed_data, self.job_data, self.bot)
-            # guild = discord.utils.get(self.bot.guilds, id=self.job_data['discord_server_id'])
-            guild_id = Enums.GUILD_ID.value
+            guild_id = Enums.OUR_COMPANY.value
             guild = self.bot.get_guild(guild_id)
+            # guild = discord.utils.get(self.bot.guilds, id=self.job_data['discord_server_id'])
             channel_name =  Enums.APPROVE_GUILD.value
             channel = discord.utils.get(guild.channels, name=channel_name)
             job_approve_view.message = await channel.send(embed=job_approve_view.embed, view=job_approve_view)
