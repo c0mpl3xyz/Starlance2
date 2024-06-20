@@ -31,7 +31,8 @@ def update_content(k, data):
     data['content_id'] = k
     requests.put(URL + '/content/status', json=data)
 
-def update_user_point(user_id, data):
+def update_user_point(user_id, data, point_per_view=10):
+    point_ratio = point_per_view / 10.0
     data = {
         'user_id': user_id,
         'points': data['points']
@@ -68,8 +69,9 @@ def calculate_replays_points(points):
 def calculate_initial_plays_points(points):
     return round(points * 1 / 1.7)
 
-def content_updater():
+def content_updater(app):
     try:
+        app.logger.info('Im alive!')
         jobs = get_jobs()
         job_ids = [job[0] for job in jobs]
         contents = get_contents_by_job_ids(job_ids)

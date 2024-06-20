@@ -32,14 +32,20 @@ def create_app():
     app.register_blueprint(review_bp)
     app.register_blueprint(collect_bp)
     app.config['THREADED'] = True
-    
-    # scheduler = BackgroundScheduler()
-    # scheduler.add_job(content_updater, 'interval', seconds=10)  # Adjust the interval as needed
-    # scheduler.start()
 
     return app
 
+scheduler = BackgroundScheduler()
 app = create_app()
+first = True
+
+@app.before_request
+def firstRun():
+    global first
+    if not first:
+        scheduler.add_job(content_updater, 'interval', args=[app], seconds=10) 
+        scheduler.start()
+        first = True
 
 @app.route('/')
 def hello_world():
