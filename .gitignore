@@ -167,4 +167,5 @@ instagram
 # zip
 *.zip
 .env
-:https
+https:
+.conda
