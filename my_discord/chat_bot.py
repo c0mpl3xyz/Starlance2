@@ -323,7 +323,6 @@ async def server_approves(interaction: discord.Interaction):
             except discord.errors.InteractionResponded:
                 await interaction.followup.send(ErrorMessageEnum.NO_APPROVES.value + f'<@{interaction.user.id}>', ephemeral=True)
         else:
-            print(f'interaction.guild.channels {interaction.guild.channels}')
             channel = discord.utils.get(interaction.guild.channels, name=Enums.APPROVE_GUILD.value)
             if not channel:
                 channel = interaction.channel
