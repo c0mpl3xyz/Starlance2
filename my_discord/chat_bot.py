@@ -35,7 +35,7 @@ def is_our_company(intearaction) -> bool:
     
 def is_influencer(roles):
     # TODO: change to Influencer
-    return '@everyone' in roles
+    return 'Influencer' in roles
 
 def is_dm(interaction):
     try:
@@ -183,25 +183,25 @@ async def company_job_add(interaction: discord.Interaction):
     if is_influencer(roles):
         return await interaction.followup.send(ErrorMessageEnum.NOT_COMPANY.value + f' <@{interaction.user.id}>', ephemeral=True)
 
-    try:
-        if is_main_server(interaction):
-            return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
-        
-        else:
-            view = View()
-            guild = client.get_guild(Enums.GUILD_ID.value)
-            roles = [role.name for role in guild.roles]
-            select = SelectRoles(client, roles, URL)
-            view.add_item(select)
-            channel = discord.utils.get(interaction.guild.channels, name=Enums.JOB.value)
-            if not channel:
-                channel = interaction.channel
-            if channel:
-                select.message = await channel.send('Add new Job here \nSelect roles', view=view)
-
-            await interaction.followup.send(f'Job add sent to <#{channel.id}>')
-    except AttributeError:
+    # try:
+    if is_main_server(interaction):
         return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
+    
+    else:
+        view = View()
+        guild = client.get_guild(Enums.GUILD_ID.value)
+        roles = [role.name for role in guild.roles]
+        select = SelectRoles(client, roles, URL)
+        view.add_item(select)
+        channel = discord.utils.get(interaction.guild.channels, name=Enums.JOB.value)
+        if not channel:
+            channel = interaction.channel
+        if channel:
+            select.message = await channel.send('Add new Job here \nSelect roles', view=view)
+
+        await interaction.followup.send(f'Job add sent to <#{channel.id}>')
+    # except AttributeError:
+    #     return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
 
 @client.tree.command(name='company_jobs')
 async def company_jobs(interaction: discord.Interaction):

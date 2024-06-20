@@ -136,6 +136,7 @@ class JobEmbed(Embed):
         self.add_field(name="Participation date", value=job_data['participation_date'])
         self.add_field(name="Job files", value=f"[Click Here]({job_data['upload_link']})")
         self.add_field(name="Roles", value=job_data['roles'].replace(',', ' '), inline=False)
+        self.add_field(name="1 view point", value=job_data['point'], inline=False)
 
         for idx, content in enumerate(contents):
             self.add_field(name=f'content-{idx}', value=f"[Click Here]({content['link']})", inline=False)

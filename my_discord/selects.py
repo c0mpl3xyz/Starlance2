@@ -20,7 +20,7 @@ class MessageSelect(Select):
         roles = self.values
         if self.all_roles in roles:
             i = roles.index(self.all_roles)
-            roles[i] = '@everyone'
+            roles[i] = 'Influencer'
 
         modal = MessageModal(self.bot, roles=roles)
         await interaction.response.send_modal(modal)
@@ -51,13 +51,16 @@ class SelectRoles(Select):
         roles = self.values
         if self.all_roles in roles:
             i = roles.index(self.all_roles)
-            roles[i] = '@everyone'
+            roles[i] = 'Influencer'
 
         view = View()
         select = SelectBudget(self.bot, roles, self.url)
         select.select_roles_message = self.message
         view.add_item(select)
-        await interaction.response.send_message('Select budget', view=view)
+        select.message = await interaction.response.send_message('Select budget', view=view)
+        await view.wait()
+        if select.finished:
+            return
         return
     
     def clean_roles(self, roles):
@@ -70,8 +73,8 @@ class SelectBudget(Select):
         self.roles = roles
         self.url = url
         self.finished = False
+        self.message = None
         self.select_roles_message = None
-        self.select_budget_message = None
 
         cashes = list(range(2000000, 6000000, 250000))
         options = [discord.SelectOption(label=str(f"{cash:,}") + ' ₮', description='') for cash in cashes[:25]]
@@ -79,12 +82,43 @@ class SelectBudget(Select):
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         budget = self.values[0].split(' ')[0].replace(',', '')
-        job_modal = JobModal(self.bot, self.roles, int(budget), self.url)
+        point_select = SelectPoint(self.bot, self.roles, int(budget), self.url)
+        point_select.select_roles_message = self.select_roles_message
+        point_select.select_budget_message = self.message
+
+        view = View()
+        view.add_item(point_select)
+        await interaction.response.send_message('Select Budget', view=view)
+        await view.wait()
+        if point_select.finished:
+            self.finished = True
+
+class SelectPoint(Select):
+    def __init__(self, bot, roles, budget, url):
+        self.bot = bot
+        self.roles = roles
+        self.budget = budget
+        self.url = url
+        self.finished = False
+        self.select_roles_message = None
+        self.select_budget_message = None
+        self.select_point_message = None
+
+        points = list(range(10, 50, 5))
+        options = [discord.SelectOption(label=str(f"{cash:,}") + ' ₮', description='') for cash in points[:25]]
+        super().__init__(options=options, placeholder='Please select Points', min_values=1)
+
+    async def callback(self, interaction: discord.Interaction) -> Any:
+        point = int(str(self.values[0]).replace(' ₮', ''))
+        job_modal = JobModal(self.bot, self.roles, self.budget, point, self.url)
         await interaction.response.send_modal(job_modal)
         await job_modal.wait()
+
         if job_modal.finished:
+            self.finished = True
             await self.select_roles_message.delete()
-    
+            await self.select_budget_message.delete()
+
 class UploadLinkSelect(Select):
     def __init__(self, bot, user_id, job_id, server_id, job_register_id, review_id, edit=False):
         self.user_id = user_id

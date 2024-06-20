@@ -42,7 +42,7 @@ class CollectView(discord.ui.View):
         self.points = points
         self.embed = CollectEmbed(user_data, points)
 
-        self.collect_button = discord.ui.Button(label=f"Uprove Collect request: {user_data['points']}", style=discord.ButtonStyle.green, emoji='✨')
+        self.collect_button = discord.ui.Button(label=f"Uprove Collect request", style=discord.ButtonStyle.green, emoji='✨')
         self.collect_button.callback = self.collect_button_callback
         self.add_item(self.collect_button)
 
@@ -85,11 +85,11 @@ class UserView(discord.ui.View):
         self.bot = bot
         self.embed = UserEmbed(user_data)
         super().__init__()
-        self.collect_button.callback = self.collect_button_callback
         collectable_points = user_data['points'] - 2000
         collectable = collectable_points > 0 #TODO: add threshold
         
         self.collect_button = discord.ui.Button(label=f"Collect Points: {user_data['points']}", style=discord.ButtonStyle.green, emoji='✨')
+        self.collect_button.callback = self.collect_button_callback
 
         if not collectable:
             self.collect_button.label = f'No enough points to collect: {user_data["points"]}'

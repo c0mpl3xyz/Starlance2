@@ -11,12 +11,13 @@ import re, os, pytz
 URL = os.getenv('URL')
 # start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
 class JobModal(Modal, title="Job registration"):
-    def __init__(self, bot, roles, budget, url, name=None, start_date=None, duration=7, upload_link=None):
+    def __init__(self, bot, roles, budget, point, url, name=None, start_date=None, duration=7, upload_link=None):
         self.bot = bot
         self.finished = False
         self.url = url
         self.roles = roles
         self.budget = budget
+        self.point = point
         
         timezone = pytz.timezone('Asia/Ulaanbaatar')
         date = datetime.now(timezone)
@@ -85,7 +86,8 @@ class JobModal(Modal, title="Job registration"):
             'upload_link': str(self.upload_link),
             'requirements': "",
             'type': 'Open',
-            'user_count': '20'
+            'user_count': '20',
+            'point': self.point
         }
 
         response = requests.post(self.url + '/job', json=data)
@@ -94,11 +96,6 @@ class JobModal(Modal, title="Job registration"):
             success = ['success']
             data['job_id'] = response['job_id']
 
-        # channel_name =  ChannelEnum.GUILD.value #TODO: CHANGE IT
-        # channel = discord.utils.get(interaction.guild.channels, name=channel_name)
-        # if channel:
-        #     await channel.send(message)
-        
         if success:
             self.finished = True
             user_job_view = JobView(data, self.bot)
@@ -150,12 +147,12 @@ class MessageModal(Modal, title='Message send'):
     def __init__(self, bot, roles):
         self.bot = bot
         self.roles = roles
-        self.message_title = TextInput(label="Title", placeholder='UGC MONGOLIA', required=True)
-        self.message = TextInput(label="Message", placeholder='Enter message or announcement', required=True)
+        self.message_title = TextInput(label="Title", placeholder='UGC MONGOLIA', required=True, style=discord.TextStyle.short)
+        self.message = TextInput(label="Message", placeholder='Enter message or announcement', required=True, style=discord.TextStyle.paragraph)
         self.finished = False
         super().__init__()
-        self.add_item(self.message)
         self.add_item(self.message_title)
+        self.add_item(self.message)
 
     async def on_submit(self, interaction: discord.Interaction):
         from embeds import MessageEmbed

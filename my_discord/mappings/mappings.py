@@ -10,8 +10,8 @@ def job_mapping_with_type(data: list) -> dict:
     job_dict = {
         'job_id': data[0],
         'discord_server_id': data[1],
-        'server_name': data[2],
-        'name': data[3],
+        'name': data[2],
+        'server_name': data[3],
         'roles': data[4],
         'budget': data[5],
         'start_date': convert_date(data[6]),
@@ -23,7 +23,8 @@ def job_mapping_with_type(data: list) -> dict:
         'requirements': data[12],
         'job_type': data[13],
         'user_count': data[14],
-        'type': data[15],
+        'point': data[15],
+        'type': data[16],
     }
 
     return job_dict
@@ -32,8 +33,8 @@ def job_mapping(data: list) -> dict:
     job_dict = {
         'job_id': data[0],
         'discord_server_id': data[1],
-        'server_name': data[2],
-        'name': data[3],
+        'name': data[2],
+        'server_name': data[3],
         'roles': data[4],
         'budget': data[5],
         'start_date': convert_date(data[6]),
@@ -44,7 +45,8 @@ def job_mapping(data: list) -> dict:
         'upload_link': data[11],
         'requirements': data[12],
         'job_type': data[13],
-        'user_count': data[14]
+        'user_count': data[14],
+        'point': data[15],
     }
 
     return job_dict
