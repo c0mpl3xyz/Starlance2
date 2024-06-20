@@ -48,7 +48,7 @@ def create_app():
     return app
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(content_updater, 'interval', seconds=5) 
+scheduler.add_job(content_updater, 'interval', seconds=30) 
 app = create_app()
 first = True
 
