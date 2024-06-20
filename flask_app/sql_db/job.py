@@ -84,17 +84,18 @@ class Job:
         requirements = data['requirements'] 
         job_type = data['job_type'] 
         user_count = data['user_count']
+        point = data['point']
         
         start_date = datetime.strptime(start_date, self.date_format)
         end_date = datetime.strptime(end_date, self.date_format)
         participation_date = datetime.strptime(participation_date, self.date_format)
         
         query = """
-            INSERT INTO Job (discord_server_id, server_name, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, type, user_count)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Job (discord_server_id, server_name, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, type, user_count, point)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
-        self.cursor.execute(query, (company_id, server_name, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, job_type, user_count)) # type: ignore
+        self.cursor.execute(query, (company_id, server_name, name, roles, budget, start_date, end_date, duration, participation_date, description, upload_link, requirements, job_type, user_count, point)) # type: ignore
         return True
     
     def update_status(self, job_id, job_type) -> bool:
@@ -169,6 +170,10 @@ class Job:
         if 'user_count' in data:
             update_query += "user_count = %s, "
             update_params.append(data['user_count'])
+        
+        if 'point' in data:
+            update_query += "point = %s, "
+            update_params.append(data['point'])
 
         update_query = update_query.rstrip(", ") + " WHERE id = %s"
         update_params.append(job_id)
