@@ -38,11 +38,11 @@ def update_content(k, data):
     data['content_id'] = k
     requests.put(URL + '/content/status', json=data)
 
-def update_user_point(user_id, data, point_per_view=10):
+def update_user_point(user_id, data, point_per_view):
     point_ratio = point_per_view / 10.0
     data = {
         'user_id': user_id,
-        'points': data['points']
+        'points': data['points'] * point_ratio
     }
     requests.put(URL + '/user', json=data)
 
@@ -82,6 +82,7 @@ def content_updater():
         ('Im alive!')
         jobs = get_jobs()
         job_ids = [job[0] for job in jobs]
+        job_point_dict = {job[0]: job[-1] for job in jobs}
         contents = get_contents_by_job_ids(job_ids)
         contents_real_dict = {content[0]: content for content in contents}
         contents_dict = {get_shortcode(content[6]): content[0] for content in contents if get_shortcode(content[6]) is not None}
@@ -138,7 +139,7 @@ def content_updater():
                         update_content(k_2, v_2_v)
                         update_job(k)
                         user_id = contents_real_dict[k_2][3]
-                        update_user_point(user_id, v_2_v)
+                        update_user_point(user_id, v_2_v, job_point_dict[k])
 
         logging.info('Ended updating contents')
     except Exception as e:
