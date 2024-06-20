@@ -26,9 +26,11 @@ class UserEmbed(Embed):
             color = discord.Color.random()
             )
         
+        tugrik = user_data['points'] * 10
         self.add_field(name='User', value=f'<@{user_data["user_id"]}>', inline=False)
         self.add_field(name="Total Points Of Lifetime", value=user_data['total_points'])
         self.add_field(name="Available Points", value=user_data['points'])
+        self.add_field(name="Available Points in MNT", value=f'{tugrik} MNT')
         self.add_field(name="Register Number", value=user_data['register'])
         self.add_field(name="Bank Name", value=user_data['bank_name'])
         self.add_field(name="Bank Number", value=user_data['bank_number'])
@@ -40,11 +42,13 @@ class CollectEmbed(Embed):
             color = discord.Color.random()
             )
         
+        tugrik = points * 10
         self.add_field(name='User', value=f'<@{user_data["user_id"]}>', inline=False)
         self.add_field(name="Register Number", value=user_data['register'])
         self.add_field(name="Bank Name", value=user_data['bank_name'])
         self.add_field(name="Bank Number", value=user_data['bank_number'])
         self.add_field(name="Collect points", value=points)
+        self.add_field(name="Collect points in MNT", value=f'{tugrik} MNT')
 
 class ReviewEmbed(Embed):
      def __init__(self, data: dict):

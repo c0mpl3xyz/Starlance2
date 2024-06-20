@@ -225,11 +225,8 @@ class ReviewUserModal(Modal, title='Review upload'):
             data['id'] = response.json()['review_id']
 
             our_guild = self.bot.get_guild(Enums.OUR_COMPANY.value)
-            print(f'{our_guild.name=}')
-            print(f'{our_guild.channels=}')
             if our_guild:
                 channel = discord.utils.get(our_guild.channels, name=Enums.REVIEW.value)
-                print(f'{channel=}')
                 view = ReviewView(data, self.bot, company=True)
                 if channel:
                     view.message = await channel.send(embed=view.embed, view=view)
@@ -384,8 +381,8 @@ class UserCollectModal(Modal, title='Collect User Points'):
         messages = []
         if not points.isnumeric():
             messages.append(f'You entered this {points}. And this is not a valid number')
-        if points.isnumeric() and int(points) > user_points:
-            messages.append(f'Your availabled Points: {user_points}, You can\'t collect more than this!')
+        if points.isnumeric() and int(points) > user_points - 2000:
+            messages.append(f'Your availabled Points: {user_points - 2000}, You can\'t collect more than this!')
         return messages
 
     async def on_submit(self, interaction: Interaction):
@@ -406,10 +403,8 @@ class UserCollectModal(Modal, title='Collect User Points'):
 
             response = requests.post(URL + '/collect', json=data)
             response = response.json()
-            print(f'collect id: {response}')
             if response['success']:
                 collect_id = response['collect_id']
-                print(f'{collect_id=}')
                 guild = self.bot.get_guild(Enums.OUR_COMPANY.value)
                 channel = discord.utils.get(guild.channels, name=Enums.COLLECT.value)            
                 collect_view = CollectView(self.user_data, self.bot, collect_id, int(points))

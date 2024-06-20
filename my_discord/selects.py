@@ -12,7 +12,6 @@ class MessageSelect(Select):
         self.all_roles = 'All Roles'
         roles = [self.all_roles] + roles
         roles = roles[:25]
-        print(f'{roles=}')
         options = [discord.SelectOption(label=role, description='') for role in roles]
         super().__init__(options = options, placeholder='Please select roles', min_values=1, max_values=len(roles))
 

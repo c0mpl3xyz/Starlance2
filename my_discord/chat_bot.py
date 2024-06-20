@@ -35,7 +35,7 @@ def is_our_company(intearaction) -> bool:
     
 def is_influencer(roles):
     # TODO: change to Influencer
-    return 'Influencer' in roles
+    return '@everyone' in roles
 
 def is_dm(interaction):
     try:
@@ -161,8 +161,6 @@ async def my_all_jobs(interaction: discord.Interaction):
 
 @client.tree.command(name='my_status')
 async def my_status(interaction: discord.Interaction):
-    print(interaction.guild.id)
-    print(interaction.guild.name)
     await interaction.response.defer()
     roles = is_dm(interaction)
 
@@ -327,7 +325,6 @@ async def server_approves(interaction: discord.Interaction):
         else:
             print(f'interaction.guild.channels {interaction.guild.channels}')
             channel = discord.utils.get(interaction.guild.channels, name=Enums.APPROVE_GUILD.value)
-            print(channel)
             if not channel:
                 channel = interaction.channel
             for view in approve_views:
@@ -380,9 +377,6 @@ async def server_message(interaction: discord.Interaction):
         else:
             guild = client.get_guild(Enums.GUILD_ID.value)
             roles = [role.name for role in guild.roles]
-
-            print(roles)
-            
             select = MessageSelect(client, roles)
             view = View()
             view.add_item(select)
