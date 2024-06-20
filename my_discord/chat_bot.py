@@ -49,20 +49,20 @@ def is_dm(interaction):
     except AttributeError:
         return []
 
-# @client.event
-# async def on_message(message):
-#     # Prevent the bot from responding to its own messages
-#     if message.author == client.user:
-#         return
+@client.event
+async def on_message(message):
+    # Prevent the bot from responding to its own messages
+    if message.author == client.user:
+        return
     
-#     # Check if the message is a DM
-#     response = 'Welcome to the UGC Mongolia, Please contact UGC Mongolia server Admins'
-#     try:
-#         if message.guild is None:
-#             # Your response
-#             await message.channel.send(response)
-#     except:
-#         await message.channel.send(response)
+    # Check if the message is a DM
+    response = 'Welcome to the UGC Mongolia, Please contact UGC Mongolia server Admins'
+    try:
+        if message.guild is None:
+            # Your response
+            await message.channel.send(response)
+    except:
+        await message.channel.send(response)
 
 @client.event
 async def on_ready():
