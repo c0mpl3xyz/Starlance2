@@ -1,4 +1,5 @@
 # app.py
+import logging
 import os
 from flask import Flask
 from dotenv import load_dotenv
@@ -13,6 +14,10 @@ from apis.review_api import review_bp
 from apis.collect_api import collect_bp
 
 load_dotenv()
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s [%(levelname)s] %(message)s',
+                    handlers=[logging.StreamHandler()])
 
 APP_ID = os.getenv('APP_ID')
 APP_SECRET = os.getenv('APP_SECRET')
@@ -36,16 +41,17 @@ def create_app():
     return app
 
 scheduler = BackgroundScheduler()
+scheduler.add_job(content_updater, 'interval', seconds=5) 
 app = create_app()
 first = True
 
 @app.before_request
 def firstRun():
+    logging.info('Test-----------------------------------------')
     global first
-    if not first:
-        scheduler.add_job(content_updater, 'interval', args=[app], seconds=10) 
+    if first:
         scheduler.start()
-        first = True
+        first = False
 
 @app.route('/')
 def hello_world():

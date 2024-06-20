@@ -113,7 +113,7 @@ def content_mappings(data: list):
         'points': data[17],
         'engagement': data[18],
         'engagement_rate': data[19],
-        'active': data[20],
+        'active': data[20]
     }
 
     return content_dict

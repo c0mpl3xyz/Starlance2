@@ -1,6 +1,6 @@
 import requests, os, time
 from dotenv import load_dotenv
-import math
+import logging
 
 load_dotenv()
 URL = os.getenv('URL')
@@ -14,6 +14,13 @@ URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
 IG_TOKEN = os.getenv('IG_TOKEN')
 IG_ID = os.getenv('IG_ID')
 PERMISSIONS = ['instagram_manage_insights', 'instagram_basic', 'pages_show_list']
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s [%(levelname)s] %(message)s',
+                    handlers=[logging.StreamHandler()])
+
+def content_updater_2():
+    logging.info('LOGGER-----------------------------------------')
 
 def get_jobs():
     result = requests.get(URL + 'job/open_jobs')
@@ -69,9 +76,10 @@ def calculate_replays_points(points):
 def calculate_initial_plays_points(points):
     return round(points * 1 / 1.7)
 
-def content_updater(app):
+def content_updater():
+    logging.info('Started updating contents')
     try:
-        app.logger.info('Im alive!')
+        ('Im alive!')
         jobs = get_jobs()
         job_ids = [job[0] for job in jobs]
         contents = get_contents_by_job_ids(job_ids)
@@ -131,8 +139,10 @@ def content_updater(app):
                         update_job(k)
                         user_id = contents_real_dict[k_2][3]
                         update_user_point(user_id, v_2_v)
+
+        logging.info('Ended updating contents')
     except Exception as e:
-        raise e
+        logging.error(f'Content updating failed: {str(e)}')
 
 class ProIGToken():
     def __init__(self):
