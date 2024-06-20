@@ -23,7 +23,7 @@ def content_updater_2():
     logging.info('LOGGER-----------------------------------------')
 
 def get_jobs():
-    result = requests.get(URL + 'job/open_jobs')
+    result = requests.get(URL + '/job/open_jobs')
     return result.json()
 
 def get_contents_by_job_ids(job_ids):
@@ -31,7 +31,7 @@ def get_contents_by_job_ids(job_ids):
         'job_ids': job_ids
     }
 
-    result = requests.get(URL + 'content/job_ids', json=data)
+    result = requests.get(URL + '/content/job_ids', json=data)
     return result.json()
 
 def update_content(k, data):
