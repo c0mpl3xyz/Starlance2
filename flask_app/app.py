@@ -54,9 +54,9 @@ first = True
 
 @app.before_request
 def firstRun():
-    logging.info('Test-----------------------------------------')
     global first
     if first:
+        logging.info('Test-----------------------------------------')
         scheduler.start()
         first = False
 
