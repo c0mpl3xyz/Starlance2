@@ -117,7 +117,6 @@ class SelectPoint(Select):
         if job_modal.finished:
             self.finished = True
             await self.select_roles_message.delete()
-            await self.select_budget_message.delete()
 
 class UploadLinkSelect(Select):
     def __init__(self, bot, user_id, job_id, server_id, job_register_id, review_id, edit=False):
