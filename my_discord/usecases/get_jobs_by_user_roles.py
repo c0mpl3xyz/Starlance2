@@ -7,7 +7,7 @@ class GetJobsByUserRoles:
     def execute(self, user_id, roles, bot):
         data = {
                 'user_id': user_id,
-                'roles': roles
+                'roles': ['ADMIN', '@everyone']
             }
         
         print(f'{data=}')

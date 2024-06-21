@@ -33,8 +33,6 @@ class RegisterJob():
         }
 
         response = requests.get(URL + '/job_register/user_job', json=data)
-        # if 'success' not in response.json():
-        #     return False
         return job_register_mapping(response.json())
     
     def update_link(self, user_id, job_id, instagram_link, facebook_link, youtube_link, tiktok_link):

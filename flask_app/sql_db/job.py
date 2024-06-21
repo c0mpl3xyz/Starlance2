@@ -42,10 +42,10 @@ class Job:
                 FROM Job j
                 WHERE j.start_date > %s
                 AND (
-                    LOWER(j.roles) COLLATE utf8mb4_general_ci LIKE %s 
-                    OR LOWER(j.roles) COLLATE utf8mb4_general_ci LIKE %s 
-                    OR LOWER(j.roles) COLLATE utf8mb4_general_ci LIKE %s 
-                    OR LOWER(j.roles) COLLATE utf8mb4_general_ci = %s
+                    LOWER(j.roles) LIKE %s 
+                    OR LOWER(j.roles) LIKE %s 
+                    OR LOWER(j.roles) LIKE %s 
+                    OR LOWER(j.roles) = %s
                 )
                 AND j.type = 'Open'
                 AND NOT EXISTS (
