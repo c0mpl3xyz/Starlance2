@@ -44,8 +44,13 @@ class Review:
         return self.cursor.fetchall() # type: ignore
     
     def get_all_reviews(self):
+        # SELECT * FROM Review WHERE type = 'Pending'
         query = """
-            SELECT * FROM Review WHERE type = 'Pending'
+            SELECT r.*
+            FROM Review r
+            LEFT JOIN Content c ON r.id = c.review_id
+            WHERE r.type IN ('Pending', 'Approved')
+            AND c.review_id IS NULL;
         """
 
         self.cursor.execute(query)  # Ensure server_id is a tuple
