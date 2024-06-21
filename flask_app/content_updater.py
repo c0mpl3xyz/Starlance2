@@ -24,7 +24,6 @@ def content_updater_2():
 
 def get_jobs():
     result = requests.get(URL + '/job/open_jobs')
-    print(result.text)
     return result.json()
 
 def get_contents_by_job_ids(job_ids):
