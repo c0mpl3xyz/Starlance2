@@ -6,7 +6,7 @@ from discord import Interaction
 from utils.enums import Enums
 from datetime import datetime, timedelta
 from validator.validator import Validator
-import re, os, pytz
+import re, os, pytz, time
 
 URL = os.getenv('URL')
 # start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
@@ -67,7 +67,6 @@ class JobModal(Modal, title="Job registration"):
                 await interaction.channel.send(message)
             return
 
-        self.roles = ['ADMIN']
         start_date = datetime.strptime(str(self.start_date), '%Y/%m/%d')
         end_date_obj: datetime =  start_date + timedelta(days=int(str(self.duration)))
         participation_date_obj = start_date + timedelta(days=7)
@@ -97,6 +96,7 @@ class JobModal(Modal, title="Job registration"):
             success = ['success']
             data['job_id'] = response['job_id']
 
+        self.roles = ['ADMIN']
         if success:
             self.finished = True
             company_job_view = JobView(data, self.bot, company=True)

@@ -10,6 +10,7 @@ class GetJobsByUserRoles:
                 'roles': roles
             }
         
+        print(f'{data=}')
         response = requests.get(URL + '/job_register/roles', json=data)
         print(response.text)
         

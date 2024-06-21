@@ -57,8 +57,8 @@ def firstRun():
     global first
     if first:
         logging.info('Test-----------------------------------------')
-        scheduler.start()
         first = False
+        scheduler.start()
 
 @app.route('/')
 def hello_world():

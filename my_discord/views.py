@@ -9,6 +9,7 @@ from usecases.user_reviews import GetUserReview, UpdateReview
 from usecases.user_status import UpdateUserPoints
 from embeds import ApproveEmbed, ReviewEmbed, UserEmbed, CollectEmbed
 from utils.enums import Enums
+import time
 
 URL = os.getenv('URL')
 
@@ -131,6 +132,7 @@ class UserView(discord.ui.View):
 class JobView(discord.ui.View):
     def __init__(self, job_data, bot, company=False, has_review=False, contents=[]):
         self.message = None
+        self.register_job = None
         timeout = 350
         self.job_data = job_data
         self.bot = bot
@@ -153,6 +155,9 @@ class JobView(discord.ui.View):
 
         self.review_button = discord.ui.Button(label='Content Review Add', style=discord.ButtonStyle.green, emoji='👀')
         self.review_button.callback = self.review_button_callback
+
+        self.new_button = discord.ui.Button(label='Click here', style=discord.ButtonStyle.green, emoji='➕')
+        self.new_button.callback = self.new_button_callback
 
         if not company:
             if job_data['type'] == 'Open':
@@ -187,10 +192,19 @@ class JobView(discord.ui.View):
             await interaction.message.delete()
         self.stop()
 
-    async def review_button_callback(self, interaction: discord.Interaction):
-        # await interaction.response.defer()
+    async def new_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewUserModal
+        modal = ReviewUserModal(self.bot, interaction.user.id, self.register_job, self.job_data, 'Pending', self.company)
+        await interaction.response.send_modal(modal)
+        await modal.wait()
 
+        self.new_button.label = 'Review request sent'
+        self.new_button.disabled = True
+        await interaction.message.edit(view=self)
+        self.stop()
+
+    async def review_button_callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         data = {
             'user_id': interaction.user.id,
             'job_ids': [self.job_data['job_id']]
@@ -209,15 +223,10 @@ class JobView(discord.ui.View):
         else:
             register_job = RegisterJob().get_by_user_job(interaction.user.id, self.job_data['job_id'])
             register_job['job_register_id'] = register_job['id']
-            modal = ReviewUserModal(self.bot, interaction.user.id, register_job, self.job_data, 'Pending', self.company)
-            await interaction.response.send_modal(modal)
-            await modal.wait()
-
-            self.review_button.label = 'Review request sent'
+            self.register_job = register_job
+            self.add_item(self.new_button)
             self.review_button.disabled = True
             await interaction.message.edit(view=self)
-        self.stop()
-        
 
     async def accept_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -357,6 +366,9 @@ class ReviewView(discord.ui.View):
         self.review_button = discord.ui.Button(label="Review", style=discord.ButtonStyle.green, emoji='👀')
         self.review_button.callback = self.review_button_callback
 
+        self.new_button = discord.ui.Button(label="Click me", style=discord.ButtonStyle.green, emoji='➕')
+        self.new_button.callback = self.new_button_callback
+
         self.approve_button = discord.ui.Button(label="Approved", style=discord.ButtonStyle.primary)
         self.approve_button.disabled = True
 
@@ -366,6 +378,9 @@ class ReviewView(discord.ui.View):
         self.pending_button = discord.ui.Button(label="Pending", style=discord.ButtonStyle.primary)
         self.pending_button.disabled = True
 
+        self.register_job = None
+        self.update = False
+        self.job_data = None
         if company:
             if review_data['type'] == 'Pending':
                 self.add_item(self.reject_button)
@@ -390,18 +405,29 @@ class ReviewView(discord.ui.View):
                 self.add_item(self.reject_button)
                 self.add_item(self.review_button)
 
+    async def new_button_callback(self, interaction: discord.Interaction):
+        from modal import ReviewUserModal
+        modal = ReviewUserModal(self.bot, interaction.user.id, self.review_data, self.job_data, 'Pending', self.company, update=self.update)
+        await interaction.response.send_modal(modal)
+        await modal.wait()
+
+        self.new_button.label = 'Review request sent'
+        self.new_button.disabled = True
+        await interaction.message.edit(view=self)
+        self.stop()
+
     async def review_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewUserModal
-        # await interaction.response.defer()
+        await interaction.response.defer()
         job_data = GetJobById(self.review_data['job_id']).execute()
         update = False
         if 'type' in self.review_data and self.review_data['type'] == 'Rejected':
             update = True
-        modal = ReviewUserModal(self.bot, interaction.user.id, self.review_data, job_data, 'Pending', self.company, update=update)
-        await interaction.response.send_modal(modal)
-        await modal.wait()
         self.review_button.label = 'Review request sent'
         self.review_button.disabled = True
+        self.update = update
+        self.job_data = job_data
+        self.add_item(self.new_button)
         await interaction.message.edit(view=self)
         
     async def reject_button_callback(self, interaction: discord.Interaction):

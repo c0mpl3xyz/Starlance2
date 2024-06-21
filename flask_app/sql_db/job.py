@@ -37,16 +37,15 @@ class Job:
     
     def get_all_by_roles(self, user_id, roles: list):
         data = []
-        for role in roles:
-            query = """
+        query = """
                 SELECT j.*
                 FROM Job j
                 WHERE j.start_date > %s
                 AND (
-                    LOWER(j.roles) LIKE %s 
-                    OR LOWER(j.roles) LIKE %s 
-                    OR LOWER(j.roles) LIKE %s 
-                    OR LOWER(j.roles) = %s
+                    LOWER(j.roles) COLLATE utf8mb4_general_ci LIKE %s 
+                    OR LOWER(j.roles) COLLATE utf8mb4_general_ci LIKE %s 
+                    OR LOWER(j.roles) COLLATE utf8mb4_general_ci LIKE %s 
+                    OR LOWER(j.roles) COLLATE utf8mb4_general_ci = %s
                 )
                 AND j.type = 'Open'
                 AND NOT EXISTS (
@@ -55,7 +54,8 @@ class Job:
                     WHERE jr.job_id = j.id
                     AND jr.user_id = %s
                 );
-            """
+        """
+        for role in roles:
             # Execute the query with parameters
             self.cursor.execute(query, (self.current, f'%{role},%', f'%,{role},%', f'%,{role}', role, user_id))
             data = self.cursor.fetchall()

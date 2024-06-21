@@ -24,6 +24,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 URL = os.getenv('URL')
 intents = discord.Intents.all()
 
+print(f'{URL}')
 client = commands.Bot(command_prefix='!', intents=intents)
 # client.interaction_timeout = INTERACTION_TIMEOUT
 
