@@ -40,7 +40,7 @@ class Job:
         query = """
                 SELECT j.*
                 FROM Job j
-                WHERE j.start_date > %s
+                WHERE j.start_date >= %s
                 AND (
                     LOWER(j.roles) LIKE %s 
                     OR LOWER(j.roles) LIKE %s 
@@ -56,9 +56,11 @@ class Job:
                 );
         """
         for role in roles:
-            # Execute the query with parameters
             self.cursor.execute(query, (self.current, f'%{role},%', f'%,{role},%', f'%,{role}', role, user_id))
-        data = self.cursor.fetchall()
+            # Fetch all rows from the result set
+            rows = self.cursor.fetchall()
+            data += rows  # Append fetched rows to data list
+
         return data
 
     def exist_by_id(self, id) -> bool:
