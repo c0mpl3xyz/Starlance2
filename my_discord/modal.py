@@ -66,7 +66,6 @@ class JobModal(Modal, title="Job registration"):
             for message in valid_messages:
                 await interaction.channel.send(message)
             return
-
         start_date = datetime.strptime(str(self.start_date), '%Y/%m/%d')
         end_date_obj: datetime =  start_date + timedelta(days=int(str(self.duration)))
         participation_date_obj = start_date + timedelta(days=7)
@@ -96,7 +95,7 @@ class JobModal(Modal, title="Job registration"):
             success = ['success']
             data['job_id'] = response['job_id']
 
-        self.roles = ['ADMIN']
+        # self.roles = ['ADMIN']
         if success:
             self.finished = True
             company_job_view = JobView(data, self.bot, company=True)
@@ -114,7 +113,6 @@ class JobModal(Modal, title="Job registration"):
                 try:
                     if isinstance(user, discord.User) or isinstance(user, discord.Member):
                         if list(intersection_set):
-                            print('found!')
                             user_job_view = JobView(data, self.bot)
                             await user.send(embed=user_job_view.embed, view=user_job_view)
                         #     dm_channel = user.dm_channel

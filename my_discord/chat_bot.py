@@ -144,8 +144,8 @@ async def my_reviews(interaction: discord.Interaction):
     else:
         await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
 
-@client.tree.command(name='my_all_jobs')
-async def my_all_jobs(interaction: discord.Interaction):
+@client.tree.command(name='my_new_jobs')
+async def my_new_jobs(interaction: discord.Interaction):
     await interaction.response.defer()
     roles = is_dm(interaction)
 
