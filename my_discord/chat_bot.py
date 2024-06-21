@@ -122,7 +122,7 @@ async def my_contents(interaction: discord.Interaction):
             await interaction.followup.send(ErrorMessageEnum.NO_CONTENT.value + f'<@{interaction.user.id}>', ephemeral=True)
         else:
             for view in content_views:
-                await interaction.user.send(embed=view.embed, view=view)
+                view.message = await interaction.user.send(embed=view.embed, view=view)
             await interaction.followup.send(f'Content list sent to <@{interaction.user.id}>', ephemeral=True)
     
     else:

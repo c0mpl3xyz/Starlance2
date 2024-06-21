@@ -270,7 +270,6 @@ class JobView(discord.ui.View):
             await interaction.message.edit('failed')
         
         self.stop()
-        
 
     async def on_timeout(self):
         self.clear_items()

@@ -42,10 +42,10 @@ class Job:
                 FROM Job j
                 WHERE j.start_date >= %s
                 AND (
-                    LOWER(j.roles) LIKE %s 
-                    OR LOWER(j.roles) LIKE %s 
-                    OR LOWER(j.roles) LIKE %s 
-                    OR LOWER(j.roles) = %s
+                    LOWER(j.roles) LIKE LOWER(%s) 
+                    OR LOWER(j.roles) LIKE LOWER(%s) 
+                    OR LOWER(j.roles) LIKE LOWER(%s) 
+                    OR LOWER(j.roles) = LOWER(%s)
                 )
                 AND j.type = 'Open'
                 AND NOT EXISTS (
