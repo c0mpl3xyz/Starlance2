@@ -1,6 +1,6 @@
 import requests, os
 from views import JobView
-from mappings.mappings import job_mapping 
+from mappings.mappings import job_mapping_with_type
 URL = os.getenv('URL')
 
 class GetJobsByUserRoles:
@@ -15,5 +15,5 @@ class GetJobsByUserRoles:
         print(response.text)
         
         JSON = response.json()
-        jobs = [JobView(job_mapping(job), bot) for job in JSON]
+        jobs = [JobView(job_mapping_with_type(job), bot) for job in JSON]
         return jobs
