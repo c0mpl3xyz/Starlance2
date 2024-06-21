@@ -120,7 +120,7 @@ class JobModal(Modal, title="Job registration"):
                         #         dm_channel = await user.create_dm()
                         #     user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
                         # return success
-                except:
+                except Exception as e:
                     print(str(e))
                     pass
             await interaction.followup.send(response['message'])
