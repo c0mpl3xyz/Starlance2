@@ -9,7 +9,7 @@ class Job:
         self.date_format = '%Y/%m/%d'
         self.timezone = pytz.timezone('Asia/Ulaanbaatar')
         date = datetime.now(self.timezone)
-        self.current = datetime(date.year, date.month, date.day)
+        self.current = f'{date.year, date.month, date.day}'
 
     def get_by_id(self, id):
         query = """
