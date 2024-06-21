@@ -58,7 +58,7 @@ class Job:
         for role in roles:
             # Execute the query with parameters
             self.cursor.execute(query, (self.current, f'%{role},%', f'%,{role},%', f'%,{role}', role, user_id))
-            data = self.cursor.fetchall()
+        data = self.cursor.fetchall()
         return data
 
     def exist_by_id(self, id) -> bool:
