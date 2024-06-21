@@ -189,7 +189,7 @@ async def company_job_add(interaction: discord.Interaction):
     
     else:
         view = View()
-        guild = client.get_guild(Enums.GUILD_ID.value)
+        guild = client.get_guild(interaction.guild.id)
         roles = [role.name for role in guild.roles]
         select = SelectRoles(client, roles, URL)
         view.add_item(select)
@@ -374,14 +374,13 @@ async def server_message(interaction: discord.Interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 
         else:
-            guild = client.get_guild(Enums.GUILD_ID.value)
-            roles = [role.name for role in guild.roles]
-            select = MessageSelect(client, roles)
+            select = MessageSelect(client, Enums.MESSAGE_ROLES.value)
             view = View()
             view.add_item(select)
             select.roles_message = await interaction.followup.send('Send message by roles', view=view)
-    except AttributeError:
+    except AttributeError as e:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+        # raise e
     
 
 # @client.tree.command(name='test_embed')

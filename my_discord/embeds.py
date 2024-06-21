@@ -55,10 +55,11 @@ class ReviewEmbed(Embed):
         self.data = data
         super().__init__(
             title=data['server_name'],
+            # description=data['job_description'],
             color = discord.Color.random()
             )
         self.add_field(name='Job Name', value=data['job_name'], inline=False)
-        self.add_field(name='Job Description', value=data['job_description'], inline=False)
+        self.add_field(name='Job Description', value=f'{data["job_description"][:300]}', inline=False)
         self.add_field(name="Message", value=data['description'], inline=False)
         self.add_field(name='link', value=data['link'], inline=False)
 
@@ -79,7 +80,7 @@ class ContentEmbed(Embed):
             )
         
         self.add_field(name='Job Name', value=review_data['job_name'], inline=False)
-        self.add_field(name='Job Description', value=review_data['job_description'], inline=False)
+        # self.add_field(name='Job Description', value=review_data['job_description'], inline=False)
         self.add_field(name='Content link', value=content_data['link'], inline=False)
 
         if 'initial_plays' in content_data:
@@ -125,7 +126,7 @@ class JobEmbed(Embed):
 
         super().__init__(
             title=job_data['server_name'],
-            description=job_data['description'],
+            description=f'{job_data["description"]}',
             color=color
         )
 
@@ -134,9 +135,11 @@ class JobEmbed(Embed):
         self.add_field(name="Duration", value=f"{job_data['duration']} days")
         self.add_field(name="End date", value=job_data['end_date'])
         self.add_field(name="Participation date", value=job_data['participation_date'])
+        self.add_field(name="Total Budget", value=str(job_data['budget']) + ' MNT')
         self.add_field(name="Job files", value=f"[Click Here]({job_data['upload_link']})")
         self.add_field(name="Roles", value=job_data['roles'].replace(',', ' '), inline=False)
         self.add_field(name="1 view point", value=job_data['point'], inline=False)
+        # self.add_field(name="Description", value=job_data['description'])
 
         for idx, content in enumerate(contents):
             self.add_field(name=f'content-{idx}', value=f"[Click Here]({content['link']})", inline=False)
@@ -148,7 +151,7 @@ class ApproveEmbed(Embed):
         self.job_name = data['job_name']
         self.job_roles = data['job_roles']
         self.start_date = data['start_date']
-        self.description = data['description']
+        self.data = data
         job_type = data['type']
 
         if job_type is not None and job_type == 'Rejected':
@@ -162,13 +165,16 @@ class ApproveEmbed(Embed):
 
         super().__init__(
             title=self.job_name,
-            description=self.description,
+            # description=self.description,
             color=color
         )
         
+        user_roles = [f"**{str(role).replace('@', '')}**" if '@' not in f'**{role}**' else role for role in self.user_roles]
+        job_roles = [f"**{str(role).replace('@', '')}**" if '@' not in f'**{role}**' else role for role in self.job_roles.split(',')]
         self.add_field(name="User", value=self.user)
         self.add_field(name="Job name", value=self.job_name)
         self.add_field(name="Start date", value=self.start_date)
-        self.add_field(name="Description", value=self.description)
-        self.add_field(name="Job roles", value=self.job_roles.replace(',', ' '), inline=False)
-        self.add_field(name="User roles", value=' '.join(self.user_roles), inline=False)
+        self.add_field(name="Job roles", value=', '.join(job_roles), inline=False)
+        self.add_field(name="User roles", value=', '.join(user_roles), inline=False)
+        
+        self.add_field(name="Description", value=f"{self.data['description'][:300]}")

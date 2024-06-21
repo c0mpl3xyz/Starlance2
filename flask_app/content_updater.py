@@ -119,7 +119,7 @@ def content_updater():
                 for _, v_2_v in v_2.items():
                     total += v_2_v['points']
 
-            total_points = job_budgets[k][0]/10
+            total_points = job_budgets[k][0]/job_point_dict[k]
             if total < total_points:
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():

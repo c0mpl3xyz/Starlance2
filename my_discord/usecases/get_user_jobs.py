@@ -19,6 +19,7 @@ class GetUserJobViews:
         if response:
             review_counts = response.json()
 
+        print(review_counts)
         job_views = []
         for job in JSON:
             response = requests.get(URL + '/content/user_and_job', json={'user_id': user_id, 'job_id': str(job[0])})

@@ -208,7 +208,8 @@ class JobView(discord.ui.View):
             await interaction.message.edit(view=self)
         else:
             register_job = RegisterJob().get_by_user_job(interaction.user.id, self.job_data['job_id'])
-            modal = ReviewUserModal(self.bot, interaction.user.id, register_job['id'], self.job_data, 'Pending', self.company)
+            register_job['job_register_id'] = register_job['id']
+            modal = ReviewUserModal(self.bot, interaction.user.id, register_job, self.job_data, 'Pending', self.company)
             await interaction.response.send_modal(modal)
             await modal.wait()
 
@@ -254,7 +255,7 @@ class JobView(discord.ui.View):
             job_approve_view.message = await channel.send(embed=job_approve_view.embed, view=job_approve_view)
             await interaction.message.edit(view=self)
         else:
-            await interaction.message.edit(response['message'])
+            await interaction.message.edit('failed')
         
         self.stop()
         
@@ -272,6 +273,7 @@ class ApprovementJobView(discord.ui.View):
         self.message = None
         timeout = 350
         self.bot = bot
+        self.message = embed_data['description']
         self.embed = ApproveEmbed(embed_data)
         super().__init__(timeout=timeout)
         self.user_id = embed_data['user_id']
@@ -392,7 +394,10 @@ class ReviewView(discord.ui.View):
         from modal import ReviewUserModal
         # await interaction.response.defer()
         job_data = GetJobById(self.review_data['job_id']).execute()
-        modal = ReviewUserModal(self.bot, interaction.user.id, self.review_data['job_register_id'], job_data, 'Pending', self.company)
+        update = False
+        if 'type' in self.review_data and self.review_data['type'] == 'Rejected':
+            update = True
+        modal = ReviewUserModal(self.bot, interaction.user.id, self.review_data, job_data, 'Pending', self.company, update=update)
         await interaction.response.send_modal(modal)
         await modal.wait()
         self.review_button.label = 'Review request sent'
@@ -446,6 +451,7 @@ class ReviewView(discord.ui.View):
             self.remove_item(self.accept_button)
             self.add_item(self.approve_button)
             self.add_item(self.upload_button)
+
             self.review_data['type'] = 'Approved'
 
             await interaction.message.edit(view=self)

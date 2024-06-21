@@ -8,7 +8,6 @@ class MessageSelect(Select):
     def __init__(self, bot, roles):
         self.bot = bot
         self.roles_message = None
-        roles = self.clean_roles(roles)
         self.all_roles = 'All Roles'
         roles = [self.all_roles] + roles
         roles = roles[:25]
@@ -30,10 +29,6 @@ class MessageSelect(Select):
             message = self.roles_message
             await message.delete()
         return
-    
-    def clean_roles(self, roles):
-        roles = [role.lower().replace('[job]', '').strip() for role in roles if '[job]' in role.lower()]
-        return roles[:25]
     
 class SelectRoles(Select):
     def __init__(self, bot, roles, url):

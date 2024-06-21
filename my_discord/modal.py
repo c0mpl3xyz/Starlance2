@@ -67,6 +67,7 @@ class JobModal(Modal, title="Job registration"):
                 await interaction.channel.send(message)
             return
 
+        self.roles = ['ADMIN']
         start_date = datetime.strptime(str(self.start_date), '%Y/%m/%d')
         end_date_obj: datetime =  start_date + timedelta(days=int(str(self.duration)))
         participation_date_obj = start_date + timedelta(days=7)
@@ -98,7 +99,6 @@ class JobModal(Modal, title="Job registration"):
 
         if success:
             self.finished = True
-            user_job_view = JobView(data, self.bot)
             company_job_view = JobView(data, self.bot, company=True)
             company_job_view.message = await interaction.followup.send('New Job added', embed=company_job_view.embed, view=company_job_view)
             await interaction.message.delete()
@@ -114,15 +114,18 @@ class JobModal(Modal, title="Job registration"):
                 try:
                     if isinstance(user, discord.User) or isinstance(user, discord.Member):
                         if list(intersection_set):
-                            dm_channel = user.dm_channel
-                            if not dm_channel:
-                                dm_channel = await user.create_dm()
-                            user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
-                        else:
-                            await interaction.followup.send(response['message'])
-                        return success
+                            print('found!')
+                            user_job_view = JobView(data, self.bot)
+                            await user.send(embed=user_job_view.embed, view=user_job_view)
+                        #     dm_channel = user.dm_channel
+                        #     if not dm_channel:
+                        #         dm_channel = await user.create_dm()
+                        #     user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
+                        # return success
                 except:
+                    print(str(e))
                     pass
+            await interaction.followup.send(response['message'])
 
 class JobAdditionalModal(Modal, title='Additional Information'):
     def __init__(self, url):
@@ -158,36 +161,33 @@ class MessageModal(Modal, title='Message send'):
         from embeds import MessageEmbed
         await interaction.response.defer()
         embed = MessageEmbed(self.message_title, self.message)
-        self.roles
         guild = self.bot.get_guild(Enums.GUILD_ID.value)
-
         message_roles = set(self.roles)
+        await interaction.followup.send('Message successfully sent')
+        self.finished = True
+        self.stop()
+
         for user in guild.members:
             user_roles = set([role.name for role in user.roles])
             intersection_set = user_roles & message_roles
-
             try:
                 if isinstance(user, discord.User) or isinstance(user, discord.Member):
                     if list(intersection_set):
-                        dm_channel = user.dm_channel
-                        if not dm_channel:
-                            dm_channel = await user.create_dm()
-                        await dm_channel.send(embed=embed)
-            except:
-                pass
-        self.finished = True
-        await interaction.followup.send('Message successfully sent')
-        self.stop()
+                        await user.send(embed=embed)
+            except Exception as e:
+                print(str(e))
 
 class ReviewUserModal(Modal, title='Review upload'):
-    def __init__(self, bot, user_id, job_register_id, job_data: dict, review_type, company=False):
+    def __init__(self, bot, user_id, review_data, job_data: dict, review_type, company=False, update=False):
         super().__init__(title='Review upload')
         self.bot = bot
         self.review_type = review_type
         self.user_id = user_id
-        self.job_register_id = job_register_id
+        self.review_data = review_data
+        self.job_register_id = review_data['job_register_id']
         self.job_data = job_data
         self.company = company
+        self.update = update
         self.link = TextInput(label="We transfer link", placeholder="https://we.tl/t-A6GJNEtest", required=True, min_length=1, max_length=200)
         self.description = TextInput(label="Description", placeholder='', required=True,  style=discord.TextStyle.paragraph)
         if not company:
@@ -207,6 +207,9 @@ class ReviewUserModal(Modal, title='Review upload'):
             'description': str(self.description),
         }
 
+        if 'id' in self.review_data:
+            data['id'] = self.review_data['id']
+
         if not self.company:
             data['link'] = str(self.link)
 
@@ -216,8 +219,12 @@ class ReviewUserModal(Modal, title='Review upload'):
         data['server_id'] = self.job_data['discord_server_id']
         data['server_name'] = guild.name
 
-        response = requests.post(URL + '/review', json=data)
-        
+        response = None
+        if not self.update:
+            response = requests.post(URL + '/review', json=data)
+        else:
+            response = requests.put(URL + '/review', json=data)
+
         if response.json()['success']:
             data['id'] = response.json()['review_id']
 
@@ -229,6 +236,7 @@ class ReviewUserModal(Modal, title='Review upload'):
                     view.message = await channel.send(embed=view.embed, view=view)
                    
 class BankRegistrationModal(Modal, title='Bank Registration'):
+
     def __init__(self, bank_name, url):
         self.url = url
         self.bank_name = bank_name
