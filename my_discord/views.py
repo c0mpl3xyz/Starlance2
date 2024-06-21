@@ -137,9 +137,12 @@ class JobView(discord.ui.View):
         self.job_data = job_data
         self.bot = bot
         self.company = company
+        self.type = None
         self.embed = JobEmbed(job_data, contents)
         if 'type' in job_data:
             self.type = job_data['type']
+        else:
+            self.type = 'Open'
 
         super().__init__(timeout=timeout)
         self.description = '\n'.join([f'{k}: {v}' for (k, v) in job_data.items() if k != 'discord_server_id'])
@@ -160,19 +163,19 @@ class JobView(discord.ui.View):
         self.new_button.callback = self.new_button_callback
 
         if not company:
-            if job_data['type'] == 'Open':
+            if self.type == 'Open':
                 self.add_item(self.reject_button)
                 self.add_item(self.accept_button)
             
-            elif job_data['type'] == 'Pending':
+            elif self.type == 'Pending':
                 self.add_item(self.pending_button)
             
-            elif job_data['type'] == 'Rejected':
+            elif self.type == 'Rejected':
                 self.reject_button.label = 'Rejected'
                 self.reject_button.disabled = True
                 self.add_item(self.reject_button)
             
-            elif job_data['type'] == 'Approved':
+            elif self.type == 'Approved':
                 self.accept_button.label = 'Approved'
                 self.accept_button.style = discord.ButtonStyle.primary
                 self.accept_button.disabled = True
