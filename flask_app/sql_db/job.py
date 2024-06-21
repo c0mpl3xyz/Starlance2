@@ -40,7 +40,7 @@ class Job:
         query = """
                 SELECT j.*
                 FROM Job j
-                WHERE j.start_date >= %s
+                WHERE j.start_date <= %s
                 AND (
                     LOWER(j.roles) LIKE LOWER(%s) 
                     OR LOWER(j.roles) LIKE LOWER(%s) 
