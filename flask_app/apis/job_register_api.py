@@ -84,8 +84,8 @@ def get_job_roles():
     new_data = []
     for value in data:
         job_register = job_register.get_by_id(value[0])
-        new_data.append(data.append(value))
-    return jsonify(data)
+        new_data.append(value.append(job_register[3]))
+    return jsonify(new_data)
 
 @job_register_bp.route('/job', methods=['GET'])
 def get_job_users():
