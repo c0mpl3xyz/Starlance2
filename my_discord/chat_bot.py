@@ -36,7 +36,7 @@ def is_our_company(intearaction) -> bool:
     
 def is_influencer(roles):
     # TODO: change to Influencer
-    return 'Influencer' in roles
+    return 'ADMIN' in roles
 
 def is_dm(interaction):
     try:
