@@ -114,7 +114,7 @@ class JobModal(Modal, title="Job registration"):
                     if isinstance(user, discord.User) or isinstance(user, discord.Member):
                         if list(intersection_set):
                             user_job_view = JobView(data, self.bot)
-                            await user.send(embed=user_job_view.embed, view=user_job_view)
+                            user_job_view.message = await user.send(embed=user_job_view.embed, view=user_job_view)
                         #     dm_channel = user.dm_channel
                         #     if not dm_channel:
                         #         dm_channel = await user.create_dm()
@@ -207,7 +207,6 @@ class ReviewUserModal(Modal, title='Review upload'):
 
         if 'id' in self.review_data:
             data['id'] = self.review_data['id']
-
         if not self.company:
             data['link'] = str(self.link)
 
@@ -224,7 +223,8 @@ class ReviewUserModal(Modal, title='Review upload'):
             response = requests.put(URL + '/review', json=data)
 
         if response.json()['success']:
-            data['id'] = response.json()['review_id']
+            if 'id' not in data:
+                data['id'] = response.json()['review_id']
 
             our_guild = self.bot.get_guild(Enums.OUR_COMPANY.value)
             if our_guild:

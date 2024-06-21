@@ -7,9 +7,8 @@ class GetJobsByUserRoles:
     def execute(self, user_id, roles, bot):
         data = {
                 'user_id': user_id,
-                'roles': ['ADMIN']
+                'roles': ['Influencer']
             }
-        print(f'{data=}')
         
         response = requests.get(URL + '/job_register/roles', json=data)
         JSON = response.json()

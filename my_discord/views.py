@@ -472,7 +472,6 @@ class ReviewView(discord.ui.View):
     async def accept_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
         review = Review()
-        print(self.review_data['id'])
         response = review.update(self.review_data['id'], review_type='Approved')
 
         if response['success']:
