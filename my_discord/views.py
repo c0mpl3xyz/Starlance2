@@ -74,7 +74,7 @@ class CollectView(discord.ui.View):
     
     async def on_timeout(self):
         self.clear_items()
-        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command /status', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command /my_status', style=discord.ButtonStyle.primary, emoji='⏳')
         timeout_button.disabled = True
         self.add_item(timeout_button)
         await self.message.edit(view=self)
@@ -124,7 +124,7 @@ class UserView(discord.ui.View):
 
     async def on_timeout(self):
         self.clear_items()
-        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command /status', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command /my_status', style=discord.ButtonStyle.primary, emoji='⏳')
         timeout_button.disabled = True
         self.add_item(timeout_button)
         await self.message.edit(view=self)
@@ -273,7 +273,7 @@ class JobView(discord.ui.View):
 
     async def on_timeout(self):
         self.clear_items()
-        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command /my_new_jobs or /my_jobs', style=discord.ButtonStyle.primary, emoji='⏳')
         timeout_button.disabled = True
         self.add_item(timeout_button)
         await self.message.edit(view=self)
@@ -344,7 +344,7 @@ class ApprovementJobView(discord.ui.View):
 
     async def on_timeout(self):
         self.clear_items()
-        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command /my_approves', style=discord.ButtonStyle.primary, emoji='⏳')
         timeout_button.disabled = True
         self.add_item(timeout_button)
         await self.message.edit(view=self)
@@ -489,7 +489,7 @@ class ReviewView(discord.ui.View):
 
     async def on_timeout(self):
         self.clear_items()
-        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command /my_reviews', style=discord.ButtonStyle.primary, emoji='⏳')
         timeout_button.disabled = True
         self.add_item(timeout_button)
         await self.message.edit(view=self)
@@ -525,7 +525,7 @@ class ContentView(discord.ui.View):
 
     async def on_timeout(self):
         self.clear_items()
-        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
+        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command /my_contents', style=discord.ButtonStyle.primary, emoji='⏳')
         timeout_button.disabled = True
         self.add_item(timeout_button)
         if self.main:
