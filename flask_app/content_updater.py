@@ -14,7 +14,7 @@ URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
 IG_TOKEN = os.getenv('IG_TOKEN')
 IG_ID = os.getenv('IG_ID')
 PERMISSIONS = ['instagram_manage_insights', 'instagram_basic', 'pages_show_list']
-
+EPSILON = 1e-8
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s [%(levelname)s] %(message)s',
                     handlers=[logging.StreamHandler()])
@@ -61,10 +61,10 @@ def get_shortcode(link):
     return None
 
 def cal_percent(a, b):
-    return a / b
+    return a / (b + EPSILON)
 
 def calculate_replays(initial_plays, replays):
-    rate = replays / initial_plays
+    rate = replays / (initial_plays + EPSILON)
     if rate <= 0.7:
         return replays
 
@@ -128,9 +128,9 @@ def content_updater():
                 diff = total - total_points
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():
-                        point_perc = v_2_v['points'] / total
-                        initial_perc = v_2_v['initial_plays'] / v_2_v['points']
-                        replay_perc = v_2_v['replays'] / v_2_v['points']
+                        point_perc = v_2_v['points'] / (total + EPSILON)
+                        initial_perc = v_2_v['initial_plays'] / (v_2_v['points'] + EPSILON)
+                        replay_perc = v_2_v['replays'] / (v_2_v['points']  + EPSILON)
                         point_change = (round(diff* point_perc))
                         v_2_v['points'] = v_2_v ['points'] - (round(diff* point_perc))
                         v_2_v['initial_plays'] = v_2_v['initial_plays'] - round(point_change * initial_perc)
@@ -254,7 +254,7 @@ class ProIGToken():
                 new_data['replays'] = calculate_replays(new_data['initial_plays'], new_data['replays'])
                 new_data['points'] = new_data['initial_plays'] + new_data['replays']
                 new_data['engagement'] = new_data['total_interactions']
-                new_data['engagement_rate'] = new_data['total_interactions'] / new_data['account_reach'] * 100.0
+                new_data['engagement_rate'] = new_data['total_interactions'] / (new_data['account_reach'] + EPSILON) * 100.0
                 my_data[data['shortcode']] = new_data
         next_url = None
         if 'next' in media['paging']:
