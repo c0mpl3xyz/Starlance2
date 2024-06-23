@@ -244,7 +244,7 @@ class JobView(discord.ui.View):
     async def delete_button_callback(self, interaction: discord.Interaction):
         from modal import DeleteJobModal
         delete_modal = DeleteJobModal(self.job_data)
-        interaction.response.send_modal(delete_modal)
+        await interaction.response.send_modal(delete_modal)
         await delete_modal.wait()
         if delete_modal.finished:
             self.clear_items()
