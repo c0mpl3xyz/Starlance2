@@ -108,7 +108,7 @@ class ContentEmbed(Embed):
             self.add_field(name='Total Points', value=content_data['points'], inline=False)
 
 class JobEmbed(Embed):
-    def __init__(self, job_data, contents, company):
+    def __init__(self, job_data, contents, our_company):
         color = None
         if 'type' not in job_data:
             color = discord.Color.green()
@@ -137,7 +137,7 @@ class JobEmbed(Embed):
         self.add_field(name="1 view point", value=job_data['point'])
         self.add_field(name="Roles", value=job_data['roles'].replace(',', ' '), inline=False)
 
-        if company:
+        if our_company:
             if not len(contents):
                 self.add_field(name="Job Report", value='There is no contents yet!', inline=False)
             else:

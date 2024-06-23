@@ -217,7 +217,8 @@ async def company_jobs(interaction: discord.Interaction):
         if is_main_server(interaction):
             return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
 
-        job_views = GetCompanyJobs().execute(interaction.user.guild.id, client)
+        our_company = is_our_company(interaction)
+        job_views = GetCompanyJobs().execute(interaction.user.guild.id, client, our_company)
         if job_views is None or len(job_views) == 0:
             return await interaction.followup.send(ErrorMessageEnum.NO_JOB.value)
         else:

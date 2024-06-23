@@ -130,7 +130,9 @@ class UserView(discord.ui.View):
         await self.message.edit(view=self)
 
 class JobView(discord.ui.View):
-    def __init__(self, job_data, bot, company=False, has_review=False, contents=[]):
+    def __init__(self, job_data, bot, company=False, has_review=False, contents=None, our_company=False):
+        if contents == None:
+            contents = []
         self.message = None
         self.register_job = None
         timeout = 350
@@ -138,7 +140,7 @@ class JobView(discord.ui.View):
         self.bot = bot
         self.company = company
         self.type = None
-        self.embed = JobEmbed(job_data, contents, company)
+        self.embed = JobEmbed(job_data, contents, our_company)
         if 'type' in job_data:
             self.type = job_data['type']
         else:
