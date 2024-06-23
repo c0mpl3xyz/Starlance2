@@ -79,33 +79,23 @@ class ContentEmbed(Embed):
             color = color
             )
         
+        removed_replays = content_data['total_plays'] - content_data['initial_plays'] - content_data['replays']
         self.add_field(name='Job Name', value=review_data['job_name'], inline=False)
         self.add_field(name='User', value=f'<@{content_data["user_id"]}>')
-        self.add_field(name='Content link', value=content_data['link'], inline=False)
-        if 'total_plays' in content_data:
-            self.add_field(name='Total Views', value=content_data['total_plays'])
-        if 'initial_plays' in content_data:
-            self.add_field(name='Initial plays', value=content_data['initial_plays'])
-        if 'replays' in content_data:
-            self.add_field(name='Replay', value=content_data['replays'])
-        if 'likes' in content_data:
-            self.add_field(name='Likes', value=content_data['likes'])
-        if 'saves' in content_data:
-            self.add_field(name='Saves', value=content_data['saves'])
-        if 'shares' in content_data:
-            self.add_field(name='Shares', value=content_data['shares'])
-        if 'comments' in content_data:
-            self.add_field(name='Comments', value=content_data['comments'])
-        if 'account_reach' in content_data:
-            self.add_field(name='Account reached', value=content_data['account_reach'])
-        if 'total_interactions' in content_data:
-            self.add_field(name='Total interaction', value=content_data['total_interactions'])
-        if 'engagement_rate' in content_data:
-            self.add_field(name='Engagement Rate', value=content_data['engagement_rate'])
-        if 'active' in content_data:
-            self.add_field(name='Active', value=content_data['active'])
-        if 'points' in content_data:
-            self.add_field(name='Total Points', value=content_data['points'], inline=False)
+        self.add_field(name='Content Link', value=content_data['link'], inline=False)
+        self.add_field(name='Total Views', value=content_data['total_plays'])
+        self.add_field(name='Initial Plays', value=content_data['initial_plays'])
+        self.add_field(name='Replays', value=content_data['replays'])
+        self.add_field(name='Removed Replays', value=removed_replays)
+        self.add_field(name='Likes', value=content_data['likes'])
+        self.add_field(name='Saves', value=content_data['saves'])
+        self.add_field(name='Shares', value=content_data['shares'])
+        self.add_field(name='Comments', value=content_data['comments'])
+        self.add_field(name='Account Reached', value=content_data['account_reach'])
+        self.add_field(name='Total Interaction', value=content_data['total_interactions'])
+        self.add_field(name='Engagement Rate', value=content_data['engagement_rate'])
+        self.add_field(name='Active', value=content_data['active'])
+        self.add_field(name='Total Points', value=content_data['points'])
 
 class JobEmbed(Embed):
     def __init__(self, job_data, contents, our_company):
@@ -128,30 +118,34 @@ class JobEmbed(Embed):
         )
 
         self.add_field(name="Job name", value=job_data['name'], inline=False)
-        self.add_field(name="Start date", value=job_data['start_date'])
+        self.add_field(name="Roles", value=job_data['roles'].replace(',', ' '), inline=False)
+        self.add_field(name="Start date", value=f"{job_data['start_date']} Days")
         self.add_field(name="Duration", value=f"{job_data['duration']} days")
         self.add_field(name="End date", value=job_data['end_date'])
         self.add_field(name="Participation date", value=job_data['participation_date'])
         self.add_field(name="Total Budget", value=str(job_data['budget']) + ' MNT')
         self.add_field(name="Job files", value=f"[Click Here]({job_data['upload_link']})")
-        self.add_field(name="1 view point", value=job_data['point'])
-        self.add_field(name="Roles", value=job_data['roles'].replace(',', ' '), inline=False)
+        self.add_field(name="1 View Point", value=job_data['point'])
+        self.add_field(name="Points of Job", value=str(job_data['budget'] / job_data['point']))
+        self.add_field(name="\u200B", value="__\u200B__")
 
         if our_company:
             if len(contents):
+                self.add_field(name="\u200B", value="__\u200B__", inline=False)
                 self.add_field(name="Content Count", value=len(contents))
                 content_data = self.get_status(contents)
-                self.add_field(name="Total Views", value=content_data['views'])
-                self.add_field(name="Total Initial Plays", value=content_data['initial_plays'])
-                self.add_field(name="Total Replays ", value=content_data['replays'])
-                self.add_field(name="Total Likes", value=content_data['likes'])
-                self.add_field(name="Total Saves", value=content_data['saves'])
-                self.add_field(name="Total Shares", value=content_data['shares'])
-                self.add_field(name="Total Comments", value=content_data['comments'])
-                self.add_field(name="Total Account Reach", value=content_data['account_reach'])
+                removed_replays = content_data['views'] - content_data['initial_plays'] - content_data['replays']
+                self.add_field(name="Views", value=content_data['views'])
+                self.add_field(name="Initial Plays", value=content_data['initial_plays'])
+                self.add_field(name="Replays ", value=content_data['replays'])
+                self.add_field(name='Removed Replays', value=removed_replays)
+                self.add_field(name="Likes", value=content_data['likes'])
+                self.add_field(name="Saves", value=content_data['saves'])
+                self.add_field(name="Shares", value=content_data['shares'])
+                self.add_field(name="Comments", value=content_data['comments'])
+                self.add_field(name="Account Reach", value=content_data['account_reach'])
                 self.add_field(name="Average Engagement Rate", value=content_data['engagement_rate'])
-                self.add_field(name="Total Points", value=content_data['points'])
-                self.add_field(name="Total Points", value=content_data['points'])
+                self.add_field(name="Points", value=content_data['points'])
         
     def get_status(self, contents):
         if not len(contents):
