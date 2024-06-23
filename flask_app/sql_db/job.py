@@ -37,9 +37,10 @@ class Job:
     
     def get_all_by_roles(self, user_id, roles: list):
         data = []
+        #j.start_date <= %s AND
         query = """
                 SELECT j.*
-                FROM Job j WHERE j.start_date <= %s AND
+                FROM Job j WHERE 
                 (
                     LOWER(j.roles) LIKE LOWER(%s) 
                     OR LOWER(j.roles) LIKE LOWER(%s) 
@@ -55,7 +56,7 @@ class Job:
                 );
         """
         for role in roles:
-            self.cursor.execute(query, (self.current, f'%{role},%', f'%,{role},%', f'%,{role}', role, user_id))
+            self.cursor.execute(query, (f'%{role},%', f'%,{role},%', f'%,{role}', role, user_id))
             # Fetch all rows from the result set
             rows = self.cursor.fetchall()
             data += rows  # Append fetched rows to data list
