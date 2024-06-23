@@ -259,7 +259,7 @@ class JobView(discord.ui.View):
 
             self.job_data['type'] = 'Approved'            
             job_approve_view = ApprovementJobView(embed_data, self.job_data, self.bot)
-            guild_id = Enums.OUR_COMPANY.value
+            guild_id = Enums.GUILD_ID.value
             guild = self.bot.get_guild(guild_id)
             # guild = discord.utils.get(self.bot.guilds, id=self.job_data['discord_server_id'])
             channel_name =  Enums.APPROVE_GUILD.value

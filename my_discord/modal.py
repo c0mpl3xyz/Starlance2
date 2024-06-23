@@ -228,7 +228,7 @@ class ReviewUserModal(Modal, title='Review upload'):
             if 'id' not in data:
                 data['id'] = response.json()['review_id']
 
-            our_guild = self.bot.get_guild(Enums.OUR_COMPANY.value)
+            our_guild = self.bot.get_guild(Enums.GUILD_ID.value)
             if our_guild:
                 channel = discord.utils.get(our_guild.channels, name=Enums.REVIEW.value)
                 view = ReviewView(data, self.bot, company=True)
@@ -353,7 +353,7 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             view_main = ContentView(review_data, content_data, self.bot, main=True)
             
             #await interaction.followup.send(message, embed=view.embed, view=view)
-            guild = self.bot.get_guild(Enums.OUR_COMPANY.value)
+            guild = self.bot.get_guild(Enums.GUILD_ID.value)
             channel = discord.utils.get(guild.channels, name=Enums.CONTENT.value)
             view_main.message = await channel.send(message, embed=view_main.embed, view=view_main)
 
@@ -410,7 +410,7 @@ class UserCollectModal(Modal, title='Collect User Points'):
             response = response.json()
             if response['success']:
                 collect_id = response['collect_id']
-                guild = self.bot.get_guild(Enums.OUR_COMPANY.value)
+                guild = self.bot.get_guild(Enums.GUILD_ID.value)
                 channel = discord.utils.get(guild.channels, name=Enums.COLLECT.value)            
                 collect_view = CollectView(self.user_data, self.bot, collect_id, int(points))
                 collect_view.message = await channel.send(embed=collect_view.embed, view=collect_view)

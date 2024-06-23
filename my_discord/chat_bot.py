@@ -267,7 +267,7 @@ async def server_reviews(interaction: discord.Interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
-        if not is_our_company(interaction):
+        if not is_main_server(interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
         
         review_views = GetServerReviewView().execute(client)
@@ -293,7 +293,7 @@ async def server_contents(interaction: discord.Interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
-        if not is_our_company(interaction):
+        if not is_main_server(interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
         
         content_views = GetServerContentView().execute(client)
@@ -319,7 +319,7 @@ async def server_approves(interaction: discord.Interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
-        if not is_our_company(interaction):
+        if not is_main_server(interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
         
         approve_views = GetServerApprovementView().execute(client)
@@ -349,7 +349,7 @@ async def server_collects(interaction: discord.Interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
-        if not is_our_company(interaction):
+        if not is_main_server(interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
         
         collect_views = GetServerCollectView().execute(client)
@@ -378,7 +378,7 @@ async def server_message(interaction: discord.Interaction):
         return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
     
     try:
-        if not is_our_company(interaction):
+        if not is_main_server(interaction):
             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 
         else:
