@@ -138,11 +138,8 @@ class JobEmbed(Embed):
         self.add_field(name="Roles", value=job_data['roles'].replace(',', ' '), inline=False)
 
         if our_company:
-            if not len(contents):
-                self.add_field(name="Job Report", value='There is no contents yet!', inline=False)
-            else:
-                self.add_field(name="Job Report", value='Report of this Job!', inline=False)
-                self.add_field(name="Content Count", value=len(contents), inline=False)
+            if len(contents):
+                self.add_field(name="Content Count", value=len(contents))
                 content_data = self.get_status(contents)
                 self.add_field(name="Total Views", value=content_data['views'])
                 self.add_field(name="Total Initial Plays", value=content_data['initial_plays'])
