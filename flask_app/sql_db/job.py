@@ -24,7 +24,7 @@ class Job:
             SELECT * FROM Job
         """
 
-        self.cursor.execute(query, (self.current))
+        self.cursor.execute(query)
         return self.cursor.fetchall()
     
     def get_all_by_company_id(self, discord_server_id):
