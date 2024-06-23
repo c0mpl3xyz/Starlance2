@@ -50,9 +50,8 @@ def create_app():
     file_handler = RotatingFileHandler(log_file_path, maxBytes=10240, backupCount=3)
     file_handler.setFormatter(log_formatter)
     file_handler.setLevel(logging.INFO)
-
-    # Add file handler to the app's logger
     app.logger.addHandler(file_handler)
+    
     return app
 
 scheduler = BackgroundScheduler()
