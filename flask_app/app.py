@@ -12,7 +12,7 @@ from apis.job_register_api import job_register_bp
 from apis.content_api import content_bp
 from apis.review_api import review_bp
 from apis.collect_api import collect_bp
-
+from logging.handlers import RotatingFileHandler
 load_dotenv()
 
 logging.basicConfig(level=logging.INFO,
@@ -45,6 +45,14 @@ def create_app():
     app.register_blueprint(collect_bp)
     app.config['THREADED'] = True
 
+    log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+    log_file_path = os.path.abspath('../../app.log')
+    file_handler = RotatingFileHandler(log_file_path, maxBytes=10240, backupCount=3)
+    file_handler.setFormatter(log_formatter)
+    file_handler.setLevel(logging.INFO)
+
+    # Add file handler to the app's logger
+    app.logger.addHandler(file_handler)
     return app
 
 scheduler = BackgroundScheduler()
