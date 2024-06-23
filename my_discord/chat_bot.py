@@ -22,11 +22,12 @@ load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 URL = os.getenv('URL')
-intents = discord.Intents.all()
 
+print(f'{TOKEN}')
 print(f'{URL}')
+
+intents = discord.Intents.all()
 client = commands.Bot(command_prefix='!', intents=intents)
-# client.interaction_timeout = INTERACTION_TIMEOUT
 
 def is_main_server(intearaction) -> bool:
     return intearaction.guild.id == Enums.GUILD_ID.value
@@ -35,8 +36,7 @@ def is_our_company(intearaction) -> bool:
     return intearaction.guild.id == Enums.OUR_COMPANY.value
     
 def is_influencer(roles):
-    # TODO: chang
-    # e to Influencer
+    # TODO: change to Influencer
     return 'Influencer' in roles
 
 def is_dm(interaction):
@@ -48,8 +48,14 @@ def is_dm(interaction):
             return []
 
         return [role.name for role in user.roles]
-    except AttributeError:
+    except AttributeError as e:
+        print(str(e))
         return []
+
+@client.event
+async def on_ready():
+    synced = await client.tree.sync()
+    print(f'I\'m Ready\nCommands {str(len(synced))}')
 
 @client.event
 async def on_message(message):
@@ -66,20 +72,8 @@ async def on_message(message):
     except:
         await message.channel.send(response)
 
-@client.event
-async def on_ready():
-    synced = await client.tree.sync()
-    print(f'I\'m Ready\nCommands {str(len(synced))}')
-
-# @client.tree.command(description='Status')
-# async def status(interaction: discord.Interaction):
-#     # if not await is_influencer(interaction):
-#     #     return await interaction.response.send_message(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
-#     embed = UserEmbed(interaction.user.id, interaction.user.name)
-#     await interaction.response.send_message(embed=embed)
-
-@client.tree.command(description="Sends the bot's latency.") # this decorator makes a slash command
-async def ping(interaction: discord.Interaction): # a slash command will be created with the name "ping"
+@client.tree.command(description="Sends the bot's latency.")
+async def ping(interaction: discord.Interaction):
     await interaction.response.send_message(f"Pong! Latency is {client.latency}", ephemeral=True)
 
 @client.tree.command(name='bank_register')
@@ -99,7 +93,6 @@ async def bank_register(interaction: discord.Interaction):
 async def my_jobs(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
-    
     if is_influencer(roles):
         job_views = GetUserJobViews().execute(interaction.user.id, client)
         if job_views is None or len(job_views) == 0:
@@ -383,7 +376,6 @@ async def server_message(interaction: discord.Interaction):
     except AttributeError as e:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
         # raise e
-    
 
 # @client.tree.command(name='test_embed')
 # async def test_embed(interaction: discord.Interaction):

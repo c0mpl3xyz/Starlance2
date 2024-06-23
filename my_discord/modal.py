@@ -6,7 +6,7 @@ from discord import Interaction
 from utils.enums import Enums
 from datetime import datetime, timedelta
 from validator.validator import Validator
-import re, os, pytz, time
+import re, os, pytz, time, asyncio
 
 URL = os.getenv('URL')
 # start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
@@ -115,6 +115,7 @@ class JobModal(Modal, title="Job registration"):
                         if list(intersection_set):
                             user_job_view = JobView(data, self.bot)
                             user_job_view.message = await user.send(embed=user_job_view.embed, view=user_job_view)
+                            await asyncio.sleep(1)
                         #     dm_channel = user.dm_channel
                         #     if not dm_channel:
                         #         dm_channel = await user.create_dm()
@@ -172,6 +173,7 @@ class MessageModal(Modal, title='Message send'):
                 if isinstance(user, discord.User) or isinstance(user, discord.Member):
                     if list(intersection_set):
                         await user.send(embed=embed)
+                        await asyncio.sleep(1) 
             except Exception as e:
                 print(str(e))
 
