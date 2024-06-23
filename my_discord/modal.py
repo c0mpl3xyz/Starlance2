@@ -103,27 +103,28 @@ class JobModal(Modal, title="Job registration"):
             await interaction.message.delete()
 
             # TODO: change user id to job registered users
-            guild = self.bot.get_guild(Enums.GUILD_ID.value)
+            # guild = self.bot.get_guild(Enums.GUILD_ID.value)
 
-            job_roles = set(self.roles)
-            for user in guild.members:
+            # job_roles = set(self.roles)
+            # for user in guild.members:
 
-                user_roles = set([role.name for role in user.roles])
-                intersection_set = user_roles & job_roles
-                try:
-                    if isinstance(user, discord.User) or isinstance(user, discord.Member):
-                        if list(intersection_set):
-                            user_job_view = JobView(data, self.bot)
-                            user_job_view.message = await user.send(embed=user_job_view.embed, view=user_job_view)
-                            await asyncio.sleep(2)
-                        #     dm_channel = user.dm_channel
-                        #     if not dm_channel:
-                        #         dm_channel = await user.create_dm()
-                        #     user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
-                        # return success
-                except Exception as e:
-                    print(str(e))
-                    pass
+            #     user_roles = set([role.name for role in user.roles])
+            #     intersection_set = user_roles & job_roles
+            #     try:
+            #         if isinstance(user, discord.User) or isinstance(user, discord.Member):
+            #             if list(intersection_set):
+            #                 user_job_view = JobView(data, self.bot)
+            #                 user_job_view.message = await user.send(embed=user_job_view.embed, view=user_job_view)
+            #                 await asyncio.sleep(2)
+            #             #     dm_channel = user.dm_channel
+            #             #     if not dm_channel:
+            #             #         dm_channel = await user.create_dm()
+            #             #     user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
+            #             # return success
+            #     except Exception as e:
+            #         print(str(e))
+            #         pass
+        else:
             await interaction.followup.send(response['message'])
 
 class JobAdditionalModal(Modal, title='Additional Information'):

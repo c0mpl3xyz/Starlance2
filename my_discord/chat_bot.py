@@ -369,26 +369,26 @@ async def server_collects(interaction: discord.Interaction):
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 
-@client.tree.command(name='server_message')
-async def server_message(interaction: discord.Interaction):
-    await interaction.response.defer(ephemeral=True)
-    roles = is_dm(interaction)
+# @client.tree.command(name='server_message')
+# async def server_message(interaction: discord.Interaction):
+#     await interaction.response.defer(ephemeral=True)
+#     roles = is_dm(interaction)
 
-    if is_influencer(roles):
-        return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+#     if is_influencer(roles):
+#         return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
     
-    try:
-        if not is_main_server(interaction):
-            return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+#     try:
+#         if not is_main_server(interaction):
+#             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 
-        else:
-            select = MessageSelect(client, Enums.MESSAGE_ROLES.value)
-            view = View()
-            view.add_item(select)
-            select.roles_message = await interaction.followup.send('Send message by roles', view=view)
-    except AttributeError as e:
-        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
-        # raise e
+#         else:
+#             select = MessageSelect(client, Enums.MESSAGE_ROLES.value)
+#             view = View()
+#             view.add_item(select)
+#             select.roles_message = await interaction.followup.send('Send message by roles', view=view)
+#     except AttributeError as e:
+#         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+#         # raise e
 
 # @client.tree.command(name='test_embed')
 # async def test_embed(interaction: discord.Interaction):
