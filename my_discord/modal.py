@@ -431,7 +431,7 @@ class DeleteJobModal(Modal, title='Delete Job'):
     async def on_submit(self, interaction: Interaction):
         await interaction.response.defer()
         ack_name = str(self.ack_job_name)
-        if ack_name == self.ack_job_name:
+        if ack_name == self.job_data['name']:
             response = requests.delete(URL + '/job', json=self.job_data['job_id'])
             if response.json()['success']:
                 self.finished = True
