@@ -115,7 +115,7 @@ class JobModal(Modal, title="Job registration"):
                         if list(intersection_set):
                             user_job_view = JobView(data, self.bot)
                             user_job_view.message = await user.send(embed=user_job_view.embed, view=user_job_view)
-                            await asyncio.sleep(1)
+                            await asyncio.sleep(2)
                         #     dm_channel = user.dm_channel
                         #     if not dm_channel:
                         #         dm_channel = await user.create_dm()
@@ -173,7 +173,7 @@ class MessageModal(Modal, title='Message send'):
                 if isinstance(user, discord.User) or isinstance(user, discord.Member):
                     if list(intersection_set):
                         await user.send(embed=embed)
-                        await asyncio.sleep(1) 
+                        await asyncio.sleep(2) 
             except Exception as e:
                 print(str(e))
 
