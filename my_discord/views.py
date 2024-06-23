@@ -138,7 +138,7 @@ class JobView(discord.ui.View):
         self.bot = bot
         self.company = company
         self.type = None
-        self.embed = JobEmbed(job_data, contents)
+        self.embed = JobEmbed(job_data, contents, company)
         if 'type' in job_data:
             self.type = job_data['type']
         else:
