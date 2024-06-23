@@ -358,7 +358,7 @@ async def server_jobs(interaction: discord.Interaction):
             except discord.errors.InteractionResponded:
                 await interaction.followup.send(ErrorMessageEnum.NO_JOB.value + f'<@{interaction.user.id}>', ephemeral=True)
         else:
-            channel = discord.utils.get(interaction.guild.channels, name=Enums.APPROVE_GUILD.value)
+            channel = discord.utils.get(interaction.guild.channels, name=Enums.JOB.value)
             if not channel:
                 channel = interaction.channel
             for view in job_views:
