@@ -165,7 +165,7 @@ class JobView(discord.ui.View):
         self.new_button = discord.ui.Button(label='Click here', style=discord.ButtonStyle.green, emoji='➕')
         self.new_button.callback = self.new_button_callback
 
-        self.delete_button = discord.ui.Button(label='Delete', style=discord.ButtonStyle.green, emoji='❌')
+        self.delete_button = discord.ui.Button(label='Delete', style=discord.ButtonStyle.red, emoji='❌')
         self.delete_button.callback = self.delete_button_callback
         
         if server:
@@ -244,6 +244,7 @@ class JobView(discord.ui.View):
     async def delete_button_callback(self, interaction: discord.Interaction):
         from modal import DeleteJobModal
         delete_modal = DeleteJobModal(self.job_data)
+        interaction.response.send_modal(delete_modal)
         await delete_modal.wait()
         if delete_modal.finished:
             self.clear_items()
