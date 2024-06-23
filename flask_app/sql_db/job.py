@@ -37,10 +37,9 @@ class Job:
     
     def get_all_by_roles(self, user_id, roles: list):
         data = []
-        #WHERE j.start_date <= %s AND
         query = """
                 SELECT j.*
-                FROM Job j WHERE
+                FROM Job j WHERE j.start_date <= %s AND
                 (
                     LOWER(j.roles) LIKE LOWER(%s) 
                     OR LOWER(j.roles) LIKE LOWER(%s) 
