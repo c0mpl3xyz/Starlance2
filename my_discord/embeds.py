@@ -185,7 +185,7 @@ class JobEmbed(Embed):
             data['engagement_rate'] += content['engagement_rate']
             data['points'] += content['points']
 
-        data['engagement_rate'] = data['engagement_rate'] / len(contents)
+        data['engagement_rate'] = round(data['engagement_rate'] / len(contents), 2)
 
         return data
     
