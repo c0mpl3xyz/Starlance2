@@ -7,7 +7,7 @@ from selects import SelectRoles, SelectBankNames, MessageSelect
 from discord.ui import View
 from usecases.get_user_jobs import GetUserJobViews
 from usecases.get_jobs_by_user_roles import GetJobsByUserRoles
-from usecases.get_company_jobs import GetCompanyJobs
+from usecases.get_company_jobs import GetCompanyJobs, GetServerJobs
 from utils.error_message_enums import ErrorMessageEnum, MessageEnum
 from utils.enums import Enums
 from datetime import datetime
@@ -217,8 +217,7 @@ async def company_jobs(interaction: discord.Interaction):
         if is_main_server(interaction):
             return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
 
-        our_company = is_our_company(interaction)
-        job_views = GetCompanyJobs().execute(interaction.user.guild.id, client, our_company)
+        job_views = GetCompanyJobs().execute(interaction.user.guild.id, client)
         if job_views is None or len(job_views) == 0:
             return await interaction.followup.send(ErrorMessageEnum.NO_JOB.value)
         else:
@@ -337,6 +336,35 @@ async def server_approves(interaction: discord.Interaction):
                 view.message = await interaction.channel.send(embed=view.embed, view=view)
                 await asyncio.sleep(2)
             await interaction.followup.send(f'Approvement list sent to <#{channel.id}>', ephemeral=True)
+    except AttributeError:
+        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+
+@client.tree.command(name='server_jobs')
+async def server_jobs(interaction: discord.Interaction):
+    await interaction.response.defer(ephemeral=True)
+    roles = is_dm(interaction)
+
+    if is_influencer(roles):
+        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+    
+    try:
+        if not is_main_server(interaction):
+            return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+        
+        job_views = GetServerJobs().execute(client)
+        if job_views is None or len(job_views) == 0:
+            try:
+                await interaction.followup.send(ErrorMessageEnum.NO_JOB.value + f'<@{interaction.user.id}>', ephemeral=True)
+            except discord.errors.InteractionResponded:
+                await interaction.followup.send(ErrorMessageEnum.NO_JOB.value + f'<@{interaction.user.id}>', ephemeral=True)
+        else:
+            channel = discord.utils.get(interaction.guild.channels, name=Enums.APPROVE_GUILD.value)
+            if not channel:
+                channel = interaction.channel
+            for view in job_views:
+                view.message = await interaction.channel.send(embed=view.embed, view=view)
+                await asyncio.sleep(2)
+            await interaction.followup.send(f'Job list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 

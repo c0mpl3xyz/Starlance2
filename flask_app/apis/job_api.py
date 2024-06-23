@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from sql_db.job import Job
 from sql_db.user import User
 from sql_db.job_register import JobRegister
-from usecases.get_all_company_jobs import GetCompanyJobs
+from usecases.get_all_company_jobs import GetCompanyJobs, GetServerJobs
 
 job_bp = Blueprint('job', __name__, url_prefix='/job')
 
@@ -171,6 +171,11 @@ def get_company_jobs():
     data = GetCompanyJobs().execute(company_id)
     return jsonify(data)
 
+@job_bp.route('/server', methods=['GET'])
+def get_server_jobs():
+    data = GetServerJobs().execute()
+    return jsonify(data)
+
 @job_bp.route('/open_jobs', methods=['GET'])
 def get_open_jobs():
     connection = ConnectSQL().get_connection()
@@ -179,5 +184,18 @@ def get_open_jobs():
         job = Job(cursor)
         data = job.get_all_open_job()
         return jsonify(data)
+    finally:
+        connection.close()
+
+@job_bp.route('/', methods=['DELETE'])
+def delete_job():
+    job_id = request.json.get('job_id')
+    connection = ConnectSQL().get_connection()
+    cursor = connection.cursor()
+    try:
+        job = Job(cursor)
+        success = job.delete(job_id)
+        connection.commit()
+        return jsonify({'success': success})
     finally:
         connection.close()

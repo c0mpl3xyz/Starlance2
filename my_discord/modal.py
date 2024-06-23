@@ -189,6 +189,7 @@ class ReviewUserModal(Modal, title='Review upload'):
         self.job_data = job_data
         self.company = company
         self.update = update
+        self.finished = False
         self.link = TextInput(label="We transfer link", placeholder="https://we.tl/t-A6GJNEtest", required=True, min_length=1, max_length=200)
         self.description = TextInput(label="Description", placeholder='', required=True,  style=discord.TextStyle.paragraph)
         if not company:
@@ -208,6 +209,7 @@ class ReviewUserModal(Modal, title='Review upload'):
             'description': str(self.description),
         }
 
+        self.finished = True
         if 'id' in self.review_data:
             data['id'] = self.review_data['id']
         if not self.company:
@@ -417,7 +419,22 @@ class UserCollectModal(Modal, title='Collect User Points'):
                 collect_view.message = await channel.send(embed=collect_view.embed, view=collect_view)
             else:
                 self.requested = True
-    
-    # async def wait_for_submit(self):
-    #     await self._event.wait()  # Wait until the event is set
-    #     return self._return_value
+
+class DeleteJobModal(Modal, title='Delete Job'):
+    def __init__(self, job_data):
+        super().__init__()
+        self.job_data = job_data
+        self.finished = False
+        self.ack_job_name = TextInput(label="Please enter 'Job name' to delete", placeholder=job_data['name'], required=True, style=discord.TextStyle.short)
+        self.add_item(self.ack_job_name)
+
+    async def on_submit(self, interaction: Interaction):
+        await interaction.response.defer()
+        ack_name = str(self.ack_job_name)
+        if ack_name == self.ack_job_name:
+            response = requests.delete(URL + '/job', json=self.job_data['job_id'])
+            if response.json()['success']:
+                self.finished = True
+                self.stop()
+        else:
+            interaction.followup.send(f'You entered wrong job name "{ack_name}" actual job name is "{self.job_data['name']}"')

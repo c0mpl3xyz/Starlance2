@@ -130,7 +130,7 @@ class UserView(discord.ui.View):
         await self.message.edit(view=self)
 
 class JobView(discord.ui.View):
-    def __init__(self, job_data, bot, company=False, has_review=False, contents=None, our_company=False):
+    def __init__(self, job_data, bot, company=False, has_review=False, contents=None, server=False):
         if contents == None:
             contents = []
         self.message = None
@@ -140,7 +140,8 @@ class JobView(discord.ui.View):
         self.bot = bot
         self.company = company
         self.type = None
-        self.embed = JobEmbed(job_data, contents, our_company)
+        self.embed = JobEmbed(job_data, contents, company)
+        
         if 'type' in job_data:
             self.type = job_data['type']
         else:
@@ -163,6 +164,12 @@ class JobView(discord.ui.View):
 
         self.new_button = discord.ui.Button(label='Click here', style=discord.ButtonStyle.green, emoji='➕')
         self.new_button.callback = self.new_button_callback
+
+        self.delete_button = discord.ui.Button(label='Delete', style=discord.ButtonStyle.green, emoji='❌')
+        self.delete_button.callback = self.delete_button_callback
+        
+        if server:
+            self.add_item(self.delete_button)
 
         if not company:
             if self.type == 'Open':
@@ -203,10 +210,11 @@ class JobView(discord.ui.View):
         await interaction.response.send_modal(modal)
         await modal.wait()
 
-        self.new_button.label = 'Review request sent'
-        self.new_button.disabled = True
-        await interaction.message.edit(view=self)
-        self.stop()
+        if modal.finished:
+            self.new_button.label = 'Review request sent'
+            self.new_button.disabled = True
+            await interaction.message.edit(view=self)
+            self.stop()
 
     async def review_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -232,6 +240,17 @@ class JobView(discord.ui.View):
             self.add_item(self.new_button)
             self.review_button.disabled = True
             await interaction.message.edit(view=self)
+
+    async def delete_button_callback(self, interaction: discord.Interaction):
+        from modal import DeleteJobModal
+        delete_modal = DeleteJobModal(self.job_data)
+        await delete_modal.wait()
+        if delete_modal.finished:
+            self.clear_items()
+            self.delete_button.disabled = True
+            self.delete_button.label = 'Deleted'
+            await interaction.message.edit(view=self)
+            self.stop()
 
     async def accept_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
@@ -415,10 +434,11 @@ class ReviewView(discord.ui.View):
         await interaction.response.send_modal(modal)
         await modal.wait()
 
-        self.new_button.label = 'Review request sent'
-        self.new_button.disabled = True
-        await interaction.message.edit(view=self)
-        self.stop()
+        if modal.finished:
+            self.new_button.label = 'Review request sent'
+            self.new_button.disabled = True
+            await interaction.message.edit(view=self)
+            self.stop()
 
     async def review_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewUserModal

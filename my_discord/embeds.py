@@ -98,17 +98,13 @@ class ContentEmbed(Embed):
         self.add_field(name='Total Points', value=content_data['points'])
 
 class JobEmbed(Embed):
-    def __init__(self, job_data, contents, our_company):
+    def __init__(self, job_data, contents, company):
         color = None
-        if 'type' not in job_data:
+        if job_data['job_type'] == 'Open':
             color = discord.Color.green()
-        elif job_data['type'] == 'Pending':
+        elif job_data['job_type'] == 'Closed':
             color = discord.Color.yellow()
-        elif job_data['type'] == 'Rejected':
-            color = discord.Color.red()
-        elif job_data['type'] == 'Finished':
-            color = discord.Color.red()
-        elif job_data['type'] == 'Full':
+        elif job_data['job_type'] == 'Ended':
             color = discord.Color.red()
 
         super().__init__(
@@ -129,8 +125,7 @@ class JobEmbed(Embed):
         self.add_field(name="Points of Job", value=str(job_data['budget'] / job_data['point']))
         self.add_field(name="\u200B", value="__\u200B__")
 
-        if our_company:
-            if len(contents):
+        if company and len(contents):
                 self.add_field(name="\u200B", value="__\u200B__", inline=False)
                 self.add_field(name="Content Count", value=len(contents))
                 content_data = self.get_status(contents)

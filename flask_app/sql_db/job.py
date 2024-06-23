@@ -19,6 +19,14 @@ class Job:
         self.cursor.execute(query, (id,)) # type: ignore
         return self.cursor.fetchone() # type: ignore
     
+    def get_all_by_server(self):
+        query = """
+            SELECT * FROM Job
+        """
+
+        self.cursor.execute(query, (self.current))
+        return self.cursor.fetchall()
+    
     def get_all_by_company_id(self, discord_server_id):
         query = """
             SELECT * FROM Job WHERE discord_server_id = %s AND start_date >= %s
@@ -184,12 +192,30 @@ class Job:
         
         return True
     
-    def delete(self, id):
-        delete_query = "DELETE FROM Job WHERE id = %s"
-        self.cursor.execute(delete_query, (id,)) # type: ignore
+    def delete(self, job_id):
+        try:
+            # Identify all tables and columns referencing the Job table
+            tables_referencing_job = [
+                {"table": "Content", "column": "job_id"},
+                {"table": "Review", "column": "job_id"},
+                {"table": "JobRegister", "column": "job_id"}
+            ]
 
-        result = self.cursor.fetchall() # type: ignore
-        return result
+            # Delete all references from the referencing tables
+            for ref in tables_referencing_job:
+                delete_reference_query = f"DELETE FROM {ref['table']} WHERE {ref['column']} = %s"
+                self.cursor.execute(delete_reference_query, (job_id,))  # type: ignore
+
+            # Delete the job itself
+            delete_job_query = "DELETE FROM Job WHERE id = %s"
+            self.cursor.execute(delete_job_query, (job_id,))  # type: ignore
+
+            # Return success message or result as needed
+            return True
+        
+        except Exception as e:
+            print(str(e))
+            return False
     
     def delete_by_user_id(self, user_id):
         delete_query = "DELETE FROM Job WHERE user_id = %s"
