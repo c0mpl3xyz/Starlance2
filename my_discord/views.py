@@ -165,7 +165,7 @@ class JobView(discord.ui.View):
         self.new_button = discord.ui.Button(label='Click here', style=discord.ButtonStyle.green, emoji='➕')
         self.new_button.callback = self.new_button_callback
 
-        self.delete_button = discord.ui.Button(label='Delete', style=discord.ButtonStyle.red, emoji='❌')
+        self.delete_button = discord.ui.Button(label='Delete', style=discord.ButtonStyle.red, emoji='✖')
         self.delete_button.callback = self.delete_button_callback
         
         if server:
