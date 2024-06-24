@@ -101,7 +101,7 @@ async def my_jobs(interaction: discord.Interaction):
         else:
             for view in job_views:
                 view.message = await interaction.user.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
 
             await interaction.followup.send(f'Job list sent to <@{interaction.user.id}>', ephemeral=True)
     
@@ -120,7 +120,7 @@ async def my_contents(interaction: discord.Interaction):
         else:
             for view in content_views:
                 view.message = await interaction.user.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
             await interaction.followup.send(f'Content list sent to <@{interaction.user.id}>', ephemeral=True)
     
     else:
@@ -138,7 +138,7 @@ async def my_reviews(interaction: discord.Interaction):
         else:
             for view in review_views:
                 view.message = await interaction.user.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
             await interaction.followup.send(f'Review list sent to <@{interaction.user.id}>', ephemeral=True)
     else:
         await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
@@ -155,7 +155,7 @@ async def my_new_jobs(interaction: discord.Interaction):
         else:
             for view in job_views:
                 view.message = await interaction.user.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
         return await interaction.followup.send(f'Job list sent to <@{interaction.user.id}>', ephemeral=True)
     else:
         return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
@@ -172,7 +172,7 @@ async def my_status(interaction: discord.Interaction):
         else:
             for view in user_views:
                 view.message = await interaction.user.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
         return await interaction.followup.send(f'User status sent to <@{interaction.user.id}>', ephemeral=True)
     else:
         return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
@@ -226,7 +226,7 @@ async def company_jobs(interaction: discord.Interaction):
                 channel = interaction.channel
             for view in job_views:
                 view.message = await channel.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
         return await interaction.followup.send(f'Job list sent to <#{channel.id}>')
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
@@ -253,7 +253,7 @@ async def company_contents(interaction: discord.Interaction):
                     channel = interaction.channel
                 for view in content_views:
                     view.message = await channel.send(embed=view.embed, view=view)
-                    await asyncio.sleep(2)
+                    await asyncio.sleep(1.5)
                 await interaction.followup.send(f'Content list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.FOR_COMPANY.value, ephemeral=True)
@@ -279,7 +279,7 @@ async def server_reviews(interaction: discord.Interaction):
                 channel = interaction.channel
             for view in review_views:
                 view.message = await channel.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
             await interaction.followup.send(f'Review list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
@@ -305,7 +305,7 @@ async def server_contents(interaction: discord.Interaction):
                 channel = interaction.channel
             for view in content_views:
                 view.message = await channel.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
             await interaction.followup.send(f'Content list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
@@ -334,7 +334,7 @@ async def server_approves(interaction: discord.Interaction):
                 channel = interaction.channel
             for view in approve_views:
                 view.message = await interaction.channel.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
             await interaction.followup.send(f'Approvement list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
@@ -363,7 +363,7 @@ async def server_jobs(interaction: discord.Interaction):
                 channel = interaction.channel
             for view in job_views:
                 view.message = await interaction.channel.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
             await interaction.followup.send(f'Job list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
@@ -393,7 +393,7 @@ async def server_collects(interaction: discord.Interaction):
                 channel = interaction.channel
             for view in collect_views:
                 view.message = await interaction.channel.send(embed=view.embed, view=view)
-                await asyncio.sleep(2)
+                await asyncio.sleep(1.5)
             await interaction.followup.send(f'Collect request list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)

@@ -251,6 +251,7 @@ class JobView(discord.ui.View):
             self.clear_items()
             self.delete_button.disabled = True
             self.delete_button.label = 'Deleted'
+            self.add_item(self.delete_button)
             await interaction.message.edit(view=self)
 
     async def accept_button_callback(self, interaction: discord.Interaction):

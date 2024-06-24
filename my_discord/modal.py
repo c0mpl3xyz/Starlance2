@@ -425,16 +425,16 @@ class DeleteJobModal(Modal, title='Delete Job'):
         super().__init__()
         self.job_data = job_data
         self.finished = False
-        self.ack_job_name = TextInput(label="Please enter 'Job name' to delete", placeholder=job_data['name'], required=True, style=discord.TextStyle.short)
+        self.ack_job_name = TextInput(label=f"Please enter '{job_data['name']}' to delete", placeholder=job_data['name'], required=True, style=discord.TextStyle.short)
         self.add_item(self.ack_job_name)
 
     async def on_submit(self, interaction: Interaction):
         await interaction.response.defer()
         ack_name = str(self.ack_job_name)
         if ack_name == self.job_data['name']:
-            response = requests.delete(URL + '/job', json=self.job_data['job_id'])
+            response = requests.delete(URL + '/job', json={'job_id': self.job_data['job_id']})
             if response.json()['success']:
                 self.finished = True
                 self.stop()
         else:
-            interaction.followup.send(f'You entered wrong job name "{ack_name}" actual job name is "{self.job_data['name']}"')
+            interaction.followup.send(f'You entered wrong job name "{ack_name}" actual job name is "{self.job_data["name"]}"')

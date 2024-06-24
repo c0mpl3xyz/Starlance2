@@ -58,9 +58,9 @@ class ReviewEmbed(Embed):
             # description=data['job_description'],
             color = discord.Color.random()
             )
-        self.add_field(name='Job Name', value=data['job_name'], inline=False)
-        self.add_field(name='Job Description', value=f'{data["job_description"][:300]}', inline=False)
+        self.add_field(name='Job Name', value=data['job_name'])
         self.add_field(name='User', value=f'<@{data["user_id"]}>')
+        self.add_field(name='Job Description', value=f'{data["job_description"][:300]}', inline=False)
         self.add_field(name="Message", value=data['description'], inline=False)
         self.add_field(name='link', value=data['link'], inline=False)
 
@@ -101,6 +101,9 @@ class ContentEmbed(Embed):
 class JobEmbed(Embed):
     def __init__(self, job_data, contents, company):
         color = None
+        if 'job_type' not in job_data:
+            job_data['job_type'] = 'Open'
+
         if job_data['job_type'] == 'Open':
             color = discord.Color.green()
         elif job_data['job_type'] == 'Closed':
