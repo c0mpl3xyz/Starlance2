@@ -206,6 +206,7 @@ class JobView(discord.ui.View):
 
     async def new_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewUserModal
+        saved_interaction = interaction
         modal = ReviewUserModal(self.bot, interaction.user.id, self.register_job, self.job_data, 'Pending', self.company)
         await interaction.response.send_modal(modal)
         await modal.wait()
@@ -213,7 +214,7 @@ class JobView(discord.ui.View):
         if modal.finished:
             self.new_button.label = 'Review request sent'
             self.new_button.disabled = True
-            await interaction.message.edit(view=self)
+            await saved_interaction.message.edit(view=self)
             self.stop()
 
     async def review_button_callback(self, interaction: discord.Interaction):
@@ -430,6 +431,7 @@ class ReviewView(discord.ui.View):
 
     async def new_button_callback(self, interaction: discord.Interaction):
         from modal import ReviewUserModal
+        saved_interaction = interaction
         modal = ReviewUserModal(self.bot, interaction.user.id, self.review_data, self.job_data, 'Pending', self.company, update=self.update)
         await interaction.response.send_modal(modal)
         await modal.wait()
@@ -437,7 +439,7 @@ class ReviewView(discord.ui.View):
         if modal.finished:
             self.new_button.label = 'Review request sent'
             self.new_button.disabled = True
-            await interaction.message.edit(view=self)
+            await saved_interaction.message.edit(view=self)
             self.stop()
 
     async def review_button_callback(self, interaction: discord.Interaction):
