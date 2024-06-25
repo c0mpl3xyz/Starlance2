@@ -19,14 +19,30 @@ class MessageEmbed(Embed):
         
         self.add_field(name='Mesasage', value=message)
 
+class CollectedMessageEmbed(Embed):
+    def __init__(self, points, bank_name, bank_account):
+        super().__init__(
+            title='Collected Points',
+            color = discord.Color.green()
+            )
+        
+        self.add_field(name="Collected Points", value=points)
+        self.add_field(name="Total MNT", value=f'{points * 10} ₮')
+        self.add_field(name="Bank name", value=bank_name)
+        self.add_field(name="Bank account", value=bank_account)
+
 class UserEmbed(Embed):
      def __init__(self, user_data):
         super().__init__(
             title='User Status',
             color = discord.Color.random()
             )
-        
-        tugrik = user_data['points'] * 10
+        points = user_data['points']
+        col_points = 0
+        if points - 2000 > 0:
+            col_points = points - 2000
+
+        tugrik = col_points * 10
         tax = round(tugrik * 0.25, 2)
         collectable = tugrik - tax
         self.add_field(name='User', value=f'<@{user_data["user_id"]}>', inline=False)

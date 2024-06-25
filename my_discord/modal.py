@@ -389,7 +389,7 @@ class UserCollectModal(Modal, title='Collect User Points'):
         self.user_data = user_data
         self.bot = bot
         self.valid = False
-        self.points = TextInput(label="Points to collect", placeholder='Input your points to collect', required=True, style=discord.TextStyle.short)
+        self.points = TextInput(label=f'Points to collect: {user_data["points"] - 2000}', placeholder=f'{user_data["points"] - 2000}', required=True, style=discord.TextStyle.short)
         self.add_item(self.points)
 
     def validate(self, user_points: int, points: str):
@@ -444,4 +444,20 @@ class DeleteJobModal(Modal, title='Delete Job'):
                 self.finished = True
                 self.stop()
         else:
-            interaction.followup.send(f'You entered wrong job name "{ack_name}" actual job name is "{self.job_data["name"]}"')
+            await interaction.followup.send(f'You entered wrong job name "{ack_name}" actual job name is "{self.job_data["name"]}"')
+
+class CollectAckModal(Modal, title='Collect Request approvement'):
+    def __init__(self):
+        super().__init__()
+        self.finished = False
+        self.ack_collect = TextInput(label='YES', placeholder='YES', required=True, style=discord.TextStyle.short)
+        self.add_item(self.ack_collect)
+
+    async def on_submit(self, interaction: Interaction):
+        await interaction.response.defer()
+        ack_name = str(self.ack_collect)
+        if ack_name == 'YES':
+            self.finished = True
+            self.stop()
+        else:
+            await interaction.followup.send(f'You entered wrong "{ack_name}", please enter "YES"')

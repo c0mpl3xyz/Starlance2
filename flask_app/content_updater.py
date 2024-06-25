@@ -116,25 +116,29 @@ def content_updater():
             total = 0
             for v_2 in v:
                 for _, v_2_v in v_2.items():
-                    total += v_2_v['points']
+                    total += v_2_v['total_plays']
 
-            total_points = job_budgets[k][0]/job_point_dict[k]
-            if total < total_points:
+            total_views_end = job_budgets[k][0]/job_point_dict[k]
+            if total < total_views_end:
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():
                         v_2_v['active'] = 1
                         update_content(k_2, v_2_v)
             else:
-                diff = total - total_points
+                diff = total - total_views_end
                 for v_2 in v:
                     for k_2, v_2_v in v_2.items():
-                        point_perc = v_2_v['points'] / (total + EPSILON)
-                        initial_perc = v_2_v['initial_plays'] / (v_2_v['points'] + EPSILON)
-                        replay_perc = v_2_v['replays'] / (v_2_v['points']  + EPSILON)
-                        point_change = (round(diff* point_perc))
-                        v_2_v['points'] = v_2_v ['points'] - (round(diff* point_perc))
-                        v_2_v['initial_plays'] = v_2_v['initial_plays'] - round(point_change * initial_perc)
-                        v_2_v['replays'] = v_2_v['replays'] - round(point_change * replay_perc)
+                        total_plays_perc = v_2_v['total_plays'] / (total + EPSILON)
+                        initial_perc = v_2_v['initial_plays'] / (v_2_v['total_plays'] + EPSILON)
+                        prime_replay_perc = v_2_v['prime_replays'] / (v_2_v['total_plays']  + EPSILON)
+
+                        total_plays_change = (round(diff* total_plays_perc))
+                        v_2_v['total_plays'] = v_2_v['total_plays'] - (round(diff* total_plays_perc))
+                        v_2_v['initial_plays'] = v_2_v['initial_plays'] - round(total_plays_change * initial_perc)
+                        v_2_v['prime_replays'] = v_2_v['prime_replays'] - round(total_plays_change * prime_replay_perc)
+                        
+                        v_2_v['replays'] = calculate_replays(v_2_v['initial_plays'], v_2_v['prime_replays'])
+                        v_2_v['points'] = v_2_v['initial_plays'] + v_2_v['replays']
                         v_2_v['active'] = 0
                         update_content(k_2, v_2_v)
                         update_job(k)
@@ -249,9 +253,9 @@ class ProIGToken():
                         new_data['total_plays'] = insight['values'][0]['value']
                     
                     if insight['name'] == 'clips_replays_count':
-                        new_data['replays'] = insight['values'][0]['value']
+                        new_data['prime_replays'] = insight['values'][0]['value']
 
-                new_data['replays'] = calculate_replays(new_data['initial_plays'], new_data['replays'])
+                new_data['replays'] = calculate_replays(new_data['initial_plays'], new_data['prime_replays'])
                 new_data['points'] = new_data['initial_plays'] + new_data['replays']
                 new_data['engagement'] = new_data['total_interactions']
                 new_data['engagement_rate'] = new_data['total_interactions'] / (new_data['account_reach'] + EPSILON) * 100.0

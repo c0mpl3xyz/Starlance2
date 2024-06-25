@@ -48,29 +48,35 @@ class CollectView(discord.ui.View):
         self.add_item(self.collect_button)
 
     async def collect_button_callback(self, interaction: discord.Interaction):
-        # collected = UpdateUserPoints().execute(self.user_data['user_id'], self.points)
-        await interaction.response.defer()
+        # await interaction.response.defer()
+        from modal import CollectAckModal
+        modal = CollectAckModal()
+        await interaction.response.send_modal(modal)
+        await modal.wait()
 
-        data = {
-            'collect_id': self.collect_id,
-            'user_id': self.user_data['user_id'],
-            'points': self.points
-        }
+        if modal.finished:
+            data = {
+                'collect_id': self.collect_id,
+                'user_id': self.user_data['user_id'],
+                'points': self.points
+            }
 
-        response = requests.put(URL + '/collect', json=data).json()
-        if response['success']:
-            self.collect_button.label = 'Approved'
-            self.collect_button.disabled = True
-            await interaction.message.edit(view=self)
-            guild = self.bot.get_guild(Enums.GUILD_ID.value)
-            user = discord.utils.get(guild.members, id=self.user_data['user_id'])
-            self.message = await user.send('Your points are collected', view=self)
-        else:
-            self.collect_button.label = 'Already approved'
-            self.collect_button.disabled = True
-            self.message = await interaction.message.edit(embed=self.embed, view=self)
-        
-        self.stop()
+            response = requests.delete(URL + '/collect', json=data).json()
+            if response['success']:
+                from embeds import CollectedMessageEmbed
+                self.collect_button.label = 'Approved'
+                self.collect_button.disabled = True
+                await interaction.message.edit(view=self)
+                guild = self.bot.get_guild(Enums.GUILD_ID.value)
+                user = discord.utils.get(guild.members, id=self.user_data['user_id'])
+                embed = CollectedMessageEmbed(self.points, self.user_data['bank_name'], self.user_data['bank_number'])
+                self.message = await user.send(f'Your points are collected', embed=embed, view=self)
+            else:
+                self.collect_button.label = 'Already approved'
+                self.collect_button.disabled = True
+                self.message = await interaction.message.edit(embed=self.embed, view=self)
+            
+            self.stop()
     
     async def on_timeout(self):
         self.clear_items()
@@ -89,11 +95,11 @@ class UserView(discord.ui.View):
         collectable_points = user_data['points'] - 2000
         collectable = collectable_points > 0 #TODO: add threshold
         
-        self.collect_button = discord.ui.Button(label=f"Collect Points: {user_data['points']}", style=discord.ButtonStyle.green, emoji='✨')
+        self.collect_button = discord.ui.Button(label=f"Collect Points: {collectable_points}", style=discord.ButtonStyle.green, emoji='✨')
         self.collect_button.callback = self.collect_button_callback
 
         if not collectable:
-            self.collect_button.label = f'No enough points to collect: {user_data["points"]}'
+            self.collect_button.label = f'No enough points to collect: {collectable_points}'
             self.collect_button.disabled = True
         else:
             result: list = requests.get(URL + '/collect/user', json={'user_id': user_data['user_id']}).json()
