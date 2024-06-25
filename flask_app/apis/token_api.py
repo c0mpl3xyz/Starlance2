@@ -18,6 +18,7 @@ REDIRECT_URL = URL + 'exchange_token/'
 API_VERSION = os.getenv('API_VERSION')
 API_PREFIX = os.getenv('API_PREFIX')
 URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
+HOME = os.getenv('HOME')
 
 SQL_DICT = {
     'host': os.getenv('SQL_HOST'),
@@ -88,4 +89,4 @@ def exchange_token_test():
             connection.commit()
     finally:
         connection.close()
-    return redirect('https://www.ugc-mongolia.com')
+    return redirect(HOME)

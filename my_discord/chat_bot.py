@@ -368,7 +368,6 @@ async def server_jobs(interaction: discord.Interaction):
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 
-
 @client.tree.command(name='server_collects')
 async def server_collects(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
