@@ -45,12 +45,12 @@ def create_app():
     app.register_blueprint(collect_bp)
     app.config['THREADED'] = True
 
-    log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
-    log_file_path = os.path.abspath('../../app.log')
-    file_handler = RotatingFileHandler(log_file_path, maxBytes=10240, backupCount=3)
-    file_handler.setFormatter(log_formatter)
-    file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
+    # log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+    # log_file_path = os.path.abspath('../../app.log')
+    # file_handler = RotatingFileHandler(log_file_path, maxBytes=10240, backupCount=3)
+    # file_handler.setFormatter(log_formatter)
+    # file_handler.setLevel(logging.INFO)
+    # app.logger.addHandler(file_handler)
     
     return app
 
