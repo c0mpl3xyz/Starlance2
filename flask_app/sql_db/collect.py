@@ -18,6 +18,14 @@ class Collect():
         self.cursor.execute(query, (user_id,)) # type: ignore
         return self.cursor.fetchall() # type: ignore
 
+    def delete(self, user_id):
+        query = """
+            DELETE from CollectRequest WHERE id = %s
+        """
+
+        self.cursor.execute(query, (user_id,)) # type: ignore
+        return self.cursor.fetchall() # type: ignore
+
     def get_all_pending(self):
         query = """
             SELECT * FROM CollectRequest WHERE type = 'Pending'

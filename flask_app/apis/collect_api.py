@@ -15,7 +15,7 @@ def extract_collect_request(request):
     collect_type = request.json.get('type')
     return collect_id, user_id, points, collect_type
 
-@collect_bp.route('/', methods=['PUT'])
+@collect_bp.route('/', methods=['DELETE'])
 def update():
     collect_id, user_id, points, collect_type = extract_collect_request(request)
 
@@ -34,7 +34,7 @@ def update():
             user_data = user.get_by_id(user_id)
             user.update(user_id, points=user_data[2] - points)
 
-            updated = collect.update(collect_id, collect_type='Approved')
+            updated = collect.delete(collect_id)
             if updated:
                 connection.commit()
                 message = 'collect updated'
