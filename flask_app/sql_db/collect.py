@@ -24,7 +24,7 @@ class Collect():
         """
 
         self.cursor.execute(query, (user_id,)) # type: ignore
-        return self.cursor.fetchall() # type: ignore
+        return True # type: ignore
 
     def get_all_pending(self):
         query = """
