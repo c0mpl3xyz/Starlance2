@@ -118,8 +118,7 @@ class UploadLinkSelect(Select):
         self.user_id = user_id
         self.job_id = job_id
         self.server_id = server_id
-        if content_data is not None:
-            self.content_data = content_data
+        self.content_data = content_data
         self.job_register_id = job_register_id
         self.review_id = review_id
         self.bot = bot
