@@ -27,10 +27,14 @@ class UserEmbed(Embed):
             )
         
         tugrik = user_data['points'] * 10
+        tax = round(tugrik * 0.25, 2)
+        collectable = tugrik - tax
         self.add_field(name='User', value=f'<@{user_data["user_id"]}>', inline=False)
         self.add_field(name="Total Points Of Lifetime", value=user_data['total_points'])
         self.add_field(name="Available Points", value=user_data['points'])
-        self.add_field(name="Available Points in MNT", value=f'{tugrik} MNT')
+        self.add_field(name="Total ₮", value=f'{tugrik} ₮')
+        self.add_field(name="Tax ₮", value=f'{tax} ₮')
+        self.add_field(name="Cash ₮", value=f'{collectable} ₮')
         self.add_field(name="Register Number", value=user_data['register'])
         self.add_field(name="Bank Name", value=user_data['bank_name'])
         self.add_field(name="Bank Number", value=user_data['bank_number'])
@@ -43,12 +47,16 @@ class CollectEmbed(Embed):
             )
         
         tugrik = points * 10
+        tax = round(tugrik * 0.25, 2)
+        collectable = tugrik - tax
         self.add_field(name='User', value=f'<@{user_data["user_id"]}>', inline=False)
         self.add_field(name="Register Number", value=user_data['register'])
         self.add_field(name="Bank Name", value=user_data['bank_name'])
         self.add_field(name="Bank Number", value=user_data['bank_number'])
         self.add_field(name="Collect points", value=points)
-        self.add_field(name="Collect points in MNT", value=f'{tugrik} MNT')
+        self.add_field(name="Total ₮", value=f'{tugrik} ₮')
+        self.add_field(name="Tax ₮", value=f'{tax} ₮')
+        self.add_field(name="Collectable ₮", value=f'{collectable} ₮')
 
 class ReviewEmbed(Embed):
      def __init__(self, data: dict):
@@ -123,7 +131,7 @@ class JobEmbed(Embed):
         self.add_field(name="Duration", value=f"{job_data['duration']} days")
         self.add_field(name="End date", value=job_data['end_date'])
         self.add_field(name="Participation date", value=job_data['participation_date'])
-        self.add_field(name="Total Budget", value=str(job_data['budget']) + ' MNT')
+        self.add_field(name="Total Budget", value=str(job_data['budget']) + ' ₮')
         self.add_field(name="Job files", value=f"[Click Here]({job_data['upload_link']})")
         self.add_field(name="1 View Point", value=job_data['point'])
         self.add_field(name="Points of Job", value=str(job_data['budget'] / job_data['point']))
