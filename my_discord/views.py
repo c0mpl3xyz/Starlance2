@@ -541,7 +541,7 @@ class ContentView(discord.ui.View):
         from selects import UploadLinkSelect
         await interaction.response.defer()
         view = View()
-        view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id'], edit=True))
+        view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id'], content_data=self.content_data, edit=True))
         await interaction.followup.send('Select social accounts', view=view)
 
         self.edit_button.lable = 'Link was beed updated'

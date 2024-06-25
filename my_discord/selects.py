@@ -114,10 +114,12 @@ class SelectPoint(Select):
             await self.select_roles_message.delete()
 
 class UploadLinkSelect(Select):
-    def __init__(self, bot, user_id, job_id, server_id, job_register_id, review_id, edit=False):
+    def __init__(self, bot, user_id, job_id, server_id, job_register_id, review_id, content_data=None, edit=False):
         self.user_id = user_id
         self.job_id = job_id
         self.server_id = server_id
+        if content_data is not None:
+            self.content_data = content_data
         self.job_register_id = job_register_id
         self.review_id = review_id
         self.bot = bot
@@ -129,7 +131,7 @@ class UploadLinkSelect(Select):
 
     async def callback(self, interaction: discord.Interaction) -> Any:
         socials = self.values
-        modal = SocialRegisterModal(self.user_id, self.job_id, self.server_id, self.job_register_id, self.review_id, socials, self.bot, self.edit)
+        modal = SocialRegisterModal(self.user_id, self.job_id, self.server_id, self.job_register_id, self.review_id, socials, self.bot, self.content_data, self.edit)
         await interaction.response.send_modal(modal)
         await modal.wait()
         await interaction.message.delete()
