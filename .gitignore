@@ -169,3 +169,6 @@ instagram
 .env
 https:
 .conda
+
+# enums
+my_discord/utils/enums.py
