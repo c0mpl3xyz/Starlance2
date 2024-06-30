@@ -38,6 +38,7 @@ class GetJobReportById():
                 return True, new_file_path
         except Exception as e:
             print(f"Error generating report: {e}")
+            raise e
             return False, None
         finally:
             cursor.close()
