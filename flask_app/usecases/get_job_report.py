@@ -3,7 +3,7 @@ from sql_db.job import Job
 from sql_db.conn import ConnectSQL
 from sql_db.content import Content
 from docx import Document
-from utils.word_utils import save_doc, replace_bookmarks, fill_tables
+from utils.word_utils import replace_bookmarks
 class GetJobReportById():
     def execute(self, job_id):
         doc_data = {}
