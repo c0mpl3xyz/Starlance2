@@ -9,7 +9,8 @@ from usecases.user_reviews import GetUserReview, UpdateReview
 from usecases.user_status import UpdateUserPoints
 from embeds import ApproveEmbed, ReviewEmbed, UserEmbed, CollectEmbed
 from utils.enums import Enums
-import time, uuid, aiofiles
+from datetime import datetime
+import time, uuid, aiofiles, pytz
 
 URL = os.getenv('URL')
 
@@ -179,8 +180,7 @@ class JobView(discord.ui.View):
 
         if server:
             self.add_item(self.delete_button)
-            if self.job_data['job_type'] == 'Closed':
-                self.add_item(self.report_button)
+            self.add_item(self.report_button)
 
         if not company:
             if self.type == 'Open':
@@ -217,8 +217,12 @@ class JobView(discord.ui.View):
             file_name = str(uuid.uuid1()) + '.docx'
             async with aiofiles.open(file_name, 'wb') as f:
                 await f.write(content)
-
-            file = discord.File(file_name, filename=file_name)
+            
+            self.timezone = pytz.timezone('Asia/Ulaanbaatar')
+            date = datetime.now(self.timezone)
+            date_str = date.strftime('%Y_%m_%d')
+            download_file_name = f'{self.job_data["name"]}_report_{date_str}.docx'
+            file = discord.File(file_name, filename=download_file_name)
             
             await interaction.followup.send(f'Job Report: {self.job_data["name"]}:', file=file)
             os.remove(file_name)

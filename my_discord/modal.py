@@ -235,9 +235,10 @@ class ReviewUserModal(Modal, title='Review upload'):
             our_guild = self.bot.get_guild(Enums.GUILD_ID.value)
             if our_guild:
                 channel = discord.utils.get(our_guild.channels, name=Enums.REVIEW.value)
-                view = ReviewView(data, self.bot, company=True)
+                # view = ReviewView(data, self.bot, company=True)
                 if channel:
-                    view.message = await channel.send(embed=view.embed, view=view)
+                    # view.message = await channel.send(embed=view.embed, view=view)
+                    await channel.send('There is new reviews just added please use /server_reviews command')
                    
 class BankRegistrationModal(Modal, title='Bank Registration'):
 
