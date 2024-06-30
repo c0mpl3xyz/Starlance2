@@ -41,7 +41,7 @@ def fill_tables(doc, table_data):
             table.autofit = False  # Disable autofit to set fixed widths
 
             # Define the width for each column (adjust as needed)
-            column_widths = [Inches(1.5) for _ in range(len(table_data[0]))]
+            column_widths = [Inches(2) for _ in range(len(table_data[0]))]
 
             # Add table headers dynamically from the first row keys
             hdr_cells = table.rows[0].cells
