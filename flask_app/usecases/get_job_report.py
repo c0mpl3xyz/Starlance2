@@ -81,19 +81,20 @@ class GetJobReportById():
         for item in items:
             # Assuming item structure and transformation as needed
             row_data = {
-                'User ID': item['user_id'],
-                'Content Count': item['content_count'],
-                'Content Links': item['content_links'],
-                'Total Initial Plays': item['total_initial_plays'],
-                'Total Likes': item['total_likes'],
-                'Total Replays': item['total_replays'],
-                'Total Saves': item['total_saves'],
-                'Total Shares': item['total_shares'],
-                'Total Comments': item['total_comments'],
-                'Total Account Reach': item['total_account_reach'],
-                'Total Interaction': item['total_interactions'],
-                'Total Points': item['total_points'],
-                'Average Engagement Rate': item['avg_engagement_rate'],
+                'User ID': item[0],
+                'Content Count': item[1],
+                'Content Links': item[2],
+                'Total Initial Plays': item[3],
+                'Total Plays': item[4],
+                'Total Likes': item[5],
+                'Total Replays': item[6],
+                'Total Saves': item[7],
+                'Total Shares': item[8],
+                'Total Comments': item[9],
+                'Total Account Reach': item[10],
+                'Total Interaction': item[11],
+                'Total Points': item[12],
+                'Average Engagement Rate': round(item[13], 2),
             }
             table_rows.append(row_data)
         return table_rows
