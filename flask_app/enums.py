@@ -1,3 +1,3 @@
 from enum import Enum
 class ReportEnums(Enum):
-    JOB_REPORT_TEMPLATE = '/report_templates/job_report_template.docx'
+    JOB_REPORT_TEMPLATE = '/temp/JOB_REPORT_TEMPLATE.docx'

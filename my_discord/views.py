@@ -214,7 +214,7 @@ class JobView(discord.ui.View):
         content = get_report.execute(self.job_data['job_id'])
 
         if content:
-            file_name = str(uuid.uuid1()) + '.doc'
+            file_name = str(uuid.uuid1()) + '.docx'
             async with aiofiles.open(file_name, 'wb') as f:
                 await f.write(content)
 
@@ -222,7 +222,6 @@ class JobView(discord.ui.View):
             
             await interaction.followup.send(f'Job Report: {self.job_data["name"]}:', file=file)
             os.remove(file_name)
-            
         else:
             await interaction.followup.send('Failed to fetch the job report.')
 
