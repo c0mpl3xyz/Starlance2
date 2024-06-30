@@ -7,7 +7,7 @@ from utils.word_utils import replace_bookmarks
 class GetJobReportById():
     def execute(self, job_id):
         doc_data = {}
-        file_path = '../' + ReportEnums.JOB_REPORT_TEMPLATE.value
+        file_path = ReportEnums.JOB_REPORT_TEMPLATE.value
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
 
