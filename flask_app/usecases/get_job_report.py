@@ -36,6 +36,9 @@ class GetJobReportById():
 
             if sucess:
                 return True, new_file_path
+            else:
+                return False, None
+            
         except Exception as e:
             print(f"Error generating report: {e}")
             raise e

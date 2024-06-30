@@ -18,7 +18,8 @@ def replace_bookmarks(doc_path, replacements, tables_rows=None):
         new_file_path = str(uuid.uuid1()) + '.docx'
         doc.save(new_file_path)
         return True, new_file_path
-    except Exception:
+    except Exception as e:
+        raise e
         return False, doc_path
 
 def fill_tables(doc, tables):
