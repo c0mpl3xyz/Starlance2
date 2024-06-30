@@ -11,7 +11,7 @@ def replace_bookmarks(doc_path, replacements, tables_rows=None):
         for paragraph in doc.paragraphs:
             for bookmark_name in replacements:
                 if f'<{bookmark_name}>' in paragraph.text:
-                    paragraph.text = paragraph.text.replace(f'<{bookmark_name}>', replacements[bookmark_name])
+                    paragraph.text = paragraph.text.replace(f'<{bookmark_name}>', str(replacements[bookmark_name]))
         
         if tables_rows:
             fill_tables(doc, tables_rows)
