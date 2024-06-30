@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file
 from sql_db.conn import ConnectSQL
 import os
 from dotenv import load_dotenv
@@ -6,6 +6,7 @@ from sql_db.job import Job
 from sql_db.user import User
 from sql_db.job_register import JobRegister
 from usecases.get_all_company_jobs import GetCompanyJobs, GetServerJobs
+from usecases.get_job_report import GetJobReportById
 
 job_bp = Blueprint('job', __name__, url_prefix='/job')
 
@@ -199,3 +200,12 @@ def delete_job():
         return jsonify({'success': success})
     finally:
         connection.close()
+
+@job_bp.route('/report', methods=['GET'])
+def report():
+    job_id = request.json.get('job_id')
+    file = GetJobReportById().execute(job_id)
+
+    if file:
+        return send_file(file, as_attachment=True)
+    return None

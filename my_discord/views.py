@@ -4,12 +4,12 @@ from usecases.register_job import RegisterJob
 import discord, requests, os
 from usecases.register_job import RegisterJob
 from usecases.review import Review
-from usecases.get_job_by_id import GetJobById
+from usecases.get_job_by_id import GetJobById, GetJobReportById
 from usecases.user_reviews import GetUserReview, UpdateReview
 from usecases.user_status import UpdateUserPoints
 from embeds import ApproveEmbed, ReviewEmbed, UserEmbed, CollectEmbed
 from utils.enums import Enums
-import time
+import time, uuid, aiofiles
 
 URL = os.getenv('URL')
 
@@ -173,9 +173,14 @@ class JobView(discord.ui.View):
 
         self.delete_button = discord.ui.Button(label='Delete', style=discord.ButtonStyle.red, emoji='✖')
         self.delete_button.callback = self.delete_button_callback
-        
+
+        self.report_button = discord.ui.Button(label='Report', style=discord.ButtonStyle.secondary, emoji='📄')
+        self.report_button.callback = self.report_button_callback
+
         if server:
             self.add_item(self.delete_button)
+            if self.job_data['job_type'] == 'Closed':
+                self.add_item(self.report_button)
 
         if not company:
             if self.type == 'Open':
@@ -201,6 +206,25 @@ class JobView(discord.ui.View):
                     self.review_button.label = "Review request sent"
                     self.review_button.disabled = True
                 self.add_item(self.review_button)
+
+    async def report_button_callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
+
+        get_report = GetJobReportById()
+        content = get_report.execute(self.job_data['job_id'])
+
+        if content:
+            file_name = str(uuid.uuid1()) + '.doc'
+            async with aiofiles.open(file_name, 'wb') as f:
+                await f.write(content)
+
+            file = discord.File(file_name, filename=file_name)
+            
+            await interaction.followup.send(f'Job Report: {self.job_data["name"]}:', file=file)
+            os.remove(file_name)
+            
+        else:
+            await interaction.followup.send('Failed to fetch the job report.')
 
     async def reject_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
