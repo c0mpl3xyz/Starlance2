@@ -211,7 +211,7 @@ class JobView(discord.ui.View):
         await interaction.response.defer()
 
         get_report = GetJobReportById()
-        content = get_report.execute(self.job_data['job_id'])
+        content = await get_report.execute(self.job_data['job_id'])
 
         if content:
             file_name = str(uuid.uuid1()) + '.docx'
@@ -473,7 +473,6 @@ class ReviewView(discord.ui.View):
             self.stop()
 
     async def review_button_callback(self, interaction: discord.Interaction):
-        from modal import ReviewUserModal
         await interaction.response.defer()
         job_data = GetJobById(self.review_data['job_id']).execute()
         update = False
@@ -520,8 +519,7 @@ class ReviewView(discord.ui.View):
         await interaction.followup.send('Select social accounts', view=view)
         self.upload_button.disabled = True
         self.upload_button.label = 'Uploaded'
-        await interaction.message.edit(view=self)
-        
+        await interaction.message.edit(view=self)    
 
     async def accept_button_callback(self, interaction: discord.Interaction):
         await interaction.response.defer()

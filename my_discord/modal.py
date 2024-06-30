@@ -224,6 +224,7 @@ class ReviewUserModal(Modal, title='Review upload'):
         response = None
         if not self.update:
             response = requests.post(URL + '/review', json=data)
+            self.review_data['id'] = response.json()['review_id']
         else:
             response = requests.put(URL + '/review', json=data)
 

@@ -120,6 +120,7 @@ class UploadLinkSelect(Select):
         self.server_id = server_id
         self.content_data = content_data
         self.job_register_id = job_register_id
+        print(f'{review_id=}')
         self.review_id = review_id
         self.bot = bot
         self.edit = edit

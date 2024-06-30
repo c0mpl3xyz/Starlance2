@@ -23,4 +23,6 @@ class GetJobReportById():
             async with session.get(URL + '/job/report', json=data) as response:
                 if response.status == 200:
                     content = await response.read()
+                else:
+                    print(response.text)
         return content
