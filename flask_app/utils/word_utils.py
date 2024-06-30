@@ -1,9 +1,8 @@
 from docx import Document
 from docx.shared import Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from enums import ReportEnums
-import uuid 
-
+import uuid, os
+TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')
 def replace_bookmarks(doc_path, replacements, tables_rows=None):
     try:
         doc = Document(doc_path)
@@ -16,7 +15,7 @@ def replace_bookmarks(doc_path, replacements, tables_rows=None):
         if tables_rows:
             fill_tables(doc, tables_rows)
 
-        new_file_path = ReportEnums.TEMPLATE_PATH.value + f'/{str(uuid.uuid1())} + .docx'
+        new_file_path = TEMPLATE_PATH + f'/{str(uuid.uuid1())} + .docx'
         doc.save(new_file_path)
         return True, new_file_path
     except Exception as e:

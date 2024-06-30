@@ -1,13 +1,16 @@
-from enums import ReportEnums
+import os
 from sql_db.job import Job
 from sql_db.conn import ConnectSQL
 from sql_db.content import Content
 from docx import Document
 from utils.word_utils import replace_bookmarks
+
+TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')
+
 class GetJobReportById():
     def execute(self, job_id):
         doc_data = {}
-        file_path = ReportEnums.TEMPLATE_PATH.value + '/JOB_REPORT_TEMPLATE.docx'
+        file_path = TEMPLATE_PATH + '/JOB_REPORT_TEMPLATE.docx'
         connection = ConnectSQL().get_connection()
         cursor = connection.cursor()
 
