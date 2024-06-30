@@ -44,6 +44,20 @@ class GetJobReportById():
                 doc_data['POINTS'] = sum([item[12] for item in content_report_items])
                 doc_data['ENGAGEMENT'] = round(sum([item[13] for item in content_report_items]) / len(items), 2)
                 doc_data['CONTENT_COUNT'] = len(items)
+            else:
+                doc_data['VIEWS'] = 0
+                doc_data['INITIAL_PLAYS'] = 0
+                doc_data['REPLAYS'] = 0
+                doc_data['REMOVED_REPLAYS'] = 0
+                doc_data['LIKES'] = 0
+                doc_data['SAVES'] = 0
+                doc_data['SHARES'] = 0
+                doc_data['COMMENTS'] = 0
+                doc_data['REACH'] = 0
+                doc_data['INTERACTIONS'] = 0
+                doc_data['POINTS'] = 0
+                doc_data['ENGAGEMENT'] = 0
+                doc_data['CONTENT_COUNT'] = 0
         
         try:
             sucess, new_file_path= replace_bookmarks(doc_path=file_path, replacements=doc_data, tables_rows=items)
