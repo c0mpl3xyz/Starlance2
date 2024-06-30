@@ -15,7 +15,7 @@ class GetJobReportById():
         content_report_items = Content(cursor).get_report_by_job_id(job_id)
 
         if len(job):
-            doc_data['NAME'] = str(job[2])
+            doc_data['JOB_NAME'] = str(job[2])
             doc_data['SERVER'] = str(job[3])
             doc_data['ROLES'] = str(job[4])
             doc_data['BUDGET'] = str(job[5])
@@ -30,6 +30,20 @@ class GetJobReportById():
         items = None
         if len(content_report_items):
             items = self.convert_table_rows(content_report_items)
+            if len(items):
+                doc_data['VIEWS'] = sum([item[4] for item in content_report_items])
+                doc_data['INITIAL_PLAYS'] = sum([item[3] for item in content_report_items])
+                doc_data['REPLAYS'] = sum([item[6] for item in content_report_items])
+                doc_data['REMOVED_REPLAYS'] = doc_data['VIEWS'] - (doc_data['INITIAL_PLAYS'] + doc_data['REPLAYS'])
+                doc_data['LIKES'] = sum([item[5] for item in content_report_items])
+                doc_data['SAVES'] = sum([item[7] for item in content_report_items])
+                doc_data['SHARES'] = sum([item[8] for item in content_report_items])
+                doc_data['COMMENTS'] = sum([item[9] for item in content_report_items])
+                doc_data['REACH'] = sum([item[10] for item in content_report_items])
+                doc_data['INTERACTIONS'] = sum([item[11] for item in content_report_items])
+                doc_data['POINTS'] = sum([item[12] for item in content_report_items])
+                doc_data['ENGAGEMENT'] = round(sum([item[13] for item in content_report_items]) / len(items), 2)
+                doc_data['CONTENT_COUNT'] = len(items)
         
         try:
             sucess, new_file_path= replace_bookmarks(doc_path=file_path, replacements=doc_data, tables_rows=items)
