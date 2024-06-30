@@ -75,6 +75,30 @@ class Content:
         self.cursor.execute(query) # type: ignore
         return self.cursor.fetchall() # type: ignore
 
+    def get_report_by_job_id(self, job_id: int):
+        query = """
+            SELECT user_id,
+                COUNT(*) AS content_count,
+                GROUP_CONCAT(link SEPARATOR ',') AS content_links,
+                SUM(initial_plays) AS total_initial_plays,
+                SUM(total_plays) AS total_total_plays,
+                SUM(likes) AS total_likes,
+                SUM(replays) AS total_replays,
+                SUM(saves) AS total_saves,
+                SUM(shares) AS total_shares,
+                SUM(comments) AS total_comments,
+                SUM(account_reach) AS total_account_reach,
+                SUM(total_interactions) AS total_interactions,
+                SUM(points) AS total_points,
+                AVG(engagement_rate) AS avg_engagement_rate
+            FROM Content
+            WHERE job_id = %s
+            GROUP BY user_id
+        """
+
+        self.cursor.execute(query, (job_id,))
+        return self.cursor.fetchall()
+
     def get_all_by_job_id(self, job_ids: list):
         query = """
             SELECT * FROM Content WHERE job_id IN ({}) AND active = 1

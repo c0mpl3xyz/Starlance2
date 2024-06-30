@@ -204,8 +204,11 @@ def delete_job():
 @job_bp.route('/report', methods=['GET'])
 def report():
     job_id = request.json.get('job_id')
-    file = GetJobReportById().execute(job_id)
+    success, file_path = GetJobReportById().execute(job_id)
 
-    if file:
-        return send_file(file, as_attachment=True)
-    return None
+    try:
+        if success:
+            return send_file(file_path, as_attachment=True)
+        return None
+    finally:
+        os.remove(file_path)
