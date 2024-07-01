@@ -399,22 +399,24 @@ class UserCollectModal(Modal, title='Collect User Points'):
         self.user_data = user_data
         self.bot = bot
         self.valid = False
-        self.points = TextInput(label=f'Points to collect: {user_data["points"] - 2000}', placeholder=f'{user_data["points"] - 2000}', required=True, style=discord.TextStyle.short)
+        self.p = (user_data["points"] - 2000) // 1000 * 1000
+        self.points = TextInput(label=f'Points to collect: {self.p}', placeholder=f'{self.p}', required=True, style=discord.TextStyle.short)
         self.add_item(self.points)
 
-    def validate(self, user_points: int, points: str):
+    def validate(self, points: str):
         messages = []
         if not points.isnumeric():
             messages.append(f'You entered this {points}. And this is not a valid number')
-        if points.isnumeric() and int(points) > user_points - 2000:
-            messages.append(f'Your availabled Points: {user_points - 2000}, You can\'t collect more than this!')
+
+        if points.isnumeric() and int(points) > self.p:
+            messages.append(f'Your availabled Points: {self.p}, You can\'t collect more than this!')
         return messages
 
     async def on_submit(self, interaction: Interaction):
         await interaction.response.defer()
         from views import CollectView
         points = str(self.points)
-        messages = self.validate(self.user_data['points'], points)
+        messages = self.validate(points)
         if len(messages):
             await interaction.followup.send('User collect points failed')
             for message in messages:

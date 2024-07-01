@@ -95,7 +95,7 @@ class UserView(discord.ui.View):
         self.bot = bot
         self.embed = UserEmbed(user_data)
         super().__init__()
-        collectable_points = user_data['points'] - 2000
+        collectable_points = (user_data['points'] - 2000) // 1000 * 1000
         collectable = collectable_points > 0 #TODO: add threshold
         
         self.collect_button = discord.ui.Button(label=f"Collect Points: {collectable_points}", style=discord.ButtonStyle.green, emoji='✨')
