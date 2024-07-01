@@ -39,3 +39,8 @@ class GetServerContentView:
                 if len(review):
                     contents.append(ContentView(review_mappings(review), content, bot, main=True))
         return contents
+    
+class GetServerUserContentViews:
+    def execute(self, bot, user_id):
+        # response = requests.get(URL + '/content/server')
+        pass

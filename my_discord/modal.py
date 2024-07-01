@@ -6,7 +6,7 @@ from discord import Interaction
 from utils.enums import Enums
 from datetime import datetime, timedelta
 from validator.validator import Validator
-import re, os, pytz, time, asyncio
+import re, os, pytz, time, asyncio, aiohttp
 
 URL = os.getenv('URL')
 # start_date, duration, end_date, modified_date, participation_date, job_delete_date, description, upload_file_links, requirements) -> bool:
@@ -89,43 +89,44 @@ class JobModal(Modal, title="Job registration"):
             'point': self.point
         }
 
-        response = requests.post(self.url + '/job', json=data)
-        response = response.json()
-        if response and 'success' in response:
-            success = ['success']
-            data['job_id'] = response['job_id']
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.url + '/job', json=data) as asyc_response:
+                response = await asyc_response.json()
+                if response and 'success' in response:
+                    success = ['success']
+                    data['job_id'] = response['job_id']
 
-        # self.roles = ['ADMIN']
-        if success:
-            self.finished = True
-            company_job_view = JobView(data, self.bot, company=True)
-            company_job_view.message = await interaction.followup.send('New Job added', embed=company_job_view.embed, view=company_job_view)
-            await interaction.message.delete()
+                # self.roles = ['ADMIN']
+                if success:
+                    self.finished = True
+                    company_job_view = JobView(data, self.bot, company=True)
+                    company_job_view.message = await interaction.followup.send('New Job added', embed=company_job_view.embed, view=company_job_view)
+                    await interaction.message.delete()
 
-            # TODO: change user id to job registered users
-            # guild = self.bot.get_guild(Enums.GUILD_ID.value)
+                    # TODO: change user id to job registered users
+                    # guild = self.bot.get_guild(Enums.GUILD_ID.value)
 
-            # job_roles = set(self.roles)
-            # for user in guild.members:
+                    # job_roles = set(self.roles)
+                    # for user in guild.members:
 
-            #     user_roles = set([role.name for role in user.roles])
-            #     intersection_set = user_roles & job_roles
-            #     try:
-            #         if isinstance(user, discord.User) or isinstance(user, discord.Member):
-            #             if list(intersection_set):
-            #                 user_job_view = JobView(data, self.bot)
-            #                 user_job_view.message = await user.send(embed=user_job_view.embed, view=user_job_view)
-            #                 await asyncio.sleep(2)
-            #             #     dm_channel = user.dm_channel
-            #             #     if not dm_channel:
-            #             #         dm_channel = await user.create_dm()
-            #             #     user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
-            #             # return success
-            #     except Exception as e:
-            #         print(str(e))
-            #         pass
-        else:
-            await interaction.followup.send(response['message'])
+                    #     user_roles = set([role.name for role in user.roles])
+                    #     intersection_set = user_roles & job_roles
+                    #     try:
+                    #         if isinstance(user, discord.User) or isinstance(user, discord.Member):
+                    #             if list(intersection_set):
+                    #                 user_job_view = JobView(data, self.bot)
+                    #                 user_job_view.message = await user.send(embed=user_job_view.embed, view=user_job_view)
+                    #                 await asyncio.sleep(2)
+                    #             #     dm_channel = user.dm_channel
+                    #             #     if not dm_channel:
+                    #             #         dm_channel = await user.create_dm()
+                    #             #     user_job_view.message = await dm_channel.send(embed=user_job_view.embed, view=user_job_view)
+                    #             # return success
+                    #     except Exception as e:
+                    #         print(str(e))
+                    #         pass
+                else:
+                    await interaction.followup.send(response['message'])
 
 class JobAdditionalModal(Modal, title='Additional Information'):
     def __init__(self, url):
@@ -223,14 +224,18 @@ class ReviewUserModal(Modal, title='Review upload'):
 
         response = None
         if not self.update:
-            response = requests.post(URL + '/review', json=data)
-            self.review_data['id'] = response.json()['review_id']
+            async with aiohttp.ClientSession() as session:
+                async with session.post(URL + '/review', json=data) as asyc_response:
+                    response = await asyc_response.json()
+            self.review_data['id'] = response['review_id']
         else:
-            response = requests.put(URL + '/review', json=data)
+            async with aiohttp.ClientSession() as session:
+                async with session.put(URL + '/review', json=data) as asyc_response:
+                    response = await asyc_response.json()
 
-        if response.json()['success']:
+        if response['success']:
             if 'id' not in data:
-                data['id'] = response.json()['review_id']
+                data['id'] = response['review_id']
 
             our_guild = self.bot.get_guild(Enums.GUILD_ID.value)
             if our_guild:
@@ -263,9 +268,12 @@ class BankRegistrationModal(Modal, title='Bank Registration'):
             'register': str(self.register)
         }
 
-        response = requests.post(self.url + '/user/bank_register', json=data)
-        if response and 'success' in response.json():
-            success = response.json()['success']
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.url + '/user/bank_register', json=data) as asyc_response:
+                response = await asyc_response.json()
+                
+        if response and 'success' in response:
+            success = response['success']
 
         # channel_name =  ChannelEnum.GUILD.value #TODO: CHANGE IT
         # channel = discord.utils.get(interaction.guild.channels, name=channel_name)

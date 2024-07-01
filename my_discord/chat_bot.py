@@ -1,6 +1,6 @@
 import discord
-import os
 from dotenv import load_dotenv
+from discord import app_commands
 from discord.ext import commands
 from manual import get_manual_link
 from selects import SelectRoles, SelectBankNames, MessageSelect
@@ -16,7 +16,7 @@ from usecases.user_contents import *
 from views import LogInView
 from usecases.company_contents import GetCompanyContentView
 from usecases.user_status import GetUserStatus
-import asyncio
+import asyncio, os
 
 # from usecases.get_company_jobs import GetCompanyJobs
 load_dotenv()
@@ -166,7 +166,8 @@ async def my_status(interaction: discord.Interaction):
     roles = is_dm(interaction)
 
     if is_influencer(roles):
-        user_views = GetUserStatus().execute(interaction.user.id, client)
+        get_user_status = GetUserStatus()
+        user_views = await get_user_status.execute(interaction.user.id, client)
         if user_views is None or len(user_views) == 0:
             await interaction.user.send(ErrorMessageEnum.NO_USER.value)
         else:
@@ -396,6 +397,28 @@ async def server_collects(interaction: discord.Interaction):
             await interaction.followup.send(f'Collect request list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+
+
+# @client.tree.command(name="server_user_content", description="Get the user ID of a member")
+# @app_commands.describe(member="The member whose user ID you want to retrieve")
+# async def userid(interaction: discord.Interaction, member: discord.Member):
+#     await interaction.response.defer()
+#     if not isinstance(member, discord.Member):
+#         return await interaction.response.send_message('You entered wrong User')
+
+#     await interaction.followup.send('STARTED')
+#     for i in range(10000000):
+#         print(i)
+#         if i == 5:
+#             break
+#         # Simulate some processing (remove this in actual usage)
+#         await asyncio.sleep(5)
+    
+#     await interaction.followup.send('FINISHED')
+
+#     await interaction.followup.send('DONE')
+#     print(member.name)
+#     print(member.id)
 
 # @client.tree.command(name='server_message')
 # async def server_message(interaction: discord.Interaction):

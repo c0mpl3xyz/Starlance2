@@ -9,6 +9,8 @@ from usecases.user_reviews import GetUserReview, UpdateReview
 from usecases.user_status import UpdateUserPoints
 from embeds import ApproveEmbed, ReviewEmbed, UserEmbed, CollectEmbed
 from utils.enums import Enums
+import time
+import aiohttp, asyncio
 from datetime import datetime
 import time, uuid, aiofiles, pytz
 
@@ -102,13 +104,27 @@ class UserView(discord.ui.View):
         if not collectable:
             self.collect_button.label = f'No enough points to collect: {collectable_points}'
             self.collect_button.disabled = True
-        else:
-            result: list = requests.get(URL + '/collect/user', json={'user_id': user_data['user_id']}).json()
-            if len(result):
-                self.collect_button.label = 'Collect request is already sent'
-                self.collect_button.disabled = True
+        # else:
+        #     # result: list = requests.get(URL + '/collect/user', json={'user_id': user_data['user_id']}).json()
+        #     result = await self.get_collects(user_data['user_id'])
+        #     if len(result):
+        #         self.collect_button.label = 'Collect request is already sent'
+        #         self.collect_button.disabled = True
         self.add_item(self.collect_button)
 
+    async def setup(self):
+        result = await self.get_collects(self.user_data['user_id'])
+        if len(result):
+            self.collect_button.label = 'Collect request is already sent'
+            self.collect_button.disabled = True
+        return self
+
+    async def get_collects(self, user_id):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(URL + '/collect/user', json={'user_id': user_id}) as response:
+                result = await response.json()
+                return result
+            
     async def collect_button_callback(self, interaction: discord.Interaction):
         from modal import UserCollectModal
         # await interaction.response.defer()
@@ -256,24 +272,22 @@ class JobView(discord.ui.View):
             'user_id': interaction.user.id,
             'job_ids': [self.job_data['job_id']]
         }
-
+        
         DICT = {}
-        response = requests.get(URL + '/review/not_approved_count', json=data)
-
-        if response:
-            DICT = response.json()
-
-        if str(self.job_data['job_id']) in DICT.keys():
-            self.review_button.label = 'Review request is already sent'
-            self.review_button.disabled = True
-            await interaction.message.edit(view=self)
-        else:
-            register_job = RegisterJob().get_by_user_job(interaction.user.id, self.job_data['job_id'])
-            register_job['job_register_id'] = register_job['id']
-            self.register_job = register_job
-            self.add_item(self.new_button)
-            self.review_button.disabled = True
-            await interaction.message.edit(view=self)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(URL + '/review/not_approved_count', json=data) as asyc_response:
+                DICT = await asyc_response.json()
+                if str(self.job_data['job_id']) in DICT.keys():
+                    self.review_button.label = 'Review request is already sent'
+                    self.review_button.disabled = True
+                    await interaction.message.edit(view=self)
+                else:
+                    register_job = RegisterJob().get_by_user_job(interaction.user.id, self.job_data['job_id'])
+                    register_job['job_register_id'] = register_job['id']
+                    self.register_job = register_job
+                    self.add_item(self.new_button)
+                    self.review_button.disabled = True
+                    await interaction.message.edit(view=self)
 
     async def delete_button_callback(self, interaction: discord.Interaction):
         from modal import DeleteJobModal
