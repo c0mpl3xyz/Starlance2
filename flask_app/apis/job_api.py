@@ -209,6 +209,7 @@ def report():
     try:
         if success:
             return send_file(file_path, as_attachment=True)
-        return None
+        else:
+            return jsonify({'error': 'Report not found or could not be generated'}), 404
     finally:
         os.remove(file_path)

@@ -1,7 +1,8 @@
 from docx import Document
-from docx.shared import Pt
+from docx.shared import Inches, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 import uuid, os
+
 TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')
 def replace_bookmarks(doc_path, replacements, tables_rows=None):
     try:
@@ -21,8 +22,6 @@ def replace_bookmarks(doc_path, replacements, tables_rows=None):
     except Exception as e:
         raise e
         return False, doc_path
-from docx.shared import Inches, Pt
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 def fill_tables(doc, table_data):
     if not table_data:

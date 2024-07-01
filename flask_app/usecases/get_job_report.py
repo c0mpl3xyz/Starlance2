@@ -26,7 +26,7 @@ class GetJobReportById():
             doc_data['DURATION'] = str(job[7])
             doc_data['END_DATE'] = str(job[8])
             doc_data['PARTICIPATE_DATE'] = str(job[9])
-            doc_data['DESCRIPTION'] = str(job[10])
+            doc_data['DESCRIPTION'] = self.sanitize_description(str(job[10]))
             doc_data['JOB_TYPE'] = str(job[13])
             doc_data['POINT'] = str(job[15])
         
@@ -78,6 +78,20 @@ class GetJobReportById():
             cursor.close()
             connection.close()
 
+    def sanitize_description(self, description: str):
+        description = description.replace('**', '').replace('?', '')
+
+        parts = description.split('<a:')
+        cleaned_parts = []
+
+        for part in parts:
+            if '>' in part:
+                cleaned_parts.append(part.split('>', 1)[1].strip())
+            else:
+                cleaned_parts.append(part)
+        description_cleaned = ''.join(cleaned_parts)
+
+        return description_cleaned
     def convert_table_rows(self, items):
         # Convert content report items to a format suitable for filling tables
         table_rows = []
