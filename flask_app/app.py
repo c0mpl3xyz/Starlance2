@@ -4,7 +4,7 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
-from content_updater import content_updater
+from content_updater import ContentUpdater
 from apis.user_api import user_bp
 from apis.token_api import token_bp
 from apis.job_api import job_bp
@@ -58,7 +58,7 @@ def create_app():
     return app
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(content_updater, 'interval', minutes=5)
+scheduler.add_job(ContentUpdater().content_updater, 'interval', minutes=5)
 app = create_app()
 first = True
 
