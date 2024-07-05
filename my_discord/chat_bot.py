@@ -50,7 +50,6 @@ def is_dm(interaction):
 
         return [role.name for role in user.roles]
     except AttributeError as e:
-        print(str(e))
         return []
 
 @client.event

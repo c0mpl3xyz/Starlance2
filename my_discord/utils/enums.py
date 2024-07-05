@@ -6,7 +6,7 @@ load_dotenv()
 class Enums(Enum):
     BANK_NAMES = ['Golomt', 'Khaan', 'Turiin', 'TDB', 'Khas']
     # SOCIAL_ACCOUNTS = ['Instagram', 'Facebook', 'TikTok', 'Youtube']
-    SOCIAL_ACCOUNTS = ['Instagram']
+    SOCIAL_ACCOUNTS = ['Instagram', 'Youtube']
     APPROVE_GUILD = 'approve-influencer'
     NOTIFICATION = 'notification'
     CONTENT = 'contents'

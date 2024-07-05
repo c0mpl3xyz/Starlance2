@@ -533,10 +533,12 @@ class ReviewView(discord.ui.View):
         from selects import UploadLinkSelect
         await interaction.response.defer()
         view = View()
-        view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id']))
+        select = UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id'])
+        view.add_item(select)
         await interaction.followup.send('Select social accounts', view=view)
+
         self.upload_button.disabled = True
-        self.upload_button.label = 'Uploaded'
+        self.upload_button.label = 'Used'
         await interaction.message.edit(view=self)    
 
     async def accept_button_callback(self, interaction: discord.Interaction):
@@ -586,11 +588,12 @@ class ContentView(discord.ui.View):
         from selects import UploadLinkSelect
         await interaction.response.defer()
         view = View()
-        view.add_item(UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id'], content_data=self.content_data, edit=True))
+        select = UploadLinkSelect(self.bot, self.review_data['user_id'], self.review_data['job_id'], self.review_data['server_id'], self.review_data['job_register_id'], self.review_data['id'], content_data=self.content_data, edit=True)
+        view.add_item(select)
         await interaction.followup.send('Select social accounts', view=view)
 
-        self.edit_button.lable = 'Link was beed updated'
-        self.edit_button.disables = True
+        self.edit_button.label = 'Used'
+        self.edit_button.disabled = True
         await interaction.message.edit(view=self)
 
     async def on_timeout(self):

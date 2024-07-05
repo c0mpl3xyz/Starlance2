@@ -153,6 +153,7 @@ class ContentUpdater():
                                 total_plays_perc = v_2_v['total_plays'] / (total + EPSILON)
                                 total_plays_change = (round(diff* total_plays_perc))
                                 v_2_v['total_plays'] = v_2_v['total_plays'] - (round(diff* total_plays_perc))
+                                v_2_v['initial_plays'] = v_2_v['total_plays']
                                 v_2_v['points'] = v_2_v['total_plays']
 
                             user_id = contents_real_dict[k_2][3]
@@ -322,7 +323,7 @@ class YoutubeProcessor():
         youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
         video_ids_batch_size = 50
         start_index = 0
-        video_ids = list(set(contents.values()))
+        video_ids = list(set(contents.keys()))
         total_videos = len(video_ids)
 
         result = []
@@ -360,11 +361,9 @@ class YoutubeProcessor():
 
             start_index += video_ids_batch_size
 
-        rev_dict = {value: key for key, value in contents.items()}
-
         final_result = {}
         for item in result:
-            final_result[rev_dict[item['shortcode']]] = item
+            final_result[contents[item['shortcode']]] = item
         return final_result
     
     def get_video_id(self, link: str):

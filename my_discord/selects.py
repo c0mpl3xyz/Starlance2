@@ -120,10 +120,10 @@ class UploadLinkSelect(Select):
         self.server_id = server_id
         self.content_data = content_data
         self.job_register_id = job_register_id
-        print(f'{review_id=}')
         self.review_id = review_id
         self.bot = bot
         self.edit = edit
+        self.is_finished = False
 
         socials = Enums.SOCIAL_ACCOUNTS.value
         options = [discord.SelectOption(label=social, description='') for social in socials]
@@ -134,6 +134,8 @@ class UploadLinkSelect(Select):
         modal = SocialRegisterModal(self.user_id, self.job_id, self.server_id, self.job_register_id, self.review_id, socials, self.bot, self.content_data, self.edit)
         await interaction.response.send_modal(modal)
         await modal.wait()
+        if modal.finished:
+            self.is_finished = True
         await interaction.message.delete()
 
 class SelectBankNames(Select):

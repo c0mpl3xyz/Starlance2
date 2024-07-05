@@ -100,7 +100,7 @@ class ContentEmbed(Embed):
             color = discord.Color.green()
 
         super().__init__(
-            title=review_data['server_name'],
+            title=f"{review_data['server_name']} - {content_data['type']} content",
             color = color
             )
         

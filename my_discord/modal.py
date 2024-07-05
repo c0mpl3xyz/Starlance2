@@ -297,7 +297,7 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
         self.job_register_id = job_register_id
         self.review_id = review_id
         self.edit = edit
-
+        self.finished = False
         self.instagram = None
         self.facebook = None
         self.tiktok = None
@@ -316,6 +316,38 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
         if 'Facebook' in socials:
             self.facebook = TextInput(label="Facebook link", placeholder="https://www.facebook.com/100010907134752/videos/42146212077test/", required=False, min_length=1, max_length=100)
             self.add_item(self.facebook)
+
+    
+    def validate(self, link, social_type):
+        prefixes = []
+        valid = False
+
+        if social_type == 'instagram':
+            prefixes = [
+                'https://www.instagram.com/reel/',
+                'https://www.instagram.com/p/'
+            ]
+
+        if social_type == 'youtube':
+            prefixes = [
+                'https://www.youtube.com/watch?v=',
+                'https://youtu.be/',
+                'https://www.youtube.com/watch?v=',
+                'https://www.youtube.com/watch?v=',
+                'https://www.youtube.com/embed/',
+                'https://www.youtube.com/watch?v=',
+                'https://www.youtube.com/shorts/'
+            ]
+
+        if social_type == 'tiktok':
+            prefixes = []
+
+        for prefix in prefixes:
+            if prefix in link:
+                valid = True
+                break
+        
+        return valid
 
     async def on_submit(self, interaction: Interaction):
         from embeds import ContentEmbed
@@ -348,9 +380,19 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             socials.append(str(self.youtube))
 
         content_ids = []
-        for i, social in enumerate(socials):
+        valid = True
+        for i, link in enumerate(socials):
+            social_type = types[i]
+            if not self.validate(link, social_type):
+                await interaction.followup.send(f'{social_type} link is wrong: "{link}"')
+                valid = False
+        
+        if not valid:
+            return
+        
+        for i, link in enumerate(socials):
             data['type'] = types[i]
-            data['link'] = social
+            data['link'] = link
             response = None
             content_id = None
 
@@ -380,6 +422,7 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             guild_company = self.bot.get_guild(int(data['server_id']))
             channel_company = discord.utils.get(guild_company.channels, name=Enums.CONTENT.value)
             view.message = await channel_company.send(message, embed=view.embed, view=view)
+        self.finished = True
         self.stop()
 
 class ReviewRejectModal(Modal, title='Description'):
