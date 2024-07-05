@@ -1,6 +1,7 @@
 import requests, os, time
 from dotenv import load_dotenv
-import logging
+import logging, traceback
+from googleapiclient.discovery import build
 
 load_dotenv()
 URL = os.getenv('URL')      
@@ -9,153 +10,168 @@ APP_ID = os.getenv('APP_ID')
 API_PREFIX = os.getenv('API_PREFIX')
 PAGE_ID = os.getenv('PAGE_ID')
 
-URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
+# IG
+IG_URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
 IG_TOKEN = os.getenv('IG_TOKEN')
 IG_ID = os.getenv('IG_ID')
-PERMISSIONS = ['instagram_manage_insights','instagram_basic','pages_show_list']
+IG_PERMISSIONS = ['instagram_manage_insights','instagram_basic','pages_show_list']
+
+# YOUTUBE
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
+
+# Constants
 EPSILON = 1e-8
+
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s [%(levelname)s] %(message)s',
                     handlers=[logging.StreamHandler()])
 
-def content_updater_2():
-    logging.info('LOGGER-----------------------------------------')
+class ContentUpdater():
+    def __init__(self):
+        self.ig_processor = IGProcessor()
+        self.youtube_processor = YoutubeProcessor()
+        self.tiktok_processor = TikTokProcessor()
 
-def get_jobs():
-    result = requests.get(URL + '/job/open_jobs')
-    return result.json()
+    def get_jobs(self):
+        result = requests.get(URL + '/job/open_jobs')
+        return result.json()
 
-def get_contents_by_job_ids(job_ids):
-    data = {
-        'job_ids': job_ids
-    }
+    def get_contents_by_job_ids(self, job_ids):
+        data = {
+            'job_ids': job_ids
+        }
 
-    result = requests.get(URL + '/content/job_ids', json=data)
-    return result.json()
+        result = requests.get(URL + '/content/job_ids', json=data)
+        return result.json()
 
-def update_content(k, data):
-    data['content_id'] = k
-    requests.put(URL + '/content/status', json=data)
+    def update_content(self, k, data):
+        data['content_id'] = k
+        requests.put(URL + '/content/status', json=data)
 
-def update_user_point(user_id, data, point_per_view):
-    point_ratio = point_per_view / 10.0
-    data = {
-        'user_id': user_id,
-        'points': data['points'] * point_ratio
-    }
-    requests.put(URL + '/user', json=data)
+    def update_user_point(self, user_id, data, point_per_view):
+        point_ratio = point_per_view / 10.0
+        data = {
+            'user_id': user_id,
+            'points': data['points'] * point_ratio
+        }
+        requests.put(URL + '/user', json=data)
 
-def update_job(k):
-    data = {
-        'job_id': k,
-        'type': 'Ended'
-    }
-    requests.put(URL + '/job/status', json=data)
+    def update_job(self, k):
+        data = {
+            'job_id': k,
+            'type': 'Ended'
+        }
+        requests.put(URL + '/job/status', json=data)
 
-def get_shortcode(link):
-    link = link.replace('https://www.instagram.com/reel/', '').replace('https://www.instagram.com/p/','')
-    splits = link.split('/')
-    if len(splits):
-        return splits[0]
-    return None
+    def content_classifier(self, content_dict: dict):
+        classified_contents = {
+            'instagram': {},
+            'youtube': {},
+            'tiktok': {},
+        }
 
-def cal_percent(a, b):
-    return a / (b + EPSILON)
+        for key, value in content_dict.items():
+            if value[7] == 'instagram':
+                classified_contents['instagram'][key] = value
+            if value[7] == 'youtube':
+                classified_contents['youtube'][key] = value
+            if value[7] == 'tiktok':
+                classified_contents['tiktok'][key] = value
 
-def calculate_replays(initial_plays, replays):
-    rate = replays / (initial_plays + EPSILON)
-    if rate <= 0.7:
-        return replays
+        return classified_contents
 
-    return int(initial_plays * 0.7)
+    def content_updater(self):
+        logging.info('Started updating contents')
+        try:
+            jobs = self.get_jobs()
+            job_ids = [job[0] for job in jobs]
+            job_point_dict = {job[0]: job[-1] for job in jobs}
+            contents = self.get_contents_by_job_ids(job_ids)
+            contents_real_dict = {content[0]: content for content in contents}
+            classified_content_dict = self.content_classifier(contents_real_dict)
+            ig_result = self.ig_processor.process(classified_content_dict['instagram'].values())
+            youtube_result = self.youtube_processor.process(classified_content_dict['youtube'].values())
+            # tiktok_result = self.tiktok_processor.process(classified_content_dict['tiktok'].values())
 
-def calculate_replays_points(points):
-    return round(points * 0.7 / 1.7)
+            result = ig_result | youtube_result # | tiktok_result
 
-def calculate_initial_plays_points(points):
-    return round(points * 1 / 1.7)
+            job_content_dict = {}
+            for job in jobs:
+                job_id = job[0]
+                # Find all contents that match the job ID
+                matching_contents = [content[0] for content in contents if content[2] == job_id]
+                job_content_dict[job_id] = matching_contents
 
-def content_updater():
-    logging.info('Started updating contents')
-    try:
-        ('Im alive!')
-        jobs = get_jobs()
-        job_ids = [job[0] for job in jobs]
-        job_point_dict = {job[0]: job[-1] for job in jobs}
-        contents = get_contents_by_job_ids(job_ids)
-        contents_real_dict = {content[0]: content for content in contents}
-        contents_dict = {get_shortcode(content[6]): content[0] for content in contents if get_shortcode(content[6]) is not None}
+            job_budgets = {job[0]: [job[5], False] for job in jobs}
+            remove_keys = []
+            for k, v in job_content_dict.items():
+                if not len(v):
+                    remove_keys.append(k)
+                    continue
+                new_contents = []
+                for c_id in v:
+                    if c_id in result.keys():
+                        new_contents.append({c_id: result[c_id]})
+                job_content_dict[k] = new_contents
 
-        ig_token = ProIGToken()
-        ig_result = ig_token.filter_by_shortcodes(contents_dict)
-        job_content_dict = {}
-        for job in jobs:
-            job_id = job[0]
-            # Find all contents that match the job ID
-            matching_contents = [content[0] for content in contents if content[2] == job_id]
-            job_content_dict[job_id] = matching_contents
+            for k in remove_keys:
+                del job_content_dict[k]
+                del job_budgets[k]
 
-        job_budgets = {job[0]: [job[5], False] for job in jobs}
-        remove_keys = []
-        for k, v in job_content_dict.items():
-            if not len(v):
-                remove_keys.append(k)
-                continue
-            new_contents = []
-            for c_id in v:
-                if c_id in ig_result.keys():
-                    new_contents.append({c_id: ig_result[c_id]})
-            job_content_dict[k] = new_contents
-
-        for k in remove_keys:
-            del job_content_dict[k]
-            del job_budgets[k]
-
-        for k, v in job_content_dict.items():
-            total = 0
-            for v_2 in v:
-                for _, v_2_v in v_2.items():
-                    total += v_2_v['total_plays']
-
-            total_views_end = job_budgets[k][0]/job_point_dict[k]
-            if total < total_views_end:
+            for k, v in job_content_dict.items():
+                total = 0
                 for v_2 in v:
-                    for k_2, v_2_v in v_2.items():
-                        v_2_v['active'] = 1
-                        update_content(k_2, v_2_v)
-            else:
-                diff = total - total_views_end
-                for v_2 in v:
-                    for k_2, v_2_v in v_2.items():
-                        total_plays_perc = v_2_v['total_plays'] / (total + EPSILON)
-                        initial_perc = v_2_v['initial_plays'] / (v_2_v['total_plays'] + EPSILON)
-                        prime_replay_perc = v_2_v['prime_replays'] / (v_2_v['total_plays']  + EPSILON)
+                    for _, v_2_v in v_2.items():
+                        total += v_2_v['total_plays']
 
-                        total_plays_change = (round(diff* total_plays_perc))
-                        v_2_v['total_plays'] = v_2_v['total_plays'] - (round(diff* total_plays_perc))
-                        v_2_v['initial_plays'] = v_2_v['initial_plays'] - round(total_plays_change * initial_perc)
-                        v_2_v['prime_replays'] = v_2_v['prime_replays'] - round(total_plays_change * prime_replay_perc)
-                        
-                        v_2_v['replays'] = calculate_replays(v_2_v['initial_plays'], v_2_v['prime_replays'])
-                        v_2_v['points'] = v_2_v['initial_plays'] + v_2_v['replays']
-                        v_2_v['active'] = 0
-                        update_content(k_2, v_2_v)
-                        update_job(k)
-                        user_id = contents_real_dict[k_2][3]
-                        update_user_point(user_id, v_2_v, job_point_dict[k])
+                total_views_end = job_budgets[k][0]/job_point_dict[k]
+                if total < total_views_end:
+                    for v_2 in v:
+                        for k_2, v_2_v in v_2.items():
+                            v_2_v['active'] = 1
+                            self.update_content(k_2, v_2_v)
+                else:
+                    diff = total - total_views_end
+                    for v_2 in v:
+                        for k_2, v_2_v in v_2.items():
+                            social = contents_real_dict[k_2][7]
+                            v_2_v['active'] = 0
+                            if  social == 'instagram':
+                                total_plays_perc = v_2_v['total_plays'] / (total + EPSILON)
+                                initial_perc = v_2_v['initial_plays'] / (v_2_v['total_plays'] + EPSILON)
+                                prime_replay_perc = v_2_v['prime_replays'] / (v_2_v['total_plays']  + EPSILON)
 
-        logging.info('Ended updating contents')
-    except Exception as e:
-        logging.error(f'Content updating failed: {str(e)}')
-        raise e
+                                total_plays_change = (round(diff* total_plays_perc))
+                                v_2_v['total_plays'] = v_2_v['total_plays'] - (round(diff* total_plays_perc))
+                                v_2_v['initial_plays'] = v_2_v['initial_plays'] - round(total_plays_change * initial_perc)
+                                v_2_v['prime_replays'] = v_2_v['prime_replays'] - round(total_plays_change * prime_replay_perc)
+                                
+                                v_2_v['replays'] = self.ig_processor.calculate_replays(v_2_v['initial_plays'], v_2_v['prime_replays'])
+                                v_2_v['points'] = v_2_v['initial_plays'] + v_2_v['replays']
+                            
+                            if social == 'youtube':
+                                total_plays_perc = v_2_v['total_plays'] / (total + EPSILON)
+                                total_plays_change = (round(diff* total_plays_perc))
+                                v_2_v['total_plays'] = v_2_v['total_plays'] - (round(diff* total_plays_perc))
+                                v_2_v['points'] = v_2_v['total_plays']
 
-class ProIGToken():
+                            user_id = contents_real_dict[k_2][3]
+                            self.update_content(k_2, v_2_v)
+                            self.update_job(k)
+                            self.update_user_point(user_id, v_2_v, job_point_dict[k])
+
+            logging.info('Ended updating contents')
+        except Exception as e:
+            logging.error(traceback.print_stack())
+            raise e
+
+class IGProcessor():
     def __init__(self):
         self.access_token = IG_TOKEN
-        self.base_url = URL_PREFIX
+        self.base_url = IG_URL_PREFIX
         self.url_suffix = f'access_token={self.access_token}'
         self.user_id = IG_ID
-        self.permissions = PERMISSIONS
+        self.permissions = IG_PERMISSIONS
     
     def __permission_list(self):
         url = f'{self.base_url}/me/permissions?status=granted&access_token={self.access_token}'
@@ -166,6 +182,18 @@ class ProIGToken():
     def get_permissions(self):
         return self.__permission_list()
     
+    def process(self, ig_contents):
+        ig_contents_dict = {self.get_shortcode(content[6]): content[0] for content in ig_contents if self.get_shortcode(content[6]) is not None}
+        ig_result = self.ig_filter_by_shortcodes(ig_contents_dict)
+        return ig_result
+
+    def get_shortcode(self, link):
+        link = link.replace('https://www.instagram.com/reel/', '').replace('https://www.instagram.com/p/','')
+        splits = link.split('/')
+        if len(splits):
+            return splits[0]
+        return None
+
     def check_permissions(self):
         token_permissions = self.__permission_list()
 
@@ -184,11 +212,11 @@ class ProIGToken():
         response = requests.get(url)
         return response.json()
     
-    def sanity_shortcodes(self, shortcodes):
+    def sanitize_shortcodes(self, shortcodes):
         return [shortcode for shortcode in shortcodes if len(shortcode) == 11]
         
-    def filter_by_shortcodes(self, shortcode_dict: dict):
-        shortcodes = self.sanity_shortcodes(list(shortcode_dict.keys()))
+    def ig_filter_by_shortcodes(self, shortcode_dict: dict):
+        shortcodes = self.sanitize_shortcodes(list(shortcode_dict.keys()))
         if not len(shortcodes):
             return {}
         
@@ -216,6 +244,22 @@ class ProIGToken():
                 break
 
         return my_result
+
+    # def calculate_replays_points(self, points):
+    #     return round(points * 0.7 / 1.7)
+
+    # def calculate_initial_plays_points(self, points):
+    #     return round(points * 1 / 1.7)
+
+    # def cal_percent(self, a, b):
+    #     return a / (b + EPSILON)
+
+    def calculate_replays(self, initial_plays, replays):
+        rate = replays / (initial_plays + EPSILON)
+        if rate <= 0.7:
+            return replays
+
+        return int(initial_plays * 0.7)
 
     def get_ig_media_dict(self, url=None):
         media = self.get_ig_media_list(url)
@@ -254,7 +298,7 @@ class ProIGToken():
                     if insight['name'] == 'clips_replays_count':
                         new_data['prime_replays'] = insight['values'][0]['value']
 
-                new_data['replays'] = calculate_replays(new_data['initial_plays'], new_data['prime_replays'])
+                new_data['replays'] = self.calculate_replays(new_data['initial_plays'], new_data['prime_replays'])
                 new_data['points'] = new_data['initial_plays'] + new_data['replays']
                 new_data['engagement'] = new_data['total_interactions']
                 new_data['engagement_rate'] = new_data['total_interactions'] / (new_data['account_reach'] + EPSILON) * 100.0
@@ -264,5 +308,89 @@ class ProIGToken():
             next_url = media['paging']['next']
         return my_data, next_url
 
+class YoutubeProcessor():
+    def __init__(self):
+        self.youtube_api_key = ''
+        pass
+
+    def process(self, youtube_contents):
+        youtube_contents_dict = {self.get_video_id(content[6]): content[0] for content in youtube_contents if self.get_video_id(content[6]) is not None}
+        result = self.get_youtube_media_list(youtube_contents_dict)
+        return result
+
+    def get_youtube_media_list(self, contents: dict):
+        youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+        video_ids_batch_size = 50
+        start_index = 0
+        video_ids = list(set(contents.values()))
+        total_videos = len(video_ids)
+
+        result = []
+        while start_index < total_videos:
+            end_index = min(start_index + video_ids_batch_size, total_videos)
+            batch_ids = video_ids[start_index:end_index]
+
+            request = youtube.videos().list(
+                # part='snippet,statistics,contentDetails,status',
+                part='statistics',
+                id=','.join(batch_ids)
+            )
+
+            try:
+                response = request.execute()
+                for item in response['items']:
+
+                    statistics = item['statistics']
+                    views = int(statistics.get('viewCount', 'N/A'))
+                    likes = int(statistics.get('likeCount', 'N/A'))
+                    favorites = int(statistics.get('favoriteCount', 'N/A'))
+                    comments = int(statistics.get('commentCount', 'N/A'))
+
+                    new_dict = {}
+                    new_dict['shortcode'] = item['id']
+                    new_dict['total_plays'] = views
+                    new_dict['points'] = views
+                    new_dict['likes'] = likes
+                    new_dict['comments'] = comments 
+                    new_dict['engagement'] = round((likes + favorites + comments) / views * 100.0, 2)
+                    result.append(new_dict)
+
+            except Exception:
+                traceback.print_stack()
+
+            start_index += video_ids_batch_size
+
+        rev_dict = {value: key for key, value in contents.items()}
+
+        final_result = {}
+        for item in result:
+            final_result[rev_dict[item['shortcode']]] = item
+        return final_result
+    
+    def get_video_id(self, link: str):
+        video_prefixes = [
+            'https://www.youtube.com/watch?v=',
+            'https://youtu.be/',
+            'https://www.youtube.com/watch?v=',
+            'https://www.youtube.com/watch?v=',
+            'https://www.youtube.com/embed/',
+            'https://www.youtube.com/watch?v=',
+            'https://www.youtube.com/shorts/'
+        ]
+
+        for prefix in video_prefixes:
+            link = link.replace(prefix, '')
+
+        splits = link.split('&')
+        if len(splits):
+            return splits[0]
+        return None
+    
+    def sanitize_video_id(self, ):
+        pass
+
+class TikTokProcessor():
+    pass
+
 if __name__ == '__main__':
-    content_updater()
+    ContentUpdater().content_updater()
