@@ -3,8 +3,7 @@ from dotenv import load_dotenv
 import logging
 
 load_dotenv()
-URL = os.getenv('URL')
-load_dotenv()
+URL = os.getenv('URL')      
 API_VERSION = os.getenv('API_VERSION')
 APP_ID = os.getenv('APP_ID')
 API_PREFIX = os.getenv('API_PREFIX')
@@ -13,7 +12,7 @@ PAGE_ID = os.getenv('PAGE_ID')
 URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
 IG_TOKEN = os.getenv('IG_TOKEN')
 IG_ID = os.getenv('IG_ID')
-PERMISSIONS = ['instagram_manage_insights', 'instagram_basic', 'pages_show_list']
+PERMISSIONS = ['instagram_manage_insights','instagram_basic','pages_show_list']
 EPSILON = 1e-8
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s [%(levelname)s] %(message)s',
@@ -88,7 +87,7 @@ def content_updater():
         contents_dict = {get_shortcode(content[6]): content[0] for content in contents if get_shortcode(content[6]) is not None}
 
         ig_token = ProIGToken()
-        result = ig_token.filter_by_shortcodes(contents_dict)
+        ig_result = ig_token.filter_by_shortcodes(contents_dict)
         job_content_dict = {}
         for job in jobs:
             job_id = job[0]
@@ -104,8 +103,8 @@ def content_updater():
                 continue
             new_contents = []
             for c_id in v:
-                if c_id in result.keys():
-                    new_contents.append({c_id: result[c_id]})
+                if c_id in ig_result.keys():
+                    new_contents.append({c_id: ig_result[c_id]})
             job_content_dict[k] = new_contents
 
         for k in remove_keys:
@@ -178,7 +177,7 @@ class ProIGToken():
 
         return result
 
-    def get_media_list(self, url=None):
+    def get_ig_media_list(self, url=None):
         if url is None:
             url = f'https://graph.facebook.com/v20.0/{IG_ID}?fields=media.limit(100){{shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares,ig_reels_aggregated_all_plays_count,clips_replays_count){{name,values}}}}&access_token={IG_TOKEN}'
 
@@ -200,10 +199,10 @@ class ProIGToken():
         next_url = None
         while not finished:
             if first:
-                media_dict, next_url = self.get_media_dict()
+                media_dict, next_url = self.get_ig_media_dict()
                 first = False
             elif next_url is not None:
-                media_dict, next_url = self.get_media_dict(next_url)
+                media_dict, next_url = self.get_ig_media_dict(next_url)
             
             for shortcode in shortcodes:
                 if shortcode in media_dict.keys():
@@ -218,8 +217,8 @@ class ProIGToken():
 
         return my_result
 
-    def get_media_dict(self, url=None):
-        media = self.get_media_list(url)
+    def get_ig_media_dict(self, url=None):
+        media = self.get_ig_media_list(url)
         if url is None:
             media = media['media']
         my_data = {}

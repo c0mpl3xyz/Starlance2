@@ -27,7 +27,7 @@ class CollectedMessageEmbed(Embed):
             )
         
         self.add_field(name="Collected Points", value=points)
-        self.add_field(name="Total MNT", value=f'{points * 10} ₮')
+        self.add_field(name="Total MNT", value=f'{format(points * 10, ",")} ₮')
         self.add_field(name="Bank name", value=bank_name)
         self.add_field(name="Bank account", value=bank_account)
 
@@ -69,10 +69,10 @@ class CollectEmbed(Embed):
         self.add_field(name="Register Number", value=user_data['register'])
         self.add_field(name="Bank Name", value=user_data['bank_name'])
         self.add_field(name="Bank Number", value=user_data['bank_number'])
-        self.add_field(name="Collect points", value=points)
-        self.add_field(name="Total ₮", value=f'{tugrik} ₮')
-        self.add_field(name="Tax ₮", value=f'{tax} ₮')
-        self.add_field(name="Collectable ₮", value=f'{collectable} ₮')
+        self.add_field(name="Collect points", value=format(points, ','))
+        self.add_field(name="Total ₮", value=f'{format(tugrik, ",")} ₮')
+        self.add_field(name="Tax ₮", value=f'{format(tax, ",")} ₮')
+        self.add_field(name="Collectable ₮", value=f'{format(collectable, ",")} ₮')
 
 class ReviewEmbed(Embed):
      def __init__(self, data: dict):
