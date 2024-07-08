@@ -18,6 +18,6 @@ class Enums(Enum):
 
     MESSAGE_ROLES = ["Support staff", "Server booster", "Beginner", "Intermediate", "Advanced", "Premium", "Entertainment premium", "Education premium", "Other's premium", "Gaming premium", "Influencer premium", "Video edit premium", "Influencer", "Facebook influencer", "Instagram influencer", "Tiktok influencer", "Youtube influencer", "1-1k followers", "1k-5k followers", "5-10k followers", "10-50k followers", "Audience"]
     #TODO: add rejected message to influencer change guild id
-    GUILD_ID = UGC_ID
+    GUILD_ID = int(UGC_ID)
     ROLES = ALL_ROLES
     OUR_COMPANY = 1240963394467790938
