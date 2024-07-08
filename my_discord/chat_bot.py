@@ -39,6 +39,12 @@ def is_our_company(intearaction) -> bool:
 def is_influencer(roles):
     # TODO: change to Influencer
     return Enums.ROLES.value in roles
+    # return False
+
+def is_admin(roles):
+    # TODO: change to Influencer
+    return Enums.ADMIN.value in roles
+    # return True
 
 def is_dm(interaction):
     try:
@@ -263,7 +269,7 @@ async def server_reviews(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
 
-    if is_influencer(roles):
+    if not is_admin(roles):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
@@ -289,7 +295,7 @@ async def server_contents(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
 
-    if is_influencer(roles):
+    if not is_admin(roles):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
@@ -315,7 +321,7 @@ async def server_approves(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
 
-    if is_influencer(roles):
+    if not is_admin(roles):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
@@ -333,7 +339,7 @@ async def server_approves(interaction: discord.Interaction):
             if not channel:
                 channel = interaction.channel
             for view in approve_views:
-                view.message = await interaction.channel.send(embed=view.embed, view=view)
+                view.message = await channel.send(embed=view.embed, view=view)
                 await asyncio.sleep(1.5)
             await interaction.followup.send(f'Approvement list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:
@@ -344,7 +350,7 @@ async def server_jobs(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
 
-    if is_influencer(roles):
+    if not is_admin(roles):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
@@ -362,7 +368,7 @@ async def server_jobs(interaction: discord.Interaction):
             if not channel:
                 channel = interaction.channel
             for view in job_views:
-                view.message = await interaction.channel.send(embed=view.embed, view=view)
+                view.message = await channel.send(embed=view.embed, view=view)
                 await asyncio.sleep(1.5)
             await interaction.followup.send(f'Job list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:
@@ -373,7 +379,7 @@ async def server_collects(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
 
-    if is_influencer(roles):
+    if not is_admin(roles):
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     try:
@@ -391,7 +397,7 @@ async def server_collects(interaction: discord.Interaction):
             if not channel:
                 channel = interaction.channel
             for view in collect_views:
-                view.message = await interaction.channel.send(embed=view.embed, view=view)
+                view.message = await channel.send(embed=view.embed, view=view)
                 await asyncio.sleep(1.5)
             await interaction.followup.send(f'Collect request list sent to <#{channel.id}>', ephemeral=True)
     except AttributeError:

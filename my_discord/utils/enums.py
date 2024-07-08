@@ -20,4 +20,5 @@ class Enums(Enum):
     #TODO: add rejected message to influencer change guild id
     GUILD_ID = int(UGC_ID)
     ROLES = ALL_ROLES
+    ADMIN = 'ADMIN'
     OUR_COMPANY = 1240963394467790938
