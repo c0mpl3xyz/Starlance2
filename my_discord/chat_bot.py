@@ -37,12 +37,10 @@ def is_our_company(intearaction) -> bool:
     return intearaction.guild.id == Enums.OUR_COMPANY.value
     
 def is_influencer(roles):
-    # TODO: change to Influencer
     return Enums.ROLES.value in roles
     # return False
 
 def is_admin(roles):
-    # TODO: change to Influencer
     return Enums.ADMIN.value in roles
     # return True
 
