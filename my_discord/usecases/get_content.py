@@ -1,5 +1,5 @@
 import requests, os
-from mappings.mappings import content_mappings
+from mappings.mappings import content_mapping
 
 URL = os.getenv('URL')
 class GetContentById():
@@ -9,7 +9,7 @@ class GetContentById():
             }
         
         response = requests.get(URL + '/content', json=data)
-        contents = [content_mappings(content) for content in response.json()]
+        contents = [content_mapping(content) for content in response.json()]
 
         if len(contents):
             contents = contents[0]

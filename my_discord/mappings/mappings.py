@@ -73,7 +73,7 @@ def user_mappings(data: list):
 
     return user_dict
 
-def review_mappings(data: list):
+def review_mapping(data: list):
     review_dict = {
         'id': data[0],
         'job_register_id': data[1],
@@ -90,7 +90,7 @@ def review_mappings(data: list):
 
     return review_dict
 
-def content_mappings(data: list):
+def content_mapping(data: list):
     content_dict = {
         'id': data[0],
         'job_register_id': data[1],

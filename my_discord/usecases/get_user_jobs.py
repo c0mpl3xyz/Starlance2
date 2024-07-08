@@ -1,6 +1,6 @@
 import requests, os
 from views import JobView
-from mappings.mappings import job_mapping_with_type, content_mappings
+from mappings.mappings import job_mapping_with_type, content_mapping
 URL = os.getenv('URL')
 
 class GetUserJobViews:
@@ -21,7 +21,7 @@ class GetUserJobViews:
         job_views = []
         for job in JSON:
             response = requests.get(URL + '/content/user_and_job', json={'user_id': user_id, 'job_id': str(job[0])})
-            contents = [content_mappings(content) for content in response.json()]
+            contents = [content_mapping(content) for content in response.json()]
             job_view = JobView(job_mapping_with_type(job), bot, has_review=str(job[0]) in review_counts.keys(), contents=contents)
             job_views.append(job_view)
         return job_views

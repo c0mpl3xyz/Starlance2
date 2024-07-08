@@ -437,30 +437,28 @@ class ReviewRejectModal(Modal, title='Description'):
         return str(self.description)
 
 class UserCollectModal(Modal, title='Collect User Points'):
-    def __init__(self, user_data, bot):
+    def __init__(self, user_data, collectable_points, bot):
         super().__init__()
         self.requested = False
         self.user_data = user_data
         self.bot = bot
         self.valid = False
-        self.p = (user_data["points"] - 2000) // 1000 * 1000
-        self.points = TextInput(label=f'Points to collect: {self.p}', placeholder=f'{self.p}', required=True, style=discord.TextStyle.short)
-        self.add_item(self.points)
+        self.collectable_points = collectable_points
+        self.total_points = round(collectable_points * 100 / 75, 2)
+        self.ack_message = TextInput(label=f'Please Enter "YES" to Collect', placeholder='YES', required=True, style=discord.TextStyle.short)
+        self.add_item(self.ack_message)
 
-    def validate(self, points: str):
+    def validate(self, ack: str):
         messages = []
-        if not points.isnumeric():
-            messages.append(f'You entered this {points}. And this is not a valid number')
-
-        if points.isnumeric() and int(points) > self.p:
-            messages.append(f'Your availabled Points: {self.p}, You can\'t collect more than this!')
+        if ack != 'YES':
+            messages.append(f'Please Enter "YES" to Collect')
         return messages
 
     async def on_submit(self, interaction: Interaction):
         await interaction.response.defer()
         from views import CollectView
-        points = str(self.points)
-        messages = self.validate(points)
+        ack = self.ack_message.value
+        messages = self.validate(ack)
         if len(messages):
             await interaction.followup.send('User collect points failed')
             for message in messages:
@@ -469,7 +467,7 @@ class UserCollectModal(Modal, title='Collect User Points'):
             self.valid = True
             data = {
                 'user_id': self.user_data['user_id'],
-                'points': int(points)
+                'points': self.total_points
             }
 
             response = requests.post(URL + '/collect', json=data)
@@ -478,7 +476,7 @@ class UserCollectModal(Modal, title='Collect User Points'):
                 collect_id = response['collect_id']
                 guild = self.bot.get_guild(Enums.GUILD_ID.value)
                 channel = discord.utils.get(guild.channels, name=Enums.COLLECT.value)            
-                collect_view = CollectView(self.user_data, self.bot, collect_id, int(points))
+                collect_view = CollectView(self.user_data, self.bot, collect_id, self.total_points)
                 collect_view.message = await channel.send(embed=collect_view.embed, view=collect_view)
             else:
                 self.requested = True

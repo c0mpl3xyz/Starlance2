@@ -11,7 +11,18 @@ class GetCompanyJobs():
         finally:
             connection.close()
         return jobs
-    
+
+class GetUserJobs():
+    def execute(self, user_id):
+        connection = ConnectSQL().get_connection()
+        cursor = connection.cursor()
+        job = Job(cursor)
+        try:
+            jobs = job.get_all_by_user_id(user_id)
+        finally:
+            connection.close()
+        return jobs
+
 class GetServerJobs():
     def execute(self):
         connection = ConnectSQL().get_connection()

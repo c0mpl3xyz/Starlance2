@@ -1,5 +1,5 @@
 import requests, os
-from mappings.mappings import review_mappings, job_mapping, job_register_mapping, collect_mapping, user_mappings
+from mappings.mappings import review_mapping, job_mapping, job_register_mapping, collect_mapping, user_mappings
 import discord
 from utils.enums import Enums
 URL = os.getenv('URL')
@@ -10,7 +10,7 @@ class GetUserReview:
             }
 
         response = requests.get(URL + '/review/user', json=data)
-        reviews = [review_mappings(review) for review in response.json()]
+        reviews = [review_mapping(review) for review in response.json()]
         return reviews
 
 class GetUserReviewById:
@@ -20,7 +20,7 @@ class GetUserReviewById:
             }
 
         response = requests.get(URL + '/review', json=data)
-        reviews = [review_mappings(review) for review in response.json()]
+        reviews = [review_mapping(review) for review in response.json()]
         if len(reviews):
             reviews = reviews[0]
         return reviews
@@ -33,14 +33,14 @@ class GetUserReviewView:
             }
 
         response = requests.get(URL + '/review/user', json=data)
-        reviews = [ReviewView(review_mappings(review), bot) for review in response.json()]
+        reviews = [ReviewView(review_mapping(review), bot) for review in response.json()]
         return reviews
     
 class GetServerReviewView:
     def execute(self, bot):
         from views import ReviewView
         response = requests.get(URL + '/review/company_all')
-        reviews = [ReviewView(review_mappings(review), bot, company=True) for review in response.json()]
+        reviews = [ReviewView(review_mapping(review), bot, company=True) for review in response.json()]
         return reviews
 
 class GetServerCollectView():

@@ -415,6 +415,18 @@ async def userid(interaction: discord.Interaction, member: discord.Member):
 
     await interaction.followup.send(f'ID: {str(member.id)}\nName: {member.name}')
 
+@client.tree.command(name="get_user_report", description="Get the user ID of a member")
+@app_commands.describe(member="The member whose user ID you want to retrieve")
+async def get_user_report(interaction: discord.Interaction, member: discord.Member):
+    await interaction.response.defer()
+    roles = is_dm(interaction)
+    
+    if not is_admin(roles):
+        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+    
+    if not isinstance(member, discord.Member):
+        return await interaction.response.send_message('You entered wrong User')
+
 # @client.tree.command(name='server_message')
 # async def server_message(interaction: discord.Interaction):
 #     await interaction.response.defer(ephemeral=True)

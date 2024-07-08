@@ -9,7 +9,6 @@ from usecases.user_reviews import GetUserReview, UpdateReview
 from usecases.user_status import UpdateUserPoints
 from embeds import ApproveEmbed, ReviewEmbed, UserEmbed, CollectEmbed
 from utils.enums import Enums
-import time
 import aiohttp, asyncio
 from datetime import datetime
 import time, uuid, aiofiles, pytz
@@ -95,14 +94,14 @@ class UserView(discord.ui.View):
         self.bot = bot
         self.embed = UserEmbed(user_data)
         super().__init__()
-        collectable_points = (user_data['points'] - 2000) // 1000 * 1000
-        collectable = collectable_points > 0 #TODO: add threshold
+        self.collectable_points = (user_data['points'] - 20000) * 0.75 // 10000 * 10000
+        collectable = self.collectable_points > 0
         
-        self.collect_button = discord.ui.Button(label=f"Collect Points: {format(collectable_points, ',')}", style=discord.ButtonStyle.green, emoji='✨')
+        self.collect_button = discord.ui.Button(label=f"Collect Points: {format(self.collectable_points, ',')}", style=discord.ButtonStyle.green, emoji='✨')
         self.collect_button.callback = self.collect_button_callback
 
         if not collectable:
-            self.collect_button.label = f"No enough points to collect: {format(collectable_points, ',')}"
+            self.collect_button.label = f"No enough points to collect: {format(user_data['points'] - 20000, ',')}"
             self.collect_button.disabled = True
         # else:
         #     # result: list = requests.get(URL + '/collect/user', json={'user_id': user_data['user_id']}).json()
@@ -128,7 +127,7 @@ class UserView(discord.ui.View):
     async def collect_button_callback(self, interaction: discord.Interaction):
         from modal import UserCollectModal
         # await interaction.response.defer()
-        modal = UserCollectModal(self.user_data, self.bot)
+        modal = UserCollectModal(self.user_data, self.collectable_points, self.bot)
         await interaction.response.send_modal(modal)
         await modal.wait()
 
@@ -227,12 +226,12 @@ class JobView(discord.ui.View):
         await interaction.response.defer()
 
         get_report = GetJobReportById()
-        content = await get_report.execute(self.job_data['job_id'])
+        report = await get_report.execute(self.job_data['job_id'])
 
-        if content:
+        if report:
             file_name = str(uuid.uuid1()) + '.docx'
             async with aiofiles.open(file_name, 'wb') as f:
-                await f.write(content)
+                await f.write(report)
             
             self.timezone = pytz.timezone('Asia/Ulaanbaatar')
             date = datetime.now(self.timezone)

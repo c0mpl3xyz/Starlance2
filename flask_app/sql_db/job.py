@@ -27,6 +27,14 @@ class Job:
         self.cursor.execute(query)
         return self.cursor.fetchall()
     
+    def get_all_by_user_id(self, user_id):
+        query = """
+            SELECT * FROM Job WHERE user_id = %s
+        """
+
+        self.cursor.execute(query, (user_id,))
+        return self.cursor.fetchall()
+
     def get_all_by_company_id(self, discord_server_id):
         query = """
             SELECT * FROM Job WHERE discord_server_id = %s AND start_date >= %s

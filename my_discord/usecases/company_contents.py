@@ -1,5 +1,5 @@
 import requests, os
-from mappings.mappings import content_mappings, review_mappings
+from mappings.mappings import content_mapping, review_mapping
 
 URL = os.getenv('URL')
 class GetCompanyContentView:
@@ -17,9 +17,9 @@ class GetCompanyContentView:
         
         contents = []
         for i, content_json in enumerate(JSON):
-            content = content_mappings(content_json)
+            content = content_mapping(content_json)
             review_data = requests.get(URL + '/review', json={'review_id': content['review_id']}).json()
             if len(review_data):
                 for review in review_data:
-                    contents.append(ContentView(review_mappings(review), content, bot))
+                    contents.append(ContentView(review_mapping(review), content, bot))
         return contents
