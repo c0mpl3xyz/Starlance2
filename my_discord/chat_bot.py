@@ -415,8 +415,8 @@ async def userid(interaction: discord.Interaction, member: discord.Member):
 
     await interaction.followup.send(f'ID: {str(member.id)}\nName: {member.name}')
 
-@client.tree.command(name="get_user_report", description="Get the user ID of a member")
-@app_commands.describe(member="The member whose user ID you want to retrieve")
+# @client.tree.command(name="get_user_report", description="Get the user ID of a member")
+# @app_commands.describe(member="The member whose user ID you want to retrieve")
 async def get_user_report(interaction: discord.Interaction, member: discord.Member):
     await interaction.response.defer()
     roles = is_dm(interaction)
