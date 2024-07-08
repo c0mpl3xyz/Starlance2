@@ -401,15 +401,19 @@ async def server_collects(interaction: discord.Interaction):
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 
-@client.tree.command(name="server_user_content", description="Get the user ID of a member")
+@client.tree.command(name="get_user_id", description="Get the user ID of a member")
 @app_commands.describe(member="The member whose user ID you want to retrieve")
 async def userid(interaction: discord.Interaction, member: discord.Member):
     await interaction.response.defer()
+    roles = is_dm(interaction)
+    
+    if not is_admin(roles):
+        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+    
     if not isinstance(member, discord.Member):
         return await interaction.response.send_message('You entered wrong User')
-    
-    print(member.name)
-    print(member.id)
+
+    await interaction.followup.send(f'ID: {str(member.id)}\nName: {member.name})
 
 # @client.tree.command(name='server_message')
 # async def server_message(interaction: discord.Interaction):
