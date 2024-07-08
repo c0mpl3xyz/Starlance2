@@ -413,7 +413,7 @@ async def userid(interaction: discord.Interaction, member: discord.Member):
     if not isinstance(member, discord.Member):
         return await interaction.response.send_message('You entered wrong User')
 
-    await interaction.followup.send(f'ID: {str(member.id)}\nName: {member.name})
+    await interaction.followup.send(f'ID: {str(member.id)}\nName: {member.name}')
 
 # @client.tree.command(name='server_message')
 # async def server_message(interaction: discord.Interaction):
