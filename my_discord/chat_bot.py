@@ -401,27 +401,15 @@ async def server_collects(interaction: discord.Interaction):
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 
-
-# @client.tree.command(name="server_user_content", description="Get the user ID of a member")
-# @app_commands.describe(member="The member whose user ID you want to retrieve")
-# async def userid(interaction: discord.Interaction, member: discord.Member):
-#     await interaction.response.defer()
-#     if not isinstance(member, discord.Member):
-#         return await interaction.response.send_message('You entered wrong User')
-
-#     await interaction.followup.send('STARTED')
-#     for i in range(10000000):
-#         print(i)
-#         if i == 5:
-#             break
-#         # Simulate some processing (remove this in actual usage)
-#         await asyncio.sleep(5)
+@client.tree.command(name="server_user_content", description="Get the user ID of a member")
+@app_commands.describe(member="The member whose user ID you want to retrieve")
+async def userid(interaction: discord.Interaction, member: discord.Member):
+    await interaction.response.defer()
+    if not isinstance(member, discord.Member):
+        return await interaction.response.send_message('You entered wrong User')
     
-#     await interaction.followup.send('FINISHED')
-
-#     await interaction.followup.send('DONE')
-#     print(member.name)
-#     print(member.id)
+    print(member.name)
+    print(member.id)
 
 # @client.tree.command(name='server_message')
 # async def server_message(interaction: discord.Interaction):
@@ -443,27 +431,6 @@ async def server_collects(interaction: discord.Interaction):
 #     except AttributeError as e:
 #         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 #         # raise e
-
-# @client.tree.command(name='test_embed')
-# async def test_embed(interaction: discord.Interaction):
-#     some_url = "https://fallendeity.github.io/discord.py-masterclass/"
-#     embed = discord.Embed(
-#         title="Title",
-#         description="Description",
-#         url=some_url,
-#         color=discord.Color.random(),
-#         timestamp=datetime.utcnow()
-#     )
-#     embed.add_field(name="Field name", value="Color sets that <")
-#     embed.add_field(name="Field name", value="Color should be an integer or discord.Colour object")
-#     embed.add_field(name="Field name", value="You can't set image width/height")
-#     embed.add_field(name="Non-inline field name", value="The number of inline fields that can shown on the same row is limited to 3", inline=False)
-#     embed.set_author(name="Author", url=some_url,
-#                      icon_url="https://cdn.discordapp.com/attachments/1112418314581442650/1124820259384332319/fd0daad3d291ea1d.png")
-#     embed.set_image(url="https://cdn.discordapp.com/attachments/1028706344158634084/1124822236801544324/ea14e81636cb2f1c.png")
-#     embed.set_thumbnail(url="https://media.discordapp.net/attachments/1112418314581442650/1124819948317986926/db28bfb9bfcdd1f6.png")
-#     embed.set_footer(text="Footer", icon_url="https://cdn.discordapp.com/attachments/1112418314581442650/1124820375587528797/dc4b182a87ecee3d.png")
-#     await interaction.response.send_message(embed=embed)
 
 # @client.tree.command(name='company_login')
 # async def login(interaction: discord.Interaction):
