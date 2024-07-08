@@ -90,12 +90,13 @@ class JobModal(Modal, title="Job registration"):
         }
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(self.url + '/job', json=data) as asyc_response:
+            async with session.post(self.url + '/job', json=data) as asyc_response:
                 response = await asyc_response.json()
                 if response and 'success' in response:
                     success = ['success']
                     data['job_id'] = response['job_id']
 
+                print(f'{response=}')
                 # self.roles = ['ADMIN']
                 if success:
                     self.finished = True

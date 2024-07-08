@@ -19,7 +19,7 @@ class MessageSelect(Select):
         roles = self.values
         if self.all_roles in roles:
             i = roles.index(self.all_roles)
-            roles[i] = 'Influencer'
+            roles[i] = str(Enums.ROLES.value)
 
         modal = MessageModal(self.bot, roles=roles)
         await interaction.response.send_modal(modal)
@@ -46,7 +46,7 @@ class SelectRoles(Select):
         roles = self.values
         if self.all_roles in roles:
             i = roles.index(self.all_roles)
-            roles[i] = 'Influencer'
+            roles[i] = str(Enums.ROLES.value)
 
         view = View()
         select = SelectBudget(self.bot, roles, self.url)

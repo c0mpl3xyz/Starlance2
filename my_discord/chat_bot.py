@@ -17,15 +17,13 @@ from views import LogInView
 from usecases.company_contents import GetCompanyContentView
 from usecases.user_status import GetUserStatus
 import asyncio, os
-
-# from usecases.get_company_jobs import GetCompanyJobs
 load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 URL = os.getenv('URL')
 
-print(f'{TOKEN}')
-print(f'{URL}')
+print(f'{TOKEN=}')
+print(f'{URL=}')
 
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix='!', intents=intents)
@@ -38,7 +36,7 @@ def is_our_company(intearaction) -> bool:
     
 def is_influencer(roles):
     # TODO: change to Influencer
-    return 'Influencer' in roles
+    return Enums.ROLES.value in roles
 
 def is_dm(interaction):
     try:
