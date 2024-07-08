@@ -24,6 +24,8 @@ URL = os.getenv('URL')
 
 print(f'{TOKEN=}')
 print(f'{URL=}')
+print(f'{Enums.ROLES.value}')
+print(f'{Enums.GUILD_ID.value}')
 
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix='!', intents=intents)
