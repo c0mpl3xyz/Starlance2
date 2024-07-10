@@ -441,7 +441,7 @@ async def server_users_report(interaction: discord.Interaction):
         if not channel:
             channel = interaction.channel
 
-        await channel.send('Users Report:', file=file, ephemeral=True)
+        await channel.send('Users Report:', file=file)
         await interaction.followup.send(f'Collect request list sent to <#{channel.id}>')
         os.remove(file_name)
     else:
