@@ -193,7 +193,7 @@ class ReviewUserModal(Modal, title='Review upload'):
         self.update = update
         self.finished = False
         self.link = TextInput(label="We transfer link", placeholder="https://we.tl/t-A6GJNEtest", required=True, min_length=1, max_length=200)
-        self.description = TextInput(label="Description", placeholder='', required=True,  style=discord.TextStyle.paragraph)
+        self.description = TextInput(label="Description", placeholder='', required=True,  style=discord.TextStyle.paragraph, max_length=1000)
         if not company:
             self.add_item(self.link)
         self.add_item(self.description)
@@ -429,7 +429,7 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
 class ReviewRejectModal(Modal, title='Description'):
     def __init__(self):
         super().__init__()
-        self.description = TextInput(label="Description", placeholder='Tell me why you rejected this', required=True,  style=discord.TextStyle.paragraph)
+        self.description = TextInput(label="Description", placeholder='Tell me why you rejected this', required=True,  style=discord.TextStyle.paragraph, max_length=1000)
         self.add_item(self.description)
 
     async def on_submit(self, interaction: Interaction):

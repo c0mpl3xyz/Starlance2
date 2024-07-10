@@ -102,7 +102,7 @@ class ReviewEmbed(Embed):
         self.add_field(name='Job Name', value=data['job_name'])
         self.add_field(name='User', value=f'<@{data["user_id"]}>')
         self.add_field(name='Job Description', value=f'{data["job_description"][:300]}', inline=False)
-        self.add_field(name="Message", value=data['description'], inline=False)
+        self.add_field(name="Message", value=data['description'][:1000], inline=False)
         self.add_field(name='link', value=data['link'], inline=False)
 
 class ContentEmbed(Embed):
