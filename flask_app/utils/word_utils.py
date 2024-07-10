@@ -1,4 +1,4 @@
-from docx.shared import Inches, Pt
+from docx.shared import Inches, Pt, Mm
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx import Document
 import os
@@ -34,6 +34,8 @@ def fill_tables(doc, table_data) -> bool:
     # Find the paragraph containing the <TABLE> placeholder
     table_found = False
     for paragraph in doc.paragraphs:
+        paragraph.paragraph_format.left_indent = Mm(30.4)
+        paragraph.paragraph_format.right_indent = Mm(14.4)
         if '<TABLE>' in paragraph.text:
             table_found = True
             # Remove the old paragraph containing the bookmark
