@@ -1,7 +1,8 @@
-from docx import Document
 from docx.shared import Inches, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-import uuid, os
+from docx import Document
+import os
+import uuid
 
 TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')
 
@@ -24,7 +25,7 @@ def replace_bookmarks(doc_path, replacements, tables_rows=None):
     except Exception as e:
         print(f"Error replacing bookmarks: {e}")
         raise e
-        return False, None  # Return failure and None for file path
+        return False, None
 
 def fill_tables(doc, table_data):
     if not table_data:
@@ -43,7 +44,7 @@ def fill_tables(doc, table_data):
             table = doc.add_table(rows=1, cols=len(table_data[0]))  # Assuming table_data[0] contains headers
             table.autofit = False  # Disable autofit to set fixed widths
 
-            # Define the width for each column (default to Inches(2) if section measurements are None)
+            # Define the width for each column
             section = doc.sections[0] if doc.sections else None
             block_width = None
             if section and section.page_width is not None and section.left_margin is not None and section.right_margin is not None:

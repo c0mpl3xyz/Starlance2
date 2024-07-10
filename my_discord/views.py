@@ -6,7 +6,7 @@ from usecases.register_job import RegisterJob
 from usecases.review import Review
 from usecases.get_job_by_id import GetJobById, GetJobReportById
 from usecases.user_reviews import GetUserReview, UpdateReview
-from usecases.user_status import UpdateUserPoints
+from usecases.get_user import UpdateUserPoints
 from embeds import ApproveEmbed, ReviewEmbed, UserEmbed, CollectEmbed
 from utils.enums import Enums
 import aiohttp, asyncio

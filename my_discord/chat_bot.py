@@ -15,8 +15,8 @@ from usecases.user_reviews import *
 from usecases.user_contents import *
 from views import LogInView
 from usecases.company_contents import GetCompanyContentView
-from usecases.user_status import GetUserStatus
-import asyncio, os
+from usecases.get_user import GetUserStatus, GetUsersReport
+import asyncio, os, uuid, aiofiles, pytz
 load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -37,12 +37,12 @@ def is_our_company(intearaction) -> bool:
     return intearaction.guild.id == Enums.OUR_COMPANY.value
     
 def is_influencer(roles):
-    return Enums.ROLES.value in roles
-    # return False
+    # return Enums.ROLES.value in roles
+    return False
 
 def is_admin(roles):
-    return Enums.ADMIN.value in roles
-    # return True
+    # return Enums.ADMIN.value in roles
+    return True
 
 def is_dm(interaction):
     try:
@@ -414,6 +414,38 @@ async def userid(interaction: discord.Interaction, member: discord.Member):
         return await interaction.response.send_message('You entered wrong User')
 
     await interaction.followup.send(f'ID: {str(member.id)}\nName: {member.name}')
+
+@client.tree.command(name="server_users_report", description="Get Users Report")
+async def server_users_report(interaction: discord.Interaction):
+    await interaction.response.defer()
+
+    roles = is_dm(interaction)
+    if not is_admin(roles):
+        return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+
+    get_report = GetUsersReport()
+    report = await get_report.execute()
+
+    if report:
+        file_name = str(uuid.uuid1()) + '.docx'
+        async with aiofiles.open(file_name, 'wb') as f:
+            await f.write(report)
+        
+        timezone = pytz.timezone('Asia/Ulaanbaatar')
+        date = datetime.now(timezone)
+        date_str = date.strftime('%Y_%m_%d')
+        download_file_name = f'users_report_{date_str}.docx'
+        file = discord.File(file_name, filename=download_file_name)
+        
+        channel = discord.utils.get(interaction.guild.channels, name=Enums.NOTIFICATION.value)
+        if not channel:
+            channel = interaction.channel
+
+        await channel.send('Users Report:', file=file, ephemeral=True)
+        await interaction.followup.send(f'Collect request list sent to <#{channel.id}>')
+        os.remove(file_name)
+    else:
+        await interaction.followup.send('Failed to fetch the job report.', ephemeral=True)
 
 # @client.tree.command(name="get_user_report", description="Get the user ID of a member")
 # @app_commands.describe(member="The member whose user ID you want to retrieve")

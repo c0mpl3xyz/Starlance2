@@ -1,4 +1,4 @@
-import requests, os
+import requests, os, aiohttp
 from mappings.mappings import user_mappings
 from dotenv import load_dotenv
 load_dotenv()
@@ -27,3 +27,12 @@ class UpdateUserPoints():
         response = requests.put(URL + '/user/points', json=data)
         JSON = response.json()
         return JSON['success']
+    
+class GetUsersReport():
+    async def execute(self):
+        content = None
+        async with aiohttp.ClientSession() as session:
+            async with session.get(URL + '/user/users/report') as response:
+                if response.status == 200:
+                    content = await response.read()
+        return content
