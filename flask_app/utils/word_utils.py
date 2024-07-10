@@ -1,6 +1,7 @@
 from docx import Document
 from docx.shared import Inches, Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.shared import Inches, Emu
 import uuid, os
 
 TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')
@@ -39,10 +40,10 @@ def fill_tables(doc, table_data):
             table.autofit = False  # Disable autofit to set fixed widths
 
             # Define the width for each column (adjust as needed)
-            section = doc.sections[0]
-            page_width = section.page_width if section.page_width is not None else Inches(8.5)  # Default width if None
-            left_margin = section.left_margin if section.left_margin is not None else Inches(1)  # Default margin if None
-            right_margin = section.right_margin if section.right_margin is not None else Inches(1)  # Default margin if None
+            section = doc.sections[0]  # Assuming there's only one section
+            page_width = section.page_width if section.page_width is not None else Emu(Inches(8.5).emu)
+            left_margin = section.left_margin if section.left_margin is not None else Emu(Inches(1).emu)
+            right_margin = section.right_margin if section.right_margin is not None else Emu(Inches(1).emu)
 
             # Calculate block width
             block_width = page_width - left_margin - right_margin
