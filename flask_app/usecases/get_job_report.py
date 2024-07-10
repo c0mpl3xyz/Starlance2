@@ -92,6 +92,7 @@ class GetJobReportById():
         description_cleaned = ''.join(cleaned_parts)
 
         return description_cleaned
+        
     def convert_table_rows(self, items):
         # Convert content report items to a format suitable for filling tables
         table_rows = []

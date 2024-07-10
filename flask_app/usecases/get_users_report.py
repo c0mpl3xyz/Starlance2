@@ -16,7 +16,7 @@ class GetUsersReport():
         rows = self.convert_table_rows(users)
         doc_data['USER_COUNT'] = str(len(users))
         try:
-            sucess, new_file_path= replace_bookmarks(doc_path=file_path, replacements=[], tables_rows=rows)
+            sucess, new_file_path= replace_bookmarks(doc_path=file_path, replacements=doc_data, tables_rows=rows)
             if sucess:
                 return True, new_file_path
             else:

@@ -22,7 +22,7 @@ def replace_bookmarks(doc_path, replacements, tables_rows=None):
     except Exception as e:
         raise e
         return False, doc_path
-
+    
 def fill_tables(doc, table_data):
     if not table_data:
         return False
@@ -39,13 +39,19 @@ def fill_tables(doc, table_data):
             table.autofit = False  # Disable autofit to set fixed widths
 
             # Define the width for each column (adjust as needed)
-            column_widths = [Inches(2) for _ in range(len(table_data[0]))]
+            section = doc.sections[0]
+            page_width = section.page_width if section.page_width is not None else Inches(8.5)  # Default width if None
+            left_margin = section.left_margin if section.left_margin is not None else Inches(1)  # Default margin if None
+            right_margin = section.right_margin if section.right_margin is not None else Inches(1)  # Default margin if None
+
+            # Calculate block width
+            block_width = page_width - left_margin - right_margin
 
             # Add table headers dynamically from the first row keys
             hdr_cells = table.rows[0].cells
             headers = list(table_data[0].keys())
             for i, header_text in enumerate(headers):
-                hdr_cells[i].width = column_widths[i]
+                hdr_cells[i].width = block_width / len(headers)  # Distribute equally
                 hdr_cells[i].text = header_text
                 hdr_cells[i].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
                 run = hdr_cells[i].paragraphs[0].runs[0]
@@ -57,7 +63,7 @@ def fill_tables(doc, table_data):
             for row_data in table_data:
                 row_cells = table.add_row().cells
                 for i, cell_value in enumerate(row_data.values()):
-                    row_cells[i].width = column_widths[i]
+                    row_cells[i].width = block_width / len(headers)  # Distribute equally
                     row_cells[i].text = str(cell_value)
                     row_cells[i].paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
                     run = row_cells[i].paragraphs[0].runs[0]
