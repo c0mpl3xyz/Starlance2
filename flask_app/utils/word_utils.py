@@ -12,9 +12,12 @@ def replace_bookmarks(doc_path, replacements, tables_rows=None):
 
         for paragraph in doc.paragraphs:
             for bookmark_name in replacements:
-                if f'<{bookmark_name}>' in paragraph.text:
-                    paragraph.text = paragraph.text.replace(f'<{bookmark_name}>', str(replacements[bookmark_name]))
-        
+                full_text = ''.join(run.text for run in paragraph.runs)
+                if f'<{bookmark_name}>' in full_text:
+                    for run in paragraph.runs:
+                        if f'<{bookmark_name}>' in run.text:
+                            run.text = run.text.replace(f'<{bookmark_name}>', str(replacements[bookmark_name]))
+
         if tables_rows is not None and len(tables_rows):
             fill_tables(doc, tables_rows)
 
