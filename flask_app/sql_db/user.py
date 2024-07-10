@@ -10,8 +10,9 @@ class User:
             SELECT * FROM User
         """ 
 
-        self.cursor.execute(query) # type: ignore
-        return self.cursor.fetchall() # type: ignore
+        self.cursor.execute(query)  # type: ignore
+        users = self.cursor.fetchall()  # type: ignore
+        return users
     
     def get_by_id(self, id):
         query = """
