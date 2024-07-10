@@ -22,13 +22,15 @@ class GetUsersReport:
                 if success:
                     return True, new_file_path
                 else:
-                    return False, None
+                    return False, ''
 
         except Exception as e:
             print(f"Error generating report: {e}")
+            raise e
             return False, None
 
         finally:
+            cursor.close()
             connection.close()
 
     def convert_table_rows(self, users):
