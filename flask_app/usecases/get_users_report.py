@@ -46,7 +46,7 @@ class GetUsersReport:
                 'Bank Name': str(user[3]),
                 'Bank Number': str(user[4]),
                 'Total ₮': str(user[1] * 10),
-                'Total Collected ₮': str((user[1] - user[2]) * 10),
+                'Total Collected ₮': str((round(user[1] - user[2], 2)) * 10),
             }
             table_rows.append(row_data)
         return table_rows
