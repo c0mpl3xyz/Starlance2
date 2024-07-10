@@ -79,7 +79,7 @@ class GetJobReportById():
             connection.close()
 
     def sanitize_description(self, description: str):
-        description = description.replace('**', '').replace('?', '')
+        description = description.replace('**', '').replace('?', '')[:500]
 
         parts = description.split('<a:')
         cleaned_parts = []
