@@ -5,29 +5,30 @@ from utils.word_utils import replace_bookmarks
 
 TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')
 
-class GetUsersReport():
+class GetUsersReport:
     def execute(self):
         doc_data = {}
-        file_path = TEMPLATE_PATH + '/USERS_REPORT_TEMPLATE.docx'
+        file_path = os.path.join(TEMPLATE_PATH, 'USERS_REPORT_TEMPLATE.docx')  # Use os.path.join for path handling
         connection = ConnectSQL().get_connection()
-        cursor = connection.cursor()
 
-        users = User(cursor).get_all_user()
-        rows = self.convert_table_rows(users)
-        doc_data['USER_COUNT'] = str(len(users))
         try:
-            sucess, new_file_path= replace_bookmarks(doc_path=file_path, replacements=doc_data, tables_rows=rows)
-            if sucess:
-                return True, new_file_path
-            else:
-                return False, None
-            
+            with connection.cursor() as cursor:
+                users = User(cursor).get_all_user()
+                rows = self.convert_table_rows(users)
+                doc_data['USER_COUNT'] = str(len(users))
+
+                success, new_file_path = replace_bookmarks(doc_path=file_path, replacements=doc_data, tables_rows=rows)
+
+                if success:
+                    return True, new_file_path
+                else:
+                    return False, None
+
         except Exception as e:
             print(f"Error generating report: {e}")
-            raise e
             return False, None
+
         finally:
-            cursor.close()
             connection.close()
 
     def convert_table_rows(self, users):
