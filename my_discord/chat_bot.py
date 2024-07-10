@@ -401,9 +401,9 @@ async def server_collects(interaction: discord.Interaction):
     except AttributeError:
         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 
-@client.tree.command(name="get_user_id", description="Get the user ID of a member")
+@client.tree.command(name="server_user_id", description="Get the user ID of a member")
 @app_commands.describe(member="The member whose user ID you want to retrieve")
-async def userid(interaction: discord.Interaction, member: discord.Member):
+async def server_user_id(interaction: discord.Interaction, member: discord.Member):
     await interaction.response.defer()
     roles = is_dm(interaction)
     
@@ -449,7 +449,7 @@ async def server_users_report(interaction: discord.Interaction):
 
 # @client.tree.command(name="get_user_report", description="Get the user ID of a member")
 # @app_commands.describe(member="The member whose user ID you want to retrieve")
-async def get_user_report(interaction: discord.Interaction, member: discord.Member):
+async def server_user_report(interaction: discord.Interaction, member: discord.Member):
     await interaction.response.defer()
     roles = is_dm(interaction)
     
