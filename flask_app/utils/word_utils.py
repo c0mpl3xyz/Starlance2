@@ -4,6 +4,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 import uuid, os
 
 TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')
+
 def replace_bookmarks(doc_path, replacements, tables_rows=None):
     try:
         doc = Document(doc_path)
@@ -16,12 +17,14 @@ def replace_bookmarks(doc_path, replacements, tables_rows=None):
         if tables_rows:
             fill_tables(doc, tables_rows)
 
-        new_file_path = TEMPLATE_PATH + f'/{str(uuid.uuid1())} + .docx'
+        new_file_path = os.path.join(TEMPLATE_PATH, f'{str(uuid.uuid1())}.docx')
         doc.save(new_file_path)
         return True, new_file_path
+
     except Exception as e:
+        print(f"Error replacing bookmarks: {e}")
         raise e
-        return False, doc_path
+        return False, None  # Return failure and None for file path
 
 def fill_tables(doc, table_data):
     if not table_data:
