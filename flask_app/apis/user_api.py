@@ -123,8 +123,7 @@ def get_user():
 
 @user_bp.route('/users/report', methods=['GET'])
 def users_report():
-    users = GetUsersReport().execute()
-    return jsonify(users)
+    success, file_path = GetUsersReport().execute()
 
     try:
         if success:
