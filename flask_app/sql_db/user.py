@@ -5,6 +5,14 @@ class User:
     def __init__(self, cursor=None):
         self.cursor = cursor
         
+    def get_all_user(self):
+        query = """
+            SELECT * FROM User
+        """ 
+
+        self.cursor.execute(query) # type: ignore
+        return self.cursor.fetchall() # type: ignore
+    
     def get_by_id(self, id):
         query = """
             SELECT * FROM User WHERE id = %s

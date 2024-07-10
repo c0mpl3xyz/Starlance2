@@ -1,9 +1,10 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file
 from sql_db.user import User
 from sql_db.conn import ConnectSQL
 import os
 from dotenv import load_dotenv
 from sql_db.user import User
+from usecases.get_users_report import GetUsersReport
 
 load_dotenv()
 
@@ -119,3 +120,15 @@ def get_user():
     user = User(connection.cursor())
     data = user.get_by_id(user_id)
     return jsonify(data)
+
+@user_bp.route('/users/report', methods=['GET'])
+def users_report():
+    success, file_path = GetUsersReport().execute()
+
+    try:
+        if success:
+            return send_file(file_path, as_attachment=True)
+        else:
+            return jsonify({'error': 'Report not found or could not be generated'}), 404
+    finally:
+        os.remove(file_path)
