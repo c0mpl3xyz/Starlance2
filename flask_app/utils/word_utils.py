@@ -33,9 +33,13 @@ def fill_tables(doc, table_data) -> bool:
 
     # Find the paragraph containing the <TABLE> placeholder
     table_found = False
+
+    for section in doc.sections:
+        section.page_width = Inches(6.5)
+        section.left_margin = Inches(1)
+        section.right_margin = Inches(1)
+
     for paragraph in doc.paragraphs:
-        paragraph.paragraph_format.left_indent = Inches(1)
-        paragraph.paragraph_format.right_indent = Inches(0.5)
         if '<TABLE>' in paragraph.text:
             table_found = True
             # Remove the old paragraph containing the bookmark
