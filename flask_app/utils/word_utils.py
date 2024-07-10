@@ -35,9 +35,12 @@ def fill_tables(doc, table_data) -> bool:
     table_found = False
 
     for section in doc.sections:
-        section.page_width = Inches(6.5)
-        section.left_margin = Inches(2)
-        section.right_margin = Inches(2)
+        if section.page_width is None:
+            section.page_width = Inches(6.5)
+        if section.left_margin is None:
+            section.left_margin = Inches(0.5)
+        if section.right_margin is None:
+            section.right_margin = Inches(0.5)
 
     for paragraph in doc.paragraphs:
         if '<TABLE>' in paragraph.text:
