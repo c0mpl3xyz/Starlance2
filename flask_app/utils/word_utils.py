@@ -27,7 +27,7 @@ def replace_bookmarks(doc_path, replacements, tables_rows=None):
         raise e
         return False, None
 
-def fill_tables(doc, table_data):
+def fill_tables(doc, table_data) -> bool:
     if not table_data:
         return False
 
@@ -77,10 +77,6 @@ def fill_tables(doc, table_data):
                     font = run.font
                     font.size = Pt(10)
 
-            return True
-
-    # If no bookmark <TABLE> is found
     if not table_found:
         print("Error: <TABLE> placeholder not found in the document.")
-    
-    return False
+    return True
