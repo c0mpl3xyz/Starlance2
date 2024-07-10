@@ -15,7 +15,7 @@ def replace_bookmarks(doc_path, replacements, tables_rows=None):
                 if f'<{bookmark_name}>' in paragraph.text:
                     paragraph.text = paragraph.text.replace(f'<{bookmark_name}>', str(replacements[bookmark_name]))
         
-        if tables_rows:
+        if tables_rows is not None and len(tables_rows):
             fill_tables(doc, tables_rows)
 
         new_file_path = os.path.join(TEMPLATE_PATH, f'{str(uuid.uuid1())}.docx')
