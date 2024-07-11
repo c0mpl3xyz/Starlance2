@@ -45,22 +45,21 @@ class UserEmbed(Embed):
             title='User Status',
             color = discord.Color.random()
             )
-        points = user_data['points']
-        col_points = 0
+        points = round(user_data['points'])
+        point_75 = round(points * 0.75, 2)
+        point_25 = round(points * 0.25, 2)
+        income = point_75 // 10000 * 10000
+        balance = point_75 - income
 
-        if (points - 20000) * 0.75 // 10000 * 10000:
-            col_points = (points - 20000) * 0.75 // 10000 * 10000
-
-        tugrik = col_points * 10
-        tax = round(tugrik * 0.25, 2)
-        collectable = tugrik - tax
         self.add_field(name='User', value=f'<@{user_data["user_id"]}>', inline=False)
-        self.add_field(name="Total Points Of Lifetime", value=user_data['total_points'])
+        self.add_field(name="Total Score", value=format(user_data['total_points'], ','))
         self.add_field(name="Available Points", value=format(user_data['points'], ','))
-        self.add_field(name="Collectable Points", value=f'{format(points - 20000, ",")} ₮')
-        self.add_field(name="Total ₮", value=f'{format(tugrik, ",")} ₮')
-        self.add_field(name="Tax ₮", value=f'{format(tax, ",")} ₮')
-        self.add_field(name="Income ₮", value=f'{format(collectable, ",")} ₮')
+        self.add_field(name="Points after Collect", value=f'{format(balance, ",")}')
+
+        self.add_field(name="Total 100% ₮", value=f'{format(points * 10, ",")} ₮')
+        self.add_field(name="Collectable Points 75%", value=f'{format(point_75, ",")}')
+        self.add_field(name="Tax 25% ₮", value=f'{format(point_25 * 10, ",")} ₮')
+        self.add_field(name="Income ₮", value=f'{format(income * 10, ",")} ₮')
         self.add_field(name="Register Number", value=user_data['register'])
         self.add_field(name="Bank Name", value=user_data['bank_name'])
         bank_number = None
@@ -69,15 +68,12 @@ class UserEmbed(Embed):
         self.add_field(name="Bank Number", value=bank_number)
 
 class CollectEmbed(Embed):
-     def __init__(self, user_data, points):
+     def __init__(self, user_data, point_100, point_75, point_25, income, balance, points_minus):
         super().__init__(
             title='User Status',
             color = discord.Color.random()
             )
         
-        tugrik = round(points * 10, 2)
-        tax = round(tugrik * 0.25, 1)
-        collectable = round(tugrik - tax)
         bank_number = None
         if user_data['bank_number'] is not None:
             bank_number = '-'.join([user_data['bank_number'][i:i+3] for i in range(0, len(user_data['bank_number']), 3)])
@@ -86,10 +82,14 @@ class CollectEmbed(Embed):
         self.add_field(name="Register Number", value=user_data['register'])
         self.add_field(name="Bank Name", value=user_data['bank_name'])
         self.add_field(name="Bank Number", value=bank_number)
-        self.add_field(name="Collect points", value=format(points, ','))
-        self.add_field(name="Total ₮", value=f'{format(tugrik, ",")} ₮')
-        self.add_field(name="Tax ₮", value=f'{format(tax, ",")} ₮')
-        self.add_field(name="Collectable ₮", value=f'{format(collectable, ",")} ₮') 
+        self.add_field(name="Collect points", value=format(point_100, ','))
+
+        self.add_field(name="Total 100% ₮", value=f'{format(round(point_100 * 10, 2), ",")} ₮')
+        self.add_field(name="Total 75% ₮", value=f'{format(point_75 * 10, ",")} ₮')
+        self.add_field(name="Tax 25% ₮", value=f'{format(point_25 * 10, ",")} ₮')
+        self.add_field(name="Collectable ₮", value=f'{format(income * 10, ",")} ₮') 
+
+        self.add_field(name="Point Remind After Collect", value=f'{format(balance, ",")}')
 
 class ReviewEmbed(Embed):
      def __init__(self, data: dict):

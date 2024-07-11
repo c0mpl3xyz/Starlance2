@@ -36,14 +36,20 @@ class LogInView(discord.ui.View):
         await self.message.edit(view=self)
 
 class CollectView(discord.ui.View):
-    def __init__(self, user_data, bot, collect_id, points):
+    def __init__(self, user_data, bot, collect_id, point_100, point_75, point_25, income, balance, points_minus):
         super().__init__()
         self.user_data = user_data
         self.collect_id = collect_id
         self.message = None
         self.bot = bot
-        self.points = points
-        self.embed = CollectEmbed(user_data, points)
+        self.point_100 = point_100
+        self.point_75 = point_75
+        self.point_25= point_25
+        self.income = income
+        self.balance = balance
+        self.points_minus = points_minus
+
+        self.embed = CollectEmbed(user_data, point_100, point_75, point_25, income, balance, points_minus)
 
         self.collect_button = discord.ui.Button(label=f"Uprove Collect request", style=discord.ButtonStyle.green, emoji='✨')
         self.collect_button.callback = self.collect_button_callback
@@ -60,7 +66,7 @@ class CollectView(discord.ui.View):
             data = {
                 'collect_id': self.collect_id,
                 'user_id': self.user_data['user_id'],
-                'points': self.points
+                'points': self.points_minus
             }
 
             response = requests.delete(URL + '/collect', json=data).json()
@@ -71,7 +77,7 @@ class CollectView(discord.ui.View):
                 await interaction.message.edit(view=self)
                 guild = self.bot.get_guild(Enums.GUILD_ID.value)
                 user = discord.utils.get(guild.members, id=self.user_data['user_id'])
-                embed = CollectedMessageEmbed(self.points, self.user_data['bank_name'], self.user_data['bank_number'])
+                embed = CollectedMessageEmbed(self.points_minus, self.user_data['bank_name'], self.user_data['bank_number'])
                 self.message = await user.send(f'Your points are collected', embed=embed, view=self)
             else:
                 self.collect_button.label = 'Already approved'
@@ -94,14 +100,14 @@ class UserView(discord.ui.View):
         self.bot = bot
         self.embed = UserEmbed(user_data)
         super().__init__()
-        self.collectable_points = (user_data['points'] - 20000) * 0.75 // 10000 * 10000
-        collectable = self.collectable_points > 0
+        self.collectable_points = (user_data['points']) * 0.75 // 10000 * 10000
+        collectable = self.collectable_points >= 20000
         
-        self.collect_button = discord.ui.Button(label=f"Collect Points: {format(round(self.collectable_points, 2), ',')}", style=discord.ButtonStyle.green, emoji='✨')
+        self.collect_button = discord.ui.Button(label=f"Collect Points: {format(self.collectable_points, ',')}", style=discord.ButtonStyle.green, emoji='✨')
         self.collect_button.callback = self.collect_button_callback
 
         if not collectable:
-            self.collect_button.label = f"No enough points to collect: {format(round(user_data['points'] - 20000, 2), ',')}"
+            self.collect_button.label = f"Not enough points to collect: {format(self.collectable_points, ',')}"
             self.collect_button.disabled = True
         # else:
         #     # result: list = requests.get(URL + '/collect/user', json={'user_id': user_data['user_id']}).json()
@@ -123,11 +129,11 @@ class UserView(discord.ui.View):
             async with session.get(URL + '/collect/user', json={'user_id': user_id}) as response:
                 result = await response.json()
                 return result
-            
+
     async def collect_button_callback(self, interaction: discord.Interaction):
         from modal import UserCollectModal
         # await interaction.response.defer()
-        modal = UserCollectModal(self.user_data, self.collectable_points, self.bot)
+        modal = UserCollectModal(self.user_data, self.user_data['points'], self.bot)
         await interaction.response.send_modal(modal)
         await modal.wait()
 

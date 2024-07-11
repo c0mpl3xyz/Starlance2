@@ -52,7 +52,14 @@ class GetServerCollectView():
         for collect_json in JSON:
             collect = collect_mapping(collect_json)
             user = user_mappings(requests.get(URL + '/user/status', json={'user_id': collect['user_id']}).json())
-            view = CollectView(user, bot, collect['collect_id'], collect['points'])
+            point_100 = round(collect['point_100'], 2)
+            point_75 = round(point_100 * 0.75, 2)
+            point_25 = round(point_100 * 0.25, 2)
+            income = point_75 // 10000 * 10000
+            balance = point_75 - income
+            points_minus = point_100 - balance
+
+            view = CollectView(user, bot, collect['collect_id'], point_100, point_75, point_25, income, balance, points_minus)
             collects.append(view)
         return collects
 

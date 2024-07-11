@@ -437,14 +437,19 @@ class ReviewRejectModal(Modal, title='Description'):
         return str(self.description)
 
 class UserCollectModal(Modal, title='Collect User Points'):
-    def __init__(self, user_data, collectable_points, bot):
+    def __init__(self, user_data, user_points, bot):
         super().__init__()
         self.requested = False
         self.user_data = user_data
         self.bot = bot
         self.valid = False
-        self.collectable_points = collectable_points
-        self.total_points = round(collectable_points * 100 / 75, 2)
+        self.point_100 = user_points
+        self.point_75 = round(user_points * 0.75, 2)
+        self.point_25 = round(user_points * 0.25, 2)
+        self.income = self.point_75 // 10000 * 10000
+        self.balance = self.point_75 - self.income
+
+        self.points = self.point_100 - self.balance
         self.ack_message = TextInput(label=f'Please Enter "YES" to Collect', placeholder='YES', required=True, style=discord.TextStyle.short)
         self.add_item(self.ack_message)
 
@@ -467,7 +472,8 @@ class UserCollectModal(Modal, title='Collect User Points'):
             self.valid = True
             data = {
                 'user_id': self.user_data['user_id'],
-                'points': self.total_points
+                'points': self.points,
+                'point_100': self.point_100
             }
 
             response = requests.post(URL + '/collect', json=data)
@@ -476,7 +482,7 @@ class UserCollectModal(Modal, title='Collect User Points'):
                 collect_id = response['collect_id']
                 guild = self.bot.get_guild(Enums.GUILD_ID.value)
                 channel = discord.utils.get(guild.channels, name=Enums.COLLECT.value)            
-                collect_view = CollectView(self.user_data, self.bot, collect_id, self.total_points)
+                collect_view = CollectView(self.user_data, self.bot, collect_id, self.point_100, self.point_75, self.point_25, self.income, self.balance, self.points)
                 collect_view.message = await channel.send(embed=collect_view.embed, view=collect_view)
             else:
                 self.requested = True

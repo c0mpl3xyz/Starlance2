@@ -123,7 +123,8 @@ def collect_mapping(data: list):
         'collect_id': data[0],
         'user_id': data[1],
         'points': data[2],
-        'type': data[3],
+        'point_100': data[3],
+        'type': data[4],
     }
 
     return collect_dict
