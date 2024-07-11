@@ -35,8 +35,9 @@ class GetUsersReport:
 
     def convert_table_rows(self, users):
         table_rows = []
-        for user in users:
+        for i, user in enumerate(users):
             row_data = {
+                '№': str(i + 1),
                 'User ID': str(user[0]),
                 'Register': str(user[5]),
                 'Total Points': str(user[1]),
