@@ -47,5 +47,5 @@ class GetUsersReport:
                 'Total Collected ₮': str((round((user[1] - user[2]) * 10, 2))),
             }
             table_rows.append(row_data)
-        table_rows.sort(key=lambda x: float(x['Total Points']), reverse=True)
+        # table_rows.sort(key=lambda x: float(x['Total Points']), reverse=True)
         return table_rows
