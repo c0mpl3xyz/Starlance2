@@ -8,6 +8,7 @@ class User:
     def get_all_user(self):
         query = """
             SELECT * FROM User
+            ORDER BY total_points DESC
         """ 
 
         self.cursor.execute(query)  # type: ignore
