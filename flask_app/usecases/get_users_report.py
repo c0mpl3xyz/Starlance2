@@ -8,7 +8,7 @@ TEMPLATE_PATH = os.getenv('TEMPLATE_PATH')
 class GetUsersReport:
     def execute(self):
         doc_data = {}
-        file_path = os.path.join(TEMPLATE_PATH, 'USERS_REPORT_TEMPLATE.docx')  # Use os.path.join for path handling
+        file_path = os.path.join(TEMPLATE_PATH, 'USERS_REPORT_TEMPLATE.docx')
         connection = ConnectSQL().get_connection()
 
         try:
@@ -34,10 +34,8 @@ class GetUsersReport:
             connection.close()
 
     def convert_table_rows(self, users):
-        # Convert content report items to a format suitable for filling tables
         table_rows = []
         for user in users:
-            # Assuming item structure and transformation as needed
             row_data = {
                 'User ID': str(user[0]),
                 'Register': str(user[5]),
@@ -49,4 +47,5 @@ class GetUsersReport:
                 'Total Collected ₮': str((round((user[1] - user[2]) * 10, 2))),
             }
             table_rows.append(row_data)
+        table_rows.sort(key=lambda x: int(x['Total Points']), reverse=True)
         return table_rows
