@@ -34,16 +34,16 @@ class Collect():
         self.cursor.execute(query) # type: ignore
         return self.cursor.fetchall() # type: ignore
 
-    def create(self, user_id, points) -> bool:
+    def create(self, user_id, points, point_100) -> bool:
         collect_type = 'Pending'
         if len(self.get_by_user_id(user_id)):
             return False
         
         query = """
-            INSERT INTO CollectRequest (user_id, points, type)
-            VALUES (%s, %s, %s)
+            INSERT INTO CollectRequest (user_id, points, point_100, type)
+            VALUES (%s, %s, %s, %s)
         """
-        self.cursor.execute(query, (user_id, points, collect_type)) # type: ignore
+        self.cursor.execute(query, (user_id, points, point_100, collect_type)) # type: ignore
         return True
 
     def update(self, collect_id, user_id=None, points=None, collect_type=None):

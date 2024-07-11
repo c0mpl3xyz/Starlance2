@@ -12,12 +12,13 @@ def extract_collect_request(request):
     collect_id = request.json.get('collect_id')
     user_id = request.json.get('user_id')
     points = request.json.get('points')
+    point_100 = request.json.get('point_100')
     collect_type = request.json.get('type')
-    return collect_id, user_id, points, collect_type
+    return collect_id, user_id, points, point_100, collect_type
 
 @collect_bp.route('/', methods=['DELETE'])
 def update():
-    collect_id, user_id, points, collect_type = extract_collect_request(request)
+    collect_id, user_id, points, point_100, collect_type = extract_collect_request(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -52,7 +53,7 @@ def update():
 
 @collect_bp.route('/', methods=['POST'])
 def create():
-    collect_id, user_id, points, collect_type = extract_collect_request(request)
+    collect_id, user_id, points, point_100, collect_type = extract_collect_request(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -61,7 +62,7 @@ def create():
     message: str = ''
     try:
         collect = Collect(cursor)
-        created = collect.create(user_id, points)
+        created = collect.create(user_id, points, point_100)
         if created:
             connection.commit()
             collect_id = cursor.lastrowid
