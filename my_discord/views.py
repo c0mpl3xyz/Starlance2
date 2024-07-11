@@ -97,11 +97,11 @@ class UserView(discord.ui.View):
         self.collectable_points = (user_data['points'] - 20000) * 0.75 // 10000 * 10000
         collectable = self.collectable_points > 0
         
-        self.collect_button = discord.ui.Button(label=f"Collect Points: {format(self.collectable_points, ',')}", style=discord.ButtonStyle.green, emoji='✨')
+        self.collect_button = discord.ui.Button(label=f"Collect Points: {format(round(self.collectable_points, 2), ',')}", style=discord.ButtonStyle.green, emoji='✨')
         self.collect_button.callback = self.collect_button_callback
 
         if not collectable:
-            self.collect_button.label = f"No enough points to collect: {format(user_data['points'] - 20000, ',')}"
+            self.collect_button.label = f"No enough points to collect: {format(round(user_data['points'] - 20000, 2), ',')}"
             self.collect_button.disabled = True
         # else:
         #     # result: list = requests.get(URL + '/collect/user', json={'user_id': user_data['user_id']}).json()
