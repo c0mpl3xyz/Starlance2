@@ -18,7 +18,9 @@ class GetUserContentView:
         contents = []
         for i, content_json in enumerate(JSON):
             content = content_mapping(content_json)
-            contents.append(ContentView(None, content, bot))
+            review = requests.get(URL + '/review', json={'review_id': content['review_id']}).json()
+            if len(review):
+                contents.append(ContentView(review_mapping(review[0]), content, bot))
         return contents
 
 class GetUserContentReport:
