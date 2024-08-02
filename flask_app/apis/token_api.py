@@ -89,5 +89,5 @@ def exchange_token_test():
             connection.commit()
     finally:
         connection.close()
-        return redirect(HOME)
+        return redirect('https://www.ugc-mongolia.com')
     return redirect(HOME)
