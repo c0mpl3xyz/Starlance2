@@ -16,6 +16,8 @@ from usecases.user_contents import *
 from views import LogInView
 from usecases.company_contents import GetCompanyContentView
 from usecases.get_user import GetUserStatus, GetUsersReport
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 import asyncio, os, uuid, aiofiles, pytz
 load_dotenv()
 
@@ -29,6 +31,16 @@ print(f'{Enums.GUILD_ID.value}')
 
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix='!', intents=intents)
+timezone = pytz.timezone('Asia/Ulaanbaatar')
+scheduler = AsyncIOScheduler()
+
+def send_message():
+    guild = client.get(Enums.GUILD_ID.value)
+    channel = discord.utils.get(guild.channels, name=Enums.LEADER_BOARD.value)
+    if channel:
+        pass
+
+# scheduler.add_job(send_message, CronTrigger(day_of_week=0, ="0"))
 
 def is_main_server(intearaction) -> bool:
     return intearaction.guild.id == Enums.GUILD_ID.value
@@ -37,12 +49,12 @@ def is_our_company(intearaction) -> bool:
     return intearaction.guild.id == Enums.OUR_COMPANY.value
     
 def is_influencer(roles):
-    return Enums.ROLES.value in roles
-    # return False
+    # return Enums.ROLES.value in roles
+    return False
 
 def is_admin(roles):
-    return Enums.ADMIN.value in roles
-    # return True
+    # return Enums.ADMIN.value in roles
+    return True
 
 def is_dm(interaction):
     try:
@@ -60,6 +72,7 @@ def is_dm(interaction):
 async def on_ready():
     synced = await client.tree.sync()
     print(f'I\'m Ready\nCommands {str(len(synced))}')
+    scheduler.start()
 
 @client.event
 async def on_message(message):
@@ -442,10 +455,10 @@ async def server_users_report(interaction: discord.Interaction):
             channel = interaction.channel
 
         await channel.send('Users Report:', file=file)
-        await interaction.followup.send(f'Collect request list sent to <#{channel.id}>')
+        await interaction.followup.send(f'User report sent to <#{channel.id}>')
         os.remove(file_name)
     else:
-        await interaction.followup.send('Failed to fetch the job report.', ephemeral=True)
+        await interaction.followup.send('Failed to fetch the user report.', ephemeral=True)
 
 # @client.tree.command(name="get_user_report", description="Get the user ID of a member")
 # @app_commands.describe(member="The member whose user ID you want to retrieve")
@@ -480,21 +493,20 @@ async def server_user_report(interaction: discord.Interaction, member: discord.M
 #         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
 #         # raise e
 
-# @client.tree.command(name='company_login')
-# async def login(interaction: discord.Interaction):
-#     await interaction.response.defer()
-#     if await is_dm(interaction):
-#         return
+@client.tree.command(name='ig_login')
+async def login(interaction: discord.Interaction):
+    await interaction.response.defer()
+    roles = is_dm(interaction)
 
-#     if is_influencer(interaction):
-#         return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+    # if is_influencer(interaction):
+    #     return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
     
-#     if is_main_server(interaction):
-#         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
+    # if is_main_server(interaction):
+    #     return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
-#     else:
-#         view = LogInView(interaction.guild.id, interaction.guild.name)
-#         await interaction.user.send('Login with Facebook', view=view, embed=view.embed)
-#         return await interaction.followup.send(f'Log in link sent to user: <@{interaction.user.id}>', ephemeral=True)
+    # else:
+    view = LogInView(interaction.guild.id, interaction.guild.name)
+    await interaction.user.send('Login with Facebook', view=view, embed=view.embed)
+    return await interaction.followup.send(f'Log in link sent to user: <@{interaction.user.id}>', ephemeral=True)
 
 client.run(TOKEN)

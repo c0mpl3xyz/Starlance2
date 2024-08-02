@@ -36,3 +36,15 @@ class GetUsersReport():
                 if response.status == 200:
                     content = await response.read()
         return content
+    
+class GetTopUsers():
+    async def execute(self):
+        users = []
+        async with aiohttp.ClientSession() as session:
+            async with session.get(URL + '/user/top_users') as response:
+                if response.status == 200:
+                    users_json = await response.json()
+
+                    for user_json in users_json:
+                        users.append(user_mappings(user_json))
+        return users
