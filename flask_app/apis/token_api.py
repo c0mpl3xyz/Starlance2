@@ -63,7 +63,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
             user_exist = AccessToken(cursor).create(user_id)
 
         if user_exist:
-        token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
+            token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
 
     message = {
             'success': user_exist and token_creation,
