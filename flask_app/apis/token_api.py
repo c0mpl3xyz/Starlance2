@@ -55,14 +55,14 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         user_id = state['user_id']
         message: Dict = {}
         debug = ''
-        # user_exist = User(cursor).get_by_id(server_id)
-        # debug = 'user exists'
-        # if not user_exist:
-        #     created = True
-        #     debug = 'user not exists'
-        #     user_exist = AccessToken(cursor).create(server_id)
+        user_exist = User(cursor).get_by_id(user_id)
+        debug = 'user exists'
+        if not user_exist:
+            created = True
+            debug = 'user not exists'
+            user_exist = AccessToken(cursor).create(user_id)
 
-        # if user_exist:
+        if user_exist:
         token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
 
     message = {
