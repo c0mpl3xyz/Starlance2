@@ -96,8 +96,10 @@ def exchange_token_test():
             return redirect(url_for('success_page', discord_name=discord_name))
         else:
             return jsonify(result)
-    except Exception:
-        return render_template('unregistered.html')
+    except Exception as e:
+        data = {'error': str(e)}
+        # return render_template('unregistered.html')
+        return jsonify(data)
     finally:
         connection.close()
     return redirect(url_for('home_page'))
