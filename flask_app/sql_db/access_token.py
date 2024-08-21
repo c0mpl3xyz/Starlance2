@@ -11,7 +11,7 @@ class AccessToken:
 
         insert_query = """
             INSERT INTO AccessToken (user_id, token, token_type, expiration_date, active)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s)
         """
 
         update_query = """
