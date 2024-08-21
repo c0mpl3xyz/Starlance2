@@ -505,7 +505,7 @@ async def login(interaction: discord.Interaction):
     #     return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
     # else:
-    view = LogInView(interaction.guild.id, interaction.guild.name)
+    view = LogInView(interaction.user.id, interaction.user.name)
     await interaction.user.send('Login with Facebook', view=view, embed=view.embed)
     return await interaction.followup.send(f'Log in link sent to user: <@{interaction.user.id}>', ephemeral=True)
 
