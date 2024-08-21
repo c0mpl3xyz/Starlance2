@@ -87,7 +87,7 @@ def exchange_token_test():
         result = exchange_code_for_token(connection.cursor(), APP_ID, APP_SECRET, REDIRECT_URL, code, state)
         if result['success']:
             connection.commit()
-            return render_template(f'registered.html?discord_name={state['username']}')
+            return render_template(f'registered.html?discord_name={state["username"]}')
     except Exception:
         return render_template('registered.html')
     finally:
