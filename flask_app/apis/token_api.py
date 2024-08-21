@@ -94,6 +94,8 @@ def exchange_token_test():
             # Build the URL with query parameters and redirect
             discord_name = state["username"]
             return redirect(url_for('success_page', discord_name=discord_name))
+        else:
+            return jsonify(result)
     except Exception:
         return render_template('unregistered.html')
     finally:
