@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple, Union
 import os, ast
 import requests
 from urllib.parse import urlencode
-from flask import Flask, request, jsonify, make_response, render_template
+from flask import Flask, request, jsonify, make_response, render_template, url_for
 from dotenv import load_dotenv
 from sql_db.user  import User
 from sql_db.access_token import AccessToken
@@ -77,6 +77,10 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         
     return message
 
+@token_bp.route('/success')
+def success_page():
+    return render_template('registered.html')
+
 @token_bp.route('/exchange_token/', methods=['GET'])
 def exchange_token_test():
     code = request.args.get('code')
@@ -87,9 +91,11 @@ def exchange_token_test():
         result = exchange_code_for_token(connection.cursor(), APP_ID, APP_SECRET, REDIRECT_URL, code, state)
         if result['success']:
             connection.commit()
-            return render_template(f'registered.html?discord_name={state["username"]}')
+            # Build the URL with query parameters and redirect
+            discord_name = state["username"]
+            return redirect(url_for('success_page', discord_name=discord_name))
     except Exception:
-        return render_template('registered.html')
+        return render_template('unregistered.html')
     finally:
         connection.close()
-    return redirect(HOME)
+    return redirect(url_for('home_page'))
