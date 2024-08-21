@@ -15,8 +15,26 @@
             overflow: hidden;
             height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Ensure header is on top */
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            color: white;
+            display: flex;
             align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.6); /* Pink glow */
+        }
+
+        .logo {
+            height: 40px;
+        }
+
+        .title {
+            font-size: 24px;
+            color: #FF007F; /* Neon pink color */
         }
 
         .container {
@@ -24,7 +42,7 @@
             padding: 30px;
             border-radius: 10px;
             color: #FFF;
-            z-index: 10; /* Ensure it's above fireworks */
+            margin: auto; /* Center container */
             box-shadow: 0 0 15px rgba(255, 0, 127, 0.6); /* Pink glow */
         }
 
@@ -91,6 +109,11 @@
 </head>
 <body>
 
+    <header>
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+        <div class="title">Registration Successful</div>
+    </header>
+
     <div class="fireworks">
         <div class="firework"></div>
         <div class="firework"></div>
@@ -111,11 +134,10 @@
     </div>
 
     <script>
-        // Get the Discord name from the URL query parameters
+        // JavaScript for Discord name here
         const urlParams = new URLSearchParams(window.location.search);
         const discordName = urlParams.get('discord_name');
 
-        // Set the Discord name in the HTML
         if (discordName) {
             document.getElementById('discordName').textContent = discordName;
         } else {

@@ -95,12 +95,12 @@ def exchange_token_test():
             discord_name = state["username"]
             return redirect(url_for('token_api.success_page', discord_name=discord_name))
         else:
-            return jsonify(result)
-            # return render_template('unregistered.html')
+            # return jsonify(result)
+            return render_template('unregistered.html')
     except Exception as e:
-        # return render_template('unregistered.html')
-        data = {'error': str(e)}
-        return jsonify(data)
+        return render_template('unregistered.html')
+        # data = {'error': str(e)}
+        # return jsonify(data)
     finally:
         connection.close()
     return redirect(url_for('home_page'))
