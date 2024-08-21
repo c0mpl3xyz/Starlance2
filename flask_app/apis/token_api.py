@@ -93,7 +93,7 @@ def exchange_token_test():
             connection.commit()
             # Build the URL with query parameters and redirect
             discord_name = state["username"]
-            return redirect(url_for('success_page', discord_name=discord_name))
+            return redirect(url_for('token_api.success_page', discord_name=discord_name))
         else:
             return jsonify(result)
             # return render_template('unregistered.html')
