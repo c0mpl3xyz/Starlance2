@@ -33,14 +33,3 @@ class AccessToken:
             return True
         except Exception:
             raise
-    
-    def create(self, user_id) -> bool:
-        update_query = """
-            INSERT INTO users (user_id) VALUES (%s);
-        """
-
-        try:
-            self.cursor.execute(update_query, (user_id,))
-            return True
-        except Exception:
-            raise

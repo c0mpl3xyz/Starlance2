@@ -60,7 +60,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         if not user_exist:
             created = True
             debug = 'user not exists'
-            user_exist = AccessToken(cursor).create(user_id)
+            user_exist = User(cursor).create(user_id)
 
         if user_exist:
             token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
