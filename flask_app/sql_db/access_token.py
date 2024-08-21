@@ -32,4 +32,4 @@ class AccessToken:
                 self.cursor.execute(insert_query, (user_id, access_token, token_type, expiration_date, True))
             return True
         except Exception:
-            return False
+            raise
