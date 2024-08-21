@@ -5,12 +5,12 @@ class AccessToken:
     def __init__(self, cursor):
         self.cursor = cursor
 
-    def add(self, access_token, server_id, duration_sec, token_type) -> bool:
+    def add(self, access_token, user_id, duration_sec, token_type) -> bool:
         expires_in_timedelta = timedelta(seconds=duration_sec)
         expiration_date = datetime.now() + expires_in_timedelta
 
         insert_query = """
-            INSERT INTO AccessToken (server_id, token, token_type, expiration_date, active)
+            INSERT INTO AccessToken (user_id, token, token_type, expiration_date, active)
             VALUES (%s, %s, %s, %s, %s, %s)
         """
 
@@ -20,16 +20,16 @@ class AccessToken:
             WHERE user_id = %s
         """
 
-        select_query = "SELECT * FROM AccessToken WHERE server_id = %s"
-        self.cursor.execute(select_query, (server_id,))
+        select_query = "SELECT * FROM AccessToken WHERE user_id = %s"
+        self.cursor.execute(select_query, (user_id,))
         existing_record = self.cursor.fetchone()
 
         try:
             if existing_record:
-                update_values = (access_token, token_type, expiration_date, True, server_id)
+                update_values = (access_token, token_type, expiration_date, True, user_id)
                 self.cursor.execute(update_query, update_values)
             else:
-                self.cursor.execute(insert_query, (server_id, access_token, token_type, expiration_date, True))
+                self.cursor.execute(insert_query, (user_id, access_token, token_type, expiration_date, True))
             return True
         except Exception:
             return False

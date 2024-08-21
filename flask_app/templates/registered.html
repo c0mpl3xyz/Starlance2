@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff007f, #000000); /* Pink to Black gradient */
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            color: #FFF;
+            z-index: 10; /* Ensure it's above fireworks */
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.6); /* Pink glow */
+        }
+
+        h1 {
+            color: #FF007F; /* Neon pink color */
+        }
+
+        .discord-name {
+            font-weight: bold;
+            color: #FFD700; /* Gold color */
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        .buttons a {
+            text-decoration: none;
+            color: white;
+            background-color: #FF007F;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px;
+            display: inline-block;
+        }
+
+        .buttons a:hover {
+            background-color: #FF4081;
+        }
+
+        /* Fireworks */
+        .fireworks {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+            z-index: 5;
+        }
+
+        .firework {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #FF007F;
+            box-shadow: 0 0 10px #FF007F, 0 0 20px #FF007F, 0 0 30px #FF007F;
+            animation: firework 1.5s ease-in-out infinite;
+        }
+
+        @keyframes firework {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-50vh) scale(1.5); opacity: 0.8; }
+            100% { transform: translateY(-100vh) scale(2); opacity: 0; }
+        }
+
+        /* Randomly place fireworks */
+        .firework:nth-child(2n) { animation-delay: 0.5s; left: 20%; }
+        .firework:nth-child(3n) { animation-delay: 0.8s; left: 40%; }
+        .firework:nth-child(4n) { animation-delay: 1.2s; left: 60%; }
+        .firework:nth-child(5n) { animation-delay: 1.5s; left: 80%; }
+        .firework:nth-child(6n) { animation-delay: 1.8s; left: 90%; }
+    </style>
+</head>
+<body>
+
+    <div class="fireworks">
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+        <div class="firework"></div>
+    </div>
+
+    <div class="container">
+        <h1>Congratulations!</h1>
+        <p>You have successfully registered.</p>
+        <p>Your Discord name is: <span class="discord-name" id="discordName"></span></p>
+        <div class="buttons">
+            <a href="https://discord.gg/HTc7qze5YV" target="_blank">Go to Discord Server</a>
+            <a href="https://www.ugc-mongolia.com" target="_blank">Go to UGC Mongolia</a>
+        </div>
+    </div>
+
+    <script>
+        // Get the Discord name from the URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const discordName = urlParams.get('discord_name');
+
+        // Set the Discord name in the HTML
+        if (discordName) {
+            document.getElementById('discordName').textContent = discordName;
+        } else {
+            document.getElementById('discordName').textContent = 'Not provided';
+        }
+    </script>
+
+</body>
+</html>

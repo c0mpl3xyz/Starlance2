@@ -52,7 +52,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         access_token = JSON['access_token']
         duration = JSON['expires_in']
         token_type = JSON['token_type']
-        server_id = state['server_id']
+        user_id = state['user_id']
         message: Dict = {}
         debug = ''
         # user_exist = User(cursor).get_by_id(server_id)
@@ -63,7 +63,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         #     user_exist = AccessToken(cursor).create(server_id)
 
         # if user_exist:
-        token_creation = AccessToken(cursor).add(access_token, server_id, duration, token_type)
+        token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
 
     message = {
             'success': user_exist and token_creation,
@@ -87,7 +87,9 @@ def exchange_token_test():
         result = exchange_code_for_token(connection.cursor(), APP_ID, APP_SECRET, REDIRECT_URL, code, state)
         if result['success']:
             connection.commit()
+            return render_template(f'registered.html?discord_name={state['username']}')
+    except Exception:
+        return render_template('registered.html')
     finally:
         connection.close()
-        return redirect('https://www.ugc-mongolia.com')
     return redirect(HOME)
