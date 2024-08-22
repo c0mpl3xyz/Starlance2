@@ -27,8 +27,8 @@ def get_manual_link(user_id, username):
             'user_id': user_id,
             'username': username
         },
-        'response_type': 'code',
-        'config_id': 985148693320820
+        'response_type': 'code'
+        # 'config_id': 985148693320820
     }
 
     query = urlencode(data)
