@@ -38,6 +38,34 @@ def get_manual_link(user_id, username):
     # webbrowser.open(url)
     return link
 
+# def get_manual_link_ig(user_id, username):
+#     # scope = ''
+
+#     REDIRECT_URL = 'https://c0mpl3x.pythonanywhere.com/token_api/oauth_ig'
+#     url = f'https://www.facebook.com//dialog/oauth'
+#     data = {
+#         'client_id': APP_ID,
+#         'display': 'page',
+#         'extras': {"setup": {"channel": "IG_API_ONBOARDING"}},
+
+#         # 'client_secret': CLIENT_SECRET,
+#         'redirect_uri': REDIRECT_URL,
+#         # "auth_type": "reauthenticate",
+#         'scope': 'instagram_basic,instagram_manage_insights',
+#         'state': {
+#             'user_id': user_id,
+#             'username': username
+#         },
+#         'response_type': 'token'
+#         # 'config_id': 985148693320820
+#     }
+
+#     query = urlencode(data)
+#     link = f'{url}?{query}'
+
+#     # Open the authorization URL in the user's browser
+#     # webbrowser.open(url)
+#     return link
 # def debug_token(app_token, admin_token, token):
 #     f'graph.facebook.com/debug_token?input_token={token}&access_token={app-token-or-admin-token}'
 

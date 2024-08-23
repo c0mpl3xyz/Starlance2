@@ -104,3 +104,53 @@ def exchange_token_test():
     finally:
         connection.close()
     return redirect(url_for('home_page'))
+
+# @token_bp.route('/oauth/ig', methods=['GET'])
+# def oauth_ig():
+#     return jsonify(request.args.to_dict())
+#     # url = f'{URL_PREFIX}/oauth/access_token'
+#     # data = {
+#     #     'client_id': client_id,
+#     #     'client_secret': client_secret,
+#     #     'redirect_uri': redirect_uri,
+#     #     'code': code
+#     # }
+
+#     # response = requests.post(url, data=data)
+#     # JSON = response.json()
+#     # # token_bp.logger.info(JSON)
+#     # # token = JSON['access_token']
+
+#     # check_token = 'access_token' in JSON
+#     # token_creation: bool = False
+#     # user_exist: bool = False
+#     # created: bool = False
+#     # debug = 'token not genearated'
+#     # if check_token:
+#     #     access_token = JSON['access_token']
+#     #     duration = JSON['expires_in']
+#     #     token_type = JSON['token_type']
+#     #     user_id = state['user_id']
+#     #     message: Dict = {}
+#     #     debug = ''
+#     #     user_exist = User(cursor).get_by_id(user_id)
+#     #     debug = 'user exists'
+#     #     if not user_exist:
+#     #         created = True
+#     #         debug = 'user not exists'
+#     #         user_exist = User(cursor).create(user_id)
+
+#     #     if user_exist:
+#     #         token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
+
+#     # message = {
+#     #         'success': user_exist and token_creation,
+#     #         'token_created': token_creation,
+#     #         'access_token': check_token,
+#     #         'server_created': created,
+#     #         'debug': debug,
+#     #         'data': data,
+#     #         'json': JSON
+#     #     }
+        
+#     # return message
