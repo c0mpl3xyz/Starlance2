@@ -105,16 +105,16 @@ def exchange_token_test():
         connection.close()
     return redirect(url_for('home_page'))
 
-# @token_bp.route('/oauth/ig', methods=['GET'])
-# def oauth_ig():
-#     return jsonify(request.args.to_dict())
-#     # url = f'{URL_PREFIX}/oauth/access_token'
-#     # data = {
-#     #     'client_id': client_id,
-#     #     'client_secret': client_secret,
-#     #     'redirect_uri': redirect_uri,
-#     #     'code': code
-#     # }
+@token_bp.route('/oauth_ig', methods=['GET'])
+def oauth_ig():
+    return jsonify(request.args.to_dict())
+    # url = f'{URL_PREFIX}/oauth/access_token'
+    # data = {
+    #     'client_id': client_id,
+    #     'client_secret': client_secret,
+    #     'redirect_uri': redirect_uri,
+    #     'code': code
+    # }
 
 #     # response = requests.post(url, data=data)
 #     # JSON = response.json()
