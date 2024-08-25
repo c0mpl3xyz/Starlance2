@@ -28,12 +28,12 @@ class LogInView(discord.ui.View):
     async def login_button_callback(self, interaction: discord.Interaction):
         pass
 
-    async def on_timeout(self):
-        self.clear_items()
-        timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
-        timeout_button.disabled = True
-        self.add_item(timeout_button)
-        await self.message.edit(view=self)
+    # async def on_timeout(self):
+    #     self.clear_items()
+    #     timeout_button = discord.ui.Button(label='Time-out!, Re-use BOT Command', style=discord.ButtonStyle.primary, emoji='⏳')
+    #     timeout_button.disabled = True
+    #     self.add_item(timeout_button)
+    #     await self.message.edit(view=self)
 
 class CollectView(discord.ui.View):
     def __init__(self, user_data, bot, collect_id, point_100, point_75, point_25, income, balance, points_minus):
