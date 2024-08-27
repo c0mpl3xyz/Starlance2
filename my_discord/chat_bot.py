@@ -11,7 +11,7 @@ from usecases.get_company_jobs import GetCompanyJobs, GetServerJobs
 from utils.error_message_enums import ErrorMessageEnum, MessageEnum
 from utils.enums import Enums
 from datetime import datetime
-from usecases.user_reviews import *
+from usecases.user_reviews import * 
 from usecases.user_contents import *
 from views import LogInView
 from usecases.company_contents import GetCompanyContentView
@@ -49,12 +49,12 @@ def is_our_company(intearaction) -> bool:
     return intearaction.guild.id == Enums.OUR_COMPANY.value
     
 def is_influencer(roles):
-    # return Enums.ROLES.value in roles
-    return False
+    return Enums.ROLES.value in roles
+    # return False
 
 def is_admin(roles):
-    # return Enums.ADMIN.value in roles
-    return True
+    return Enums.ADMIN.value in roles
+    # return True
 
 def is_dm(interaction):
     try:
@@ -472,41 +472,20 @@ async def server_user_report(interaction: discord.Interaction, member: discord.M
     if not isinstance(member, discord.Member):
         return await interaction.response.send_message('You entered wrong User')
 
-# @client.tree.command(name='server_message')
-# async def server_message(interaction: discord.Interaction):
-#     await interaction.response.defer(ephemeral=True)
+# @client.tree.command(name='ig_login')
+# async def login(interaction: discord.Interaction):
+#     await interaction.response.defer()
 #     roles = is_dm(interaction)
 
-#     if is_influencer(roles):
-#         return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+#     # if is_influencer(interaction):
+#     #     return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
     
-#     try:
-#         if not is_main_server(interaction):
-#             return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
-
-#         else:
-#             select = MessageSelect(client, Enums.MESSAGE_ROLES.value)
-#             view = View()
-#             view.add_item(select)
-#             select.roles_message = await interaction.followup.send('Send message by roles', view=view)
-#     except AttributeError as e:
-#         return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
-#         # raise e
-
-@client.tree.command(name='ig_login')
-async def login(interaction: discord.Interaction):
-    await interaction.response.defer()
-    roles = is_dm(interaction)
-
-    # if is_influencer(interaction):
-    #     return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+#     # if is_main_server(interaction):
+#     #     return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
     
-    # if is_main_server(interaction):
-    #     return await interaction.followup.send(ErrorMessageEnum.NOT_MAIN.value, ephemeral=True)
-    
-    # else:
-    view = LogInView(interaction.user.id, interaction.user.name)
-    await interaction.user.send('Login with Facebook', view=view, embed=view.embed)
-    return await interaction.followup.send(f'Log in link sent to user: <@{interaction.user.id}>', ephemeral=True)
+#     # else:
+#     view = LogInView(interaction.user.id, interaction.user.name)
+#     await interaction.user.send('Login with Facebook', view=view, embed=view.embed)
+#     return await interaction.followup.send(f'Log in link sent to user: <@{interaction.user.id}>', ephemeral=True)
 
 client.run(TOKEN)
