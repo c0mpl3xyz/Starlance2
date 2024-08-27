@@ -13,10 +13,10 @@ REDIRECT_URL = URL + 'exchange_token/'
 CLIENT_SECRET = os.getenv('APP_SECRET')
 API_VERSION = os.getenv('API_VERSION')
 
-print(f'{REDIRECT_URL=}')
 def get_manual_link(user_id, username):
     # scope = ''
     url = f'https://www.facebook.com/{API_VERSION}/dialog/oauth'
+    print(f'{REDIRECT_URL=}')
     data = {
         'client_id': APP_ID,
         # 'client_secret': CLIENT_SECRET,
@@ -36,6 +36,7 @@ def get_manual_link(user_id, username):
 
     # Open the authorization URL in the user's browser
     # webbrowser.open(url)
+    print(link)
     return link
 
 def get_manual_link_ig(user_id, username):
