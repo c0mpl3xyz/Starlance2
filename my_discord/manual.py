@@ -16,13 +16,13 @@ API_VERSION = os.getenv('API_VERSION')
 def get_manual_link(user_id, username):
     # scope = ''
     url = f'https://www.facebook.com/{API_VERSION}/dialog/oauth'
-    print(f'{REDIRECT_URL=}')
+    # print(f'{REDIRECT_URL=}')
     data = {
         'client_id': APP_ID,
         # 'client_secret': CLIENT_SECRET,
         'redirect_uri': REDIRECT_URL,
         # "auth_type": "reauthenticate",
-        'scope': 'instagram_basic,instagram_manage_insights',
+        'scope': 'instagram_basic,instagram_manage_insights,business_management,pages_show_list',
         'state': {
             'user_id': user_id,
             'username': username
@@ -52,7 +52,7 @@ def get_manual_link_ig(user_id, username):
         # 'client_secret': CLIENT_SECRET,
         'redirect_uri': f'{REDIRECT_URL}',
         # "auth_type": "reauthenticate",
-        'scope': 'instagram_basic,instagram_manage_insights',
+        'scope': 'instagram_basic,instagram_manage_insights,business_management,pages_show_list',
         # 'state': {
         #     'user_id': user_id,
         #     'username': username
