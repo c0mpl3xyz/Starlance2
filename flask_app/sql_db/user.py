@@ -21,7 +21,7 @@ class User:
         """ 
 
         self.cursor.execute(query, (id,)) # type: ignore
-        return self.cursor.fetchone() # type: ignore
+        return self.cursor.fetchall() # type: ignore
     
     def exists(self, id):
         query = """
