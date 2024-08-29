@@ -38,9 +38,9 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         'code': code
     }
 
-    return data
     response = requests.post(url, data=data)
     JSON = response.json()
+    return JSON
     # token_bp.logger.info(JSON)
     # token = JSON['access_token']
 
