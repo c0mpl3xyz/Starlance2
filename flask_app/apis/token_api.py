@@ -40,7 +40,6 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
 
     response = requests.post(url, data=data)
     JSON = response.json()
-    return JSON
     # token_bp.logger.info(JSON)
     # token = JSON['access_token']
 
@@ -51,7 +50,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
     debug = 'token not genearated'
     if check_token:
         access_token = JSON['access_token']
-        duration = JSON['expires_in']
+        duration = 90
         token_type = JSON['token_type']
         user_id = state['user_id']
         message: Dict = {}
@@ -90,20 +89,19 @@ def exchange_token_test():
     connection = ConnectSQL(SQL_DICT).get_connection()
     try:
         result = exchange_code_for_token(connection.cursor(), APP_ID, APP_SECRET, REDIRECT_URL, code, state)
-        return jsonify(result)
         if result['success']:
             connection.commit()
             # Build the URL with query parameters and redirect
             discord_name = state["username"]
             return redirect(url_for('token_api.success_page', discord_name=discord_name))
         else:
-            return jsonify(result)
+            # return jsonify(result)
             return render_template('unregistered.html')
     except Exception as e:
-        # return render_template('unregistered.html')
-        data = {'error': str(e)}
-        raise e
-        return jsonify(data)
+        return render_template('unregistered.html')
+        # data = {'error': str(e)}
+        # raise e
+        # return jsonify(data)
     finally:
         connection.close()
     return redirect(url_for('home_page'))
