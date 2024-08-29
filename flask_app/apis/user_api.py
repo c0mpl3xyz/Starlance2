@@ -132,3 +132,11 @@ def users_report():
             return jsonify({'error': 'Report not found or could not be generated'}), 404
     finally:
         os.remove(file_path)
+        
+@user_bp.route('/user/token', methods=['GET'])
+def get_user_token():
+    user_id = request.json.get('user_id')
+    connection = ConnectSQL().get_connection()
+    user = User(connection.cursor())
+    data = user.get_access_token(user_id)
+    return jsonify(data)
