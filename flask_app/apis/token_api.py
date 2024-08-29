@@ -38,7 +38,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         'code': code
     }
 
-    return jsonify(data)
+    return data
     response = requests.post(url, data=data)
     JSON = response.json()
     # token_bp.logger.info(JSON)
@@ -90,6 +90,7 @@ def exchange_token_test():
     connection = ConnectSQL(SQL_DICT).get_connection()
     try:
         result = exchange_code_for_token(connection.cursor(), APP_ID, APP_SECRET, REDIRECT_URL, code, state)
+        return jsonify(result)
         if result['success']:
             connection.commit()
             # Build the URL with query parameters and redirect
