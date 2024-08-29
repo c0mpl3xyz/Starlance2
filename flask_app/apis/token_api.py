@@ -50,7 +50,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
     debug = 'token not genearated'
     if check_token:
         access_token = JSON['access_token']
-        # duration = JSON['expires_in']
+        duration = JSON['expires_in']
         token_type = JSON['token_type']
         user_id = state['user_id']
         message: Dict = {}
@@ -63,7 +63,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
             user_exist = User(cursor).create(user_id)
 
         if user_exist:
-            token_creation = AccessToken(cursor).add(access_token, user_id, 30, token_type)
+            token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
 
     message = {
             'success': user_exist and token_creation,
