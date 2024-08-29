@@ -95,9 +95,6 @@ class JobModal(Modal, title="Job registration"):
                 if response and 'success' in response:
                     success = ['success']
                     data['job_id'] = response['job_id']
-
-                print(f'{response=}')
-                # self.roles = ['ADMIN']
                 if success:
                     self.finished = True
                     company_job_view = JobView(data, self.bot, company=True)
