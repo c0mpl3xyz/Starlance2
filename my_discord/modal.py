@@ -404,8 +404,13 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             else:
                 response = requests.post(URL + '/content', json=data)
                 content_id = response.json()['content_id']
-
-            content_ids.append(content_id)
+                
+                if content_id is None:
+                    message = f'{types[i]}: {response.json()['message']}'
+                    await interaction.followup.send(message, ephemeral=True)
+                    
+            if content_id is not None:
+                content_ids.append(content_id)
 
         message = f'<@{self.user_id}>: Social links succesfully uploaded {", ".join(socials)}'
 
