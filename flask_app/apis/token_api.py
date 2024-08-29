@@ -38,6 +38,7 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         'code': code
     }
 
+    return jsonify(data)
     response = requests.post(url, data=data)
     JSON = response.json()
     # token_bp.logger.info(JSON)
