@@ -103,7 +103,7 @@ class User:
         return result
     
     def get_access_token(self, id):
-        query = "SELECT 1 FROM AccessToken WHERE user_id = %s"
+        query = "SELECT token FROM AccessToken WHERE user_id = %s"
         self.cursor.execute(query, (id,)) # type: ignore
 
         result = self.cursor.fetchone() # type: ignore

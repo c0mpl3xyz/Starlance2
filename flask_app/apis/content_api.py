@@ -17,7 +17,7 @@ def get_status(user_id, link):
         if user.exists(user_id):
             access_token = user.get_access_token(user_id)
             if access_token is not None:
-                IG_TOKEN = access_token[2]
+                IG_TOKEN = access_token[0]
                 return get_ig_ids(IG_TOKEN, link)
 
         return None, None
