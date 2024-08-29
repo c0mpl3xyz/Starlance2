@@ -17,11 +17,11 @@ class User:
     
     def get_by_id(self, id):
         query = """
-            SELECT * FROM User WHERE id = %s
+            SELECT 1 FROM User WHERE id = %s
         """ 
 
         self.cursor.execute(query, (id,)) # type: ignore
-        return self.cursor.fetchall() # type: ignore
+        return self.cursor.fetchone() # type: ignore
     
     def exists(self, id):
         query = """
