@@ -23,6 +23,23 @@ class User:
         self.cursor.execute(query, (id,)) # type: ignore
         return self.cursor.fetchone() # type: ignore
     
+    def get_status_by_id(self, id):
+        query = '''
+            SELECT 
+                u.*,
+                at.fb_pages,
+                at.ig_accounts
+            FROM 
+                User u
+            LEFT JOIN 
+                AccessToken at ON u.id = at.user_id
+            WHERE 
+                u.id = %s;
+        '''
+        
+        self.cursor.execute(query, (id,)) # type: ignore
+        return self.cursor.fetchone() # type: ignore
+    
     def exists(self, id):
         query = """
             SELECT 1 FROM User WHERE id = %s

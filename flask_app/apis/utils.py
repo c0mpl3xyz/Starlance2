@@ -18,6 +18,29 @@ def get_shortcode(link):
         return splits[0]
     return None
 
+def get_fb_pages_ig_accounts(token):
+    url = f'https://graph.facebook.com/v20.0/me?fields=accounts.limit(30){{connected_instagram_account,global_brand_page_name}}&access_token={token}'
+    response = requests.get(url)
+    ig_accounts = []
+    fb_pages = []
+
+    if response.status_code != 200:
+        return ig_accounts, fb_pages    
+
+    
+    for account in response.json()["accounts"]["data"]:
+        fb_pages.append(f'{account.get("global_brand_page_name")}-{account.get("id")}')
+        if "connected_instagram_account" in account:
+            ig_accounts.append(account["connected_instagram_account"]["id"])
+    
+    if len(ig_accounts):
+        for idx, account in enumerate(ig_accounts):
+            url = f'https://graph.facebook.com/v20.0/{account}?fields=username&access_token={token}'
+            response = requests.get(url)
+            ig_accounts[idx] = f'{response.json()['username']}-{ig_accounts[idx]}'
+    return fb_pages, ig_accounts
+    
+
 def get_ig_ids(token, link):
     shortcode = get_shortcode(link)
     url = f'https://graph.facebook.com/v20.0/me?fields=accounts.limit(30){{connected_instagram_account}}&access_token={token}'
@@ -26,8 +49,6 @@ def get_ig_ids(token, link):
         account["connected_instagram_account"]['id']
         for account in result["accounts"]["data"]
     ]
-    ig_ids = [1231231, 2312312] + ig_ids
-    print(ig_ids)
     for ig_id in ig_ids:
         url = None
         while True:
@@ -48,3 +69,7 @@ def get_ig_ids(token, link):
             else:
                 break
     return None, None
+
+if __name__ == '__main__':
+    token = 'EAAOPS5RiFaMBO2bjFGWLd3wMTEpFiFdnAGdGvNq0UyFh2V8GM9QPrstINElYVu1GVVlcrztvszod37cEvPZA6H8ZCrqtBl5AhQb9LUPniKV45lG3RIH2QxolyabIZBX5vN5XcFXOc3DZBMTJtAi8C2UUTXyO2UUAyRB83gfCmMdbO5ghbHGCdWuNtm1Uwmx4rJ4ZB68hAIQLnxKQjBX0oHACu4EWlAhDHdAZDZD'
+    print(get_fb_pages_ig_accounts(token))

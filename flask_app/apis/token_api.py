@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify, make_response, render_template, url_f
 from dotenv import load_dotenv
 from sql_db.user  import User
 from sql_db.access_token import AccessToken
+from apis.utils import get_fb_pages_ig_accounts
 import datetime
 
 load_dotenv()
@@ -59,11 +60,12 @@ def exchange_code_for_token(cursor, client_id, client_secret, redirect_uri, code
         debug = 'user exists'
         if not user_exist:
             created = True
-            debug = 'user not exists'
+            debug = 'user not exists'   
             user_exist = User(cursor).create(user_id)
 
         if user_exist:
-            token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type)
+            fb_pages, ig_accounts = get_fb_pages_ig_accounts(access_token)
+            token_creation = AccessToken(cursor).add(access_token, user_id, duration, token_type, fb_pages, ig_accounts)
 
     message = {
             'success': user_exist and token_creation,
