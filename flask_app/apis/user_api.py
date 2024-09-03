@@ -120,6 +120,7 @@ def get_user():
     user = User(connection.cursor())
     data = user.get_status_by_id(user_id)
     
+    data = list(data)
     if data[6] is not None:
         data[6] = data[6].split(',')
     if data[7] is not None:
