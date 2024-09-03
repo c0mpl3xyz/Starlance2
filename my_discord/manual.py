@@ -21,7 +21,7 @@ def get_manual_link(user_id, username):
         'client_id': APP_ID,
         # 'client_secret': CLIENT_SECRET,
         'redirect_uri': REDIRECT_URL,
-        "auth_type": "reauthenticate",
+        # "auth_type": "reauthenticate",
         'scope': 'instagram_basic,instagram_manage_insights,business_management,pages_show_list',
         'state': {
             'user_id': user_id,

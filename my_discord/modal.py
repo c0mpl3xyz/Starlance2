@@ -403,7 +403,7 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
                 content_id = response.json()['content_id']
                 
                 if content_id is None:
-                    message = f'{types[i]}: {response.json()['message']}'
+                    message = f'{response.json()["message"]}'
                     await interaction.followup.send(message, ephemeral=True)
                     
             if content_id is not None:
