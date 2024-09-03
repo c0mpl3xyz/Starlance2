@@ -37,7 +37,7 @@ def get_fb_pages_ig_accounts(token):
         for idx, account in enumerate(ig_accounts):
             url = f'https://graph.facebook.com/v20.0/{account}?fields=username&access_token={token}'
             response = requests.get(url)
-            ig_accounts[idx] = f'{response.json()['username']}-{ig_accounts[idx]}'
+            ig_accounts[idx] = f'{response.json()["username"]}-{ig_accounts[idx]}'
     return fb_pages, ig_accounts
     
 
