@@ -119,6 +119,12 @@ def get_user():
     connection = ConnectSQL().get_connection()
     user = User(connection.cursor())
     data = user.get_status_by_id(user_id)
+    
+    for user in data:
+        if user[6] is not None:
+            user[6] = user[6].split(',')
+        if user[7] is not None:
+            user[7] = user[7].split(',')
     return jsonify(data)
 
 @user_bp.route('/users/report', methods=['GET'])
