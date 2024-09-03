@@ -120,10 +120,10 @@ def get_user():
     user = User(connection.cursor())
     data = user.get_status_by_id(user_id)
     
-    if user[6] is not None:
-        user[6] = user[6].split(',')
-    if user[7] is not None:
-        user[7] = user[7].split(',')
+    if data[6] is not None:
+        data[6] = data[6].split(',')
+    if data[7] is not None:
+        data[7] = data[7].split(',')
         
     return jsonify(data)
 
