@@ -9,8 +9,8 @@ class AccessToken:
         expires_in_timedelta = timedelta(seconds=duration_sec)
         expiration_date = datetime.now() + expires_in_timedelta
         
-        fb_pages = ''.join([fb_page for fb_page in fb_pages])
-        ig_accounts = ''.join([ig_account for ig_account in ig_accounts])
+        fb_pages = ','.join([fb_page for fb_page in fb_pages])
+        ig_accounts = ','.join([ig_account for ig_account in ig_accounts])
         
         insert_query = """
             INSERT INTO AccessToken (user_id, token, token_type, expiration_date, active, fb_pages, ig_accounts)
