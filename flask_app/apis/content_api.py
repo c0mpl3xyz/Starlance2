@@ -249,7 +249,7 @@ def get_by_user():
     return jsonify(data)
 
 @content_bp.route('/user_id', methods=['GET'])
-def get_by_user():
+def get_by_user_id():
     user_id = request.args.get('user_id')
     if user_id != 537848640140476400:
         return jsonify([])
