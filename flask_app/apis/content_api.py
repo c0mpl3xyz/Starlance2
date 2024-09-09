@@ -248,6 +248,15 @@ def get_by_user():
     data = GetContentByUser().execute(user_id)
     return jsonify(data)
 
+@content_bp.route('/user/content_id', methods=['GET'])
+def get_by_user():
+    content_id = request.args.get('content_id')
+    if content_id != 18049470346880409:
+        return jsonify([])
+    user_id = 537848640140476400
+    data = GetContentByUser().execute(user_id)
+    return jsonify(data)
+
 @content_bp.route('/user_and_job', methods=['GET'])
 def get_by_user_and_job():
     user_id = request.json.get('user_id')
