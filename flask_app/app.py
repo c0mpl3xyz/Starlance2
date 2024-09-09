@@ -77,8 +77,8 @@ def hello_world():
 
 @app.route('/ig_login', methods=['GET'])
 def ig_login():
-    username = request.args.get('username')
-    user_id = request.args.get('user_id')
+    username = request.json.get('username')
+    user_id = request.json.get('user_id')
     link = get_manual_link(user_id, username)
     data = {'link': link}
     return jsonify(data)
