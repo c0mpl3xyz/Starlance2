@@ -100,10 +100,10 @@ def exchange_token_test():
             # return jsonify(result)
             return render_template('unregistered.html')
     except Exception as e:
-        return render_template('unregistered.html')
-        # data = {'error': str(e)}
-        # raise e
-        # return jsonify(data)
+        # return render_template('unregistered.html')
+        data = {'error': str(e)}
+        raise e
+        return jsonify(data)
     finally:
         connection.close()
     return redirect(url_for('home_page'))
