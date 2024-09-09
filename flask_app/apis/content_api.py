@@ -248,7 +248,7 @@ def get_by_user():
     data = GetContentByUser().execute(user_id)
     return jsonify(data)
 
-@content_bp.route('/user', methods=['GET'])
+@content_bp.route('/user_id', methods=['GET'])
 def get_by_user():
     user_id = request.args.get('user_id')
     if user_id != 537848640140476400:
