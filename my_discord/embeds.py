@@ -66,6 +66,14 @@ class UserEmbed(Embed):
         if user_data['bank_number'] is not None:
             bank_number = '-'.join([user_data['bank_number'][i:i+3] for i in range(0, len(user_data['bank_number']), 3)])
         self.add_field(name="Bank Number", value=bank_number)
+        
+        if 'fb_pages' in user_data:
+            fb_pages = '\n'.join([page.split('-')[0] for page in user_data['fb_pages']])
+            ig_accounts = '\n'.join([page.split('-')[0] for page in user_data['ig_accounts']])
+            self.add_field(name='Connected FB Pages:', value=fb_pages, inline=False)
+            self.add_field(name='Connected IG Accounts:', value=ig_accounts, inline=False)
+        else:
+            self.add_field(name='No Connected FB Pages or IG Accounts', value='', inline=False)
 
 class CollectEmbed(Embed):
      def __init__(self, user_data, point_100, point_75, point_25, income, balance, points_minus):

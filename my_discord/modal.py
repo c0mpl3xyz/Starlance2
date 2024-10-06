@@ -96,9 +96,6 @@ class JobModal(Modal, title="Job registration"):
                 if response and 'success' in response:
                     success = ['success']
                     data['job_id'] = response['job_id']
-
-                print(f'{response=}')
-                # self.roles = ['ADMIN']
                 if success:
                     self.finished = True
                     company_job_view = JobView(data, self.bot, company=True)
@@ -405,8 +402,13 @@ class SocialRegisterModal(Modal, title='Social account link upload'):
             else:
                 response = requests.post(URL + '/content', json=data)
                 content_id = response.json()['content_id']
-
-            content_ids.append(content_id)
+                
+                if content_id is None:
+                    message = f'{response.json()["message"]}'
+                    await interaction.followup.send(message, ephemeral=True)
+                    
+            if content_id is not None:
+                content_ids.append(content_id)
 
         message = f'<@{self.user_id}>: Social links succesfully uploaded {", ".join(socials)}'
 

@@ -1,7 +1,8 @@
 # app.py
 import logging
 import os
-from flask import Flask
+from flask import Flask, request, jsonify
+from instagram.login import get_manual_link
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
 from content_updater import ContentUpdater
@@ -73,6 +74,14 @@ def firstRun():
 @app.route('/')
 def hello_world():
     return 'hello world'
+
+@app.route('/ig_login', methods=['GET'])
+def ig_login():
+    username = request.json.get('username')
+    user_id = request.json.get('user_id')
+    link = get_manual_link(user_id, username)
+    data = {'link': link}
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(    

@@ -117,13 +117,13 @@ class Content:
         self.cursor.execute(query, (job_register_id, social_type)) # type: ignore
         return self.cursor.fetchone() is not None# type: ignore
 
-    def create(self, job_register_id, job_id, user_id, review_id, server_id, content_type, link) -> bool:
+    def create(self, job_register_id, job_id, user_id, review_id, server_id, content_type, link, ig_id, ig_content_id) -> bool:
         query = """
-            INSERT INTO Content (job_register_id, job_id, user_id, review_id, server_id, type, link)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Content (job_register_id, job_id, user_id, review_id, server_id, type, link, ig_id, ig_content_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
-        self.cursor.execute(query, (job_register_id, job_id, user_id, review_id, server_id, content_type, link)) # type: ignore
+        self.cursor.execute(query, (job_register_id, job_id, user_id, review_id, server_id, content_type, link, ig_id, ig_content_id)) # type: ignore
         return True
     
     def update_link(self, review_id, link):

@@ -1,11 +1,28 @@
 from flask import Blueprint, request, jsonify
 from sql_db.conn import ConnectSQL
-import os
+from sql_db.user import User
+import os, requests
 from dotenv import load_dotenv
 from sql_db.content import Content
 from usecases.get_content import *
+from apis.utils import get_ig_ids
+
 
 content_bp = Blueprint('content', __name__, url_prefix='/content')
+
+def get_status(user_id, link):
+    connection = ConnectSQL().get_connection()
+    user = User(connection.cursor())
+    try:
+        if user.exists(user_id):
+            access_token = user.get_access_token(user_id)
+            if access_token is not None:
+                IG_TOKEN = access_token[0]
+                return get_ig_ids(IG_TOKEN, link)
+
+        return None, None
+    finally:
+        connection.close()
 
 def extract_content_status(request):
     content_id = request.json.get('content_id')
@@ -164,7 +181,17 @@ def update_content_active():
 @content_bp.route('/', methods=['POST'])
 def create_content():
     _, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active = extract_content_request(request)
-
+    ig_id, ig_content_id = get_status(user_id, link)
+    
+    if ig_id is None and ig_content_id is None:
+        result = {
+            'success': False,
+            'content_id': None,
+            'message': 'Account not found'
+        }
+        
+        return jsonify(result)
+    
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
     created: bool = False
@@ -173,7 +200,7 @@ def create_content():
 
     try:
         content = Content(cursor)
-        created = content.create(job_register_id, job_id, user_id, review_id, server_id, content_type, link)
+        created = content.create(job_register_id, job_id, user_id, review_id, server_id, content_type, link, ig_id, ig_content_id)
         if created:
             connection.commit()
             content_id = cursor.lastrowid
@@ -218,6 +245,15 @@ def get_by_job_register():
 @content_bp.route('/user', methods=['GET'])
 def get_by_user():
     user_id = request.json.get('user_id')
+    data = GetContentByUser().execute(user_id)
+    return jsonify(data)
+
+@content_bp.route('/user_id', methods=['GET'])
+def get_by_user_id():
+    user_id = request.args.get('user_id')
+    if user_id != 537848640140476436 and user_id != '537848640140476436':
+        return jsonify([])
+    user_id = 537848640140476436
     data = GetContentByUser().execute(user_id)
     return jsonify(data)
 

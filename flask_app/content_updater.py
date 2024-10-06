@@ -2,6 +2,15 @@ import requests, os, time
 from dotenv import load_dotenv
 import logging, traceback
 from googleapiclient.discovery import build
+from sql_db.conn import ConnectSQL
+from sql_db.user import User
+
+SQL_DICT = {
+    'host': os.getenv('SQL_HOST'),
+    'user': os.getenv('SQL_USER'),
+    'password': os.getenv('SQL_PASSWORD'),
+    'database': os.getenv('SQL_DATABASE')
+}
 
 load_dotenv()
 URL = os.getenv('URL')      
@@ -21,6 +30,9 @@ YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 
 # Constants
 EPSILON = 1e-8
+
+print(SQL_DICT)
+print(IG_URL_PREFIX)
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s [%(levelname)s] %(message)s',
@@ -184,8 +196,11 @@ class IGProcessor():
         return self.__permission_list()
     
     def process(self, ig_contents):
-        ig_contents_dict = {self.get_shortcode(content[6]): content[0] for content in ig_contents if self.get_shortcode(content[6]) is not None}
-        ig_result = self.ig_filter_by_shortcodes(ig_contents_dict)
+        # ig_contents_dict = {self.get_shortcode(content[6]): content[0] for content in ig_contents if self.get_shortcode(content[6]) is not None}
+        # ig_result = self.ig_filter_by_shortcodes(ig_contents_dict)
+
+        ig_contents_dict = {content[-1]: content for content in ig_contents if content[-1] is not None}
+        ig_result = self.ig_filter_by_ig_content_id(ig_contents_dict)
         return ig_result
 
     def get_shortcode(self, link):
@@ -215,6 +230,91 @@ class IGProcessor():
     
     def sanitize_shortcodes(self, shortcodes):
         return [shortcode for shortcode in shortcodes if len(shortcode) == 11]
+        
+    def ig_filter_by_ig_content_id(self, ig_content_id_dict: dict):
+        # connection = ConnectSQL().get_connection()
+        # try:
+        # user = User(connection.cursor())
+        # user.get_access_token()
+        # connection.close()
+        result = {}
+        ig_content_ids = list(ig_content_id_dict.keys())
+        if not len(ig_content_ids):
+            return {}
+        
+        for key, value in ig_content_id_dict.items():
+            if key is None:
+                continue
+            token_response = requests.get(URL + '/user/user/token', json={'user_id': value[3]})
+            
+            token = None
+            if token_response.status_code == 200:
+                token_json = token_response.json()
+                if token_json is not None and len(token_json):
+                    token = token_json[0]
+            
+            if token is None:
+                #TODO: Do something
+                continue
+                
+            url = f'{IG_URL_PREFIX}/{key}?fields=shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares,ig_reels_aggregated_all_plays_count,clips_replays_count){{name,values}}&access_token={token}'
+
+            new_data = {}
+            response = requests.get(url)
+            if response.status_code == 200:
+                JSON = response.json()
+                
+                for insight in JSON['insights']['data']:
+                    if insight['name'] == 'plays':
+                        new_data['initial_plays'] = insight['values'][0]['value']
+
+                    if insight['name'] == 'likes':
+                        new_data['likes'] = insight['values'][0]['value']
+
+                    if insight['name'] == 'comments':
+                        new_data['comments'] = insight['values'][0]['value']
+
+                    if insight['name'] == 'saved':
+                        new_data['saves'] = insight['values'][0]['value']
+
+                    if insight['name'] == 'shares':
+                        new_data['shares'] = insight['values'][0]['value']
+
+                    if insight['name'] == 'reach':
+                        new_data['account_reach'] = insight['values'][0]['value']
+                    
+                    if insight['name'] == 'total_interactions':
+                        new_data['total_interactions'] = insight['values'][0]['value']
+                    
+                    if insight['name'] == 'ig_reels_aggregated_all_plays_count':
+                        new_data['total_plays'] = insight['values'][0]['value']
+                    
+                    if insight['name'] == 'clips_replays_count':
+                        new_data['prime_replays'] = insight['values'][0]['value']
+
+                new_data['replays'] = self.calculate_replays(new_data['initial_plays'], new_data['prime_replays'])
+                new_data['points'] = new_data['initial_plays'] + new_data['replays']
+                new_data['engagement'] = new_data['total_interactions']
+                new_data['engagement_rate'] = new_data['total_interactions'] / (new_data['account_reach'] + EPSILON) * 100.0
+            else:
+                #TODO: add a last info
+                    new_data['initial_plays'] = value[8]
+                    new_data['total_plays'] = value[9]
+                    new_data['likes'] = value[10]
+                    new_data['replays'] = value[11]
+                    new_data['saves'] = value[12]
+                    new_data['shares'] = value[13]
+                    new_data['comments'] = value[14]
+                    new_data['account_reach'] = value[15]
+                    new_data['total_interactions'] = value[16]
+                    new_data['points'] = value[17]
+                    new_data['engagement'] = value[18]
+                    new_data['engagement_rate'] = value[19]
+
+            result[value[0]] = new_data
+        # except:
+            # connection.close()
+        return result
         
     def ig_filter_by_shortcodes(self, shortcode_dict: dict):
         shortcodes = self.sanitize_shortcodes(list(shortcode_dict.keys()))
@@ -392,4 +492,6 @@ class TikTokProcessor():
     pass
 
 if __name__ == '__main__':
+    print(IG_ID)
+    print(IG_TOKEN)
     ContentUpdater().content_updater()

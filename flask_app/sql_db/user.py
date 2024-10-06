@@ -17,9 +17,26 @@ class User:
     
     def get_by_id(self, id):
         query = """
-            SELECT * FROM User WHERE id = %s
+            SELECT 1 FROM User WHERE id = %s
         """ 
 
+        self.cursor.execute(query, (id,)) # type: ignore
+        return self.cursor.fetchone() # type: ignore
+    
+    def get_status_by_id(self, id):
+        query = '''
+            SELECT 
+                u.*,
+                at.fb_pages,
+                at.ig_accounts
+            FROM 
+                User u
+            LEFT JOIN 
+                AccessToken at ON u.id = at.user_id
+            WHERE 
+                u.id = %s;
+        '''
+        
         self.cursor.execute(query, (id,)) # type: ignore
         return self.cursor.fetchone() # type: ignore
     
@@ -100,4 +117,11 @@ class User:
         self.cursor.execute(delete_query, (id,)) # type: ignore
 
         result = self.cursor.fetchall() # type: ignore
+        return result
+    
+    def get_access_token(self, id):
+        query = "SELECT token FROM AccessToken WHERE user_id = %s"
+        self.cursor.execute(query, (id,)) # type: ignore
+
+        result = self.cursor.fetchone() # type: ignore
         return result

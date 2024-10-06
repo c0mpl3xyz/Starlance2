@@ -70,6 +70,10 @@ def user_mappings(data: list):
         'bank_number': data[4],
         'register': data[5]
     }
+    
+    if len(data) == 8:
+        user_dict['fb_pages'] = data[6]
+        user_dict['ig_accounts'] = data[7]
 
     return user_dict
 

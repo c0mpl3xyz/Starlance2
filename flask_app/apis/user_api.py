@@ -115,10 +115,17 @@ def bank_registration():
 
 @user_bp.route('/status', methods=['GET'])
 def get_user():
-    user_id = request.json.get('user_id')
+    user_id = request.args.get('user_id')
     connection = ConnectSQL().get_connection()
     user = User(connection.cursor())
-    data = user.get_by_id(user_id)
+    data = user.get_status_by_id(user_id)
+    
+    data = list(data)
+    if data[6] is not None:
+        data[6] = data[6].split(',')
+    if data[7] is not None:
+        data[7] = data[7].split(',')
+        
     return jsonify(data)
 
 @user_bp.route('/users/report', methods=['GET'])
@@ -132,3 +139,11 @@ def users_report():
             return jsonify({'error': 'Report not found or could not be generated'}), 404
     finally:
         os.remove(file_path)
+        
+@user_bp.route('/user/token', methods=['GET'])
+def get_user_token():
+    user_id = request.json.get('user_id')
+    connection = ConnectSQL().get_connection()
+    user = User(connection.cursor())
+    data = user.get_access_token(user_id)
+    return jsonify(data)
