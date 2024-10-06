@@ -6,6 +6,7 @@ from discord import Interaction
 from utils.enums import Enums
 from datetime import datetime, timedelta
 from validator.validator import Validator
+import requests
 import re, os, pytz, time, asyncio, aiohttp
 
 URL = os.getenv('URL')
@@ -521,3 +522,63 @@ class CollectAckModal(Modal, title='Collect Request approvement'):
             self.stop()
         else:
             await interaction.followup.send(f'You entered wrong "{ack_name}", please enter "YES"')
+
+class EmonosModal(Modal, title='Content_link'):
+    def __init__(self):
+        super().__init__()
+        self.social_link = TextInput(label=f"Please enter the Content link", placeholder='https://www.instagram.com/test/p/test', required=True, style=discord.TextStyle.short)
+        self.add_item(self.social_link)
+
+    def validate(self, link, social_type):
+        prefixes = []
+        valid = False
+
+        if social_type == 'instagram':
+            prefixes = [
+                'https://www.instagram.com/reel/',
+                'https://www.instagram.com/p/'
+            ]
+
+        if social_type == 'youtube':
+            prefixes = [
+                'https://www.youtube.com/watch?v=',
+                'https://youtu.be/',
+                'https://www.youtube.com/watch?v=',
+                'https://www.youtube.com/watch?v=',
+                'https://www.youtube.com/embed/',
+                'https://www.youtube.com/watch?v=',
+                'https://www.youtube.com/shorts/'
+            ]
+
+        if social_type == 'tiktok':
+            prefixes = []
+
+        for prefix in prefixes:
+            if prefix in link:
+                valid = True
+                break
+        
+        return valid
+    
+    async def on_submit(self, interaction: Interaction):
+        await interaction.response.defer()
+        social_link = str(self.social_link)
+        if not self.validate(social_link, 'isntagram'):
+            await interaction.followup.send(f'Insatagram link is wrong: "{social_link}"')
+        else:
+            data = {
+                'job_register_id': 1000,
+                'job_id': 400,
+                'review_id': 400,
+                'user_id': interaction.user.id,
+                'server_id': Enums.GUILD_ID.value,
+                'type': 'instagram',
+                'link': social_link,
+            }
+
+            JSON = requests.get(URL + '/content/user_and_job', json={'user_id': interaction.user.id, 'job_id': 400}).json()
+            if len(JSON) > 0:
+                await interaction.followup.send(f'You have already registered the content')
+            else:
+                requests.post(URL + '/content', json=data)
+                await interaction.followup.send(f'Successfully registered the content')

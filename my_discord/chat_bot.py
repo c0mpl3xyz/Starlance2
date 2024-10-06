@@ -12,6 +12,7 @@ from utils.error_message_enums import ErrorMessageEnum, MessageEnum
 from utils.enums import Enums
 from datetime import datetime
 from usecases.user_reviews import * 
+from modal import EmonosModal
 from usecases.user_contents import *
 from views import LogInView
 from usecases.company_contents import GetCompanyContentView
@@ -105,6 +106,16 @@ async def bank_register(interaction: discord.Interaction):
     view.add_item(SelectBankNames(URL))
     await interaction.user.send(view=view)
     await interaction.followup.send(f'Bank registration form sent to <@{interaction.user.id}>', ephemeral=True)
+
+@client.tree.command(name='e_monos')
+async def e_monos(interaction: discord.Interaction):
+    # roles = is_dm(interaction)
+    
+    # if not is_influencer(roles):
+    #     return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
+     
+    modal = EmonosModal()
+    await interaction.send_modal(modal)
 
 @client.tree.command(name='my_jobs')
 async def my_jobs(interaction: discord.Interaction):
