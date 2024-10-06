@@ -186,17 +186,17 @@ def create_content():
     ig_id = 'test'
     ig_content_id = 'test'
 
-    if test and test is not None:
-        ig_id, ig_content_id = get_status(user_id, link)
+    # if test and test is not None:
+    #     ig_id, ig_content_id = get_status(user_id, link)
         
-        if ig_id is None and ig_content_id is None:
-            result = {
-                'success': False,
-                'content_id': None,
-                'message': 'Account not found'
-            }
+    #     if ig_id is None and ig_content_id is None:
+    #         result = {
+    #             'success': False,
+    #             'content_id': None,
+    #             'message': 'Account not found'
+    #         }
             
-            return jsonify(result)
+    #         return jsonify(result)
     
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
