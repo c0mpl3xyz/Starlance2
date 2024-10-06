@@ -206,7 +206,7 @@ def create_content():
 
     try:
         content = Content(cursor)
-        created = content.create(job_register_id, job_id, user_id, review_id, server_id, content_type, link, ig_id, ig_content_id)
+        created = content.create(int(job_register_id), int(job_id), int(user_id), review_id, server_id, content_type, link, ig_id, ig_content_id)
         if created:
             connection.commit()
             content_id = cursor.lastrowid
