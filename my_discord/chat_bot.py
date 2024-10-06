@@ -115,7 +115,7 @@ async def e_monos(interaction: discord.Interaction):
     #     return await interaction.followup.send(ErrorMessageEnum.NOT_INFLUENCER.value, ephemeral=True)
      
     modal = EmonosModal()
-    await interaction.send_modal(modal)
+    await interaction.response.send_modal(modal)
 
 @client.tree.command(name='my_jobs')
 async def my_jobs(interaction: discord.Interaction):
