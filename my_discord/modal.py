@@ -567,9 +567,9 @@ class EmonosModal(Modal, title='Content_link'):
             await interaction.followup.send(f'Insatagram link is wrong: "{social_link}"')
         else:
             data = {
-                'job_register_id': 1000,
+                'job_register_id': 11,
                 'job_id': 400,
-                'review_id': 400,
+                'review_id': 11,
                 'user_id': interaction.user.id,
                 'server_id': Enums.GUILD_ID.value,
                 'type': 'instagram',
