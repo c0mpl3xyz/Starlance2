@@ -584,7 +584,5 @@ class EmonosModal(Modal, title='Content_link'):
             if len(JSON) > 0:
                 await interaction.followup.send(f'You have already registered the content')
             else:
-                print(f'{data=}')
                 response = requests.post(URL + '/content', json=data)
-                print(f'{response=}')
                 await interaction.followup.send(f'Successfully registered the content')
