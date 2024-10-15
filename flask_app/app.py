@@ -1,9 +1,12 @@
+# app.py
 import logging
 import os
 from flask import Flask, request, jsonify
 from instagram.login import get_manual_link
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
+
 from content_updater import ContentUpdater
 from apis.user_api import user_bp
 from apis.token_api import token_bp
@@ -13,15 +16,14 @@ from apis.content_api import content_bp
 from apis.review_api import review_bp
 from apis.collect_api import collect_bp
 from logging.handlers import RotatingFileHandler
-
-# Load environment variables
 load_dotenv()
+
+test = os.getenv('TEST')
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s [%(levelname)s] %(message)s',
                     handlers=[logging.StreamHandler()])
 
-# Environment Variables
 APP_ID = os.getenv('APP_ID')
 APP_SECRET = os.getenv('APP_SECRET')
 URL = os.getenv('URL')
@@ -29,14 +31,13 @@ REDIRECT_URL = URL + 'exchange_token/'
 API_VERSION = os.getenv('API_VERSION')
 API_PREFIX = os.getenv('API_PREFIX')
 URL_PREFIX = f'{API_PREFIX}/{API_VERSION}'
-IS_PYTHON_ANYWHERE = os.getenv('IS_PYTHON_ANYWHERE', 'False') == 'True'
+
 
 logging.info(f'{URL=}')
 logging.info(f'{API_VERSION=}')
 logging.info(f'{APP_ID=}')
 logging.info(f'{API_PREFIX=}')
 logging.info(f'{URL_PREFIX=}')
-logging.info(f'{IS_PYTHON_ANYWHERE=}')
 
 def create_app():
     app = Flask(__name__)
@@ -58,14 +59,17 @@ def create_app():
         app.logger.addHandler(file_handler)
     except Exception:
         return app
-
+    
     return app
 
 scheduler = None
-if not IS_PYTHON_ANYWHERE:
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(ContentUpdater().content_updater, 'interval', minutes=5)
 
+if test:
+    scheduler = BlockingScheduler()
+else:
+    scheduler = BackgroundScheduler()
+
+scheduler.add_job(ContentUpdater().content_updater, 'interval', minutes=5)
 app = create_app()
 first = True
 
@@ -75,8 +79,7 @@ def firstRun():
     if first:
         logging.info('Test-----------------------------------------')
         first = False
-        if scheduler and not IS_PYTHON_ANYWHERE:
-            scheduler.start()
+        scheduler.start()
 
 @app.route('/')
 def hello_world():
@@ -91,9 +94,9 @@ def ig_login():
     return jsonify(data)
 
 if __name__ == '__main__':
-    app.run(
-        # host='0.0.0.0',
-        port=9000,
-        # ssl_context=('key/cert.pem', 'key/key.pem'),
+    app.run(    
+        # host='0.0.0.0', 
+        port=9000, 
+        # ssl_context=('key/cert.pem', 'key/key.pem'), 
         threaded=True
     )
