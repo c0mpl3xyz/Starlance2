@@ -1,0 +1,118 @@
+CREATE TABLE User (
+    id BIGINT NOT NULL PRIMARY KEY,
+    total_points FLOAT(12,2) DEFAULT 0.00,
+    points FLOAT(12,2) DEFAULT 0.00,
+    bank_name TEXT,
+    bank_number TEXT,
+    register VARCHAR(20)
+);
+
+CREATE TABLE CollectRequest (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    points DOUBLE,
+    point_100 DOUBLE,
+    type ENUM('Pending', 'Approved') NOT NULL DEFAULT 'Pending',
+    FOREIGN KEY (user_id) REFERENCES User(id)
+);
+
+
+CREATE TABLE AccessToken (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    token_type VARCHAR(50) NOT NULL,
+    expiration_date DATETIME NOT NULL,
+    active TINYINT(1) NOT NULL,
+    fb_pages TEXT,
+    ig_accounts TEXT,
+    FOREIGN KEY (user_id) REFERENCES User(id)
+);
+
+
+CREATE TABLE CollectRequest (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    points DOUBLE,
+    point_100 DOUBLE,
+    type ENUM('Pending', 'Approved') NOT NULL DEFAULT 'Pending',
+    FOREIGN KEY (user_id) REFERENCES User(id)
+);
+
+
+CREATE TABLE Job (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    discord_server_id BIGINT NOT NULL,
+    name VARCHAR(255),
+    server_name VARCHAR(255),
+    roles TEXT,
+    budget INT,
+    start_date DATE,
+    duration INT,
+    end_date DATE,
+    participation_date DATE,
+    description TEXT,
+    upload_link TEXT,
+    requirements TEXT,
+    type ENUM('Ended', 'Open', 'Closed') NOT NULL DEFAULT 'Open',
+    user_count INT DEFAULT 5,
+    point INT DEFAULT 10
+);
+
+CREATE TABLE Review (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    job_register_id INT,
+    job_id INT,
+    job_name TEXT,
+    job_description TEXT,
+    user_id BIGINT,
+    server_id BIGINT,
+    server_name TEXT,
+    link TEXT,
+    description TEXT,
+    type ENUM('Approved', 'Pending', 'Rejected') NOT NULL DEFAULT 'Pending',
+    FOREIGN KEY (job_register_id) REFERENCES Job(id),
+    FOREIGN KEY (job_id) REFERENCES Job(id),
+    FOREIGN KEY (user_id) REFERENCES User(id)
+);
+
+
+CREATE TABLE JobRegister (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    job_id INT,
+    type ENUM('Pending', 'Rejected', 'Approved') NOT NULL DEFAULT 'Pending',
+    FOREIGN KEY (user_id) REFERENCES User(id),
+    FOREIGN KEY (job_id) REFERENCES Job(id)
+);
+
+CREATE TABLE Content (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    job_register_id INT,
+    job_id INT,
+    user_id BIGINT,
+    server_id BIGINT,
+    review_id INT,
+    link TEXT,
+    type ENUM('instagram', 'facebook', 'youtube', 'tiktok') NOT NULL DEFAULT 'instagram',
+    initial_plays INT DEFAULT 0,
+    total_plays INT DEFAULT 0,
+    likes INT DEFAULT 0,
+    replays INT DEFAULT 0,
+    saves INT DEFAULT 0,
+    shares INT DEFAULT 0,
+    comments INT DEFAULT 0,
+    account_reach INT DEFAULT 0,
+    total_interactions INT DEFAULT 0,
+    points FLOAT(12,2) DEFAULT 0.00,
+    engagement INT DEFAULT 0,
+    engagement_rate FLOAT(3,2) DEFAULT 0.00,
+    active TINYINT(1) DEFAULT 1,
+    ig_id TEXT,
+    ig_content_id TEXT,
+    FOREIGN KEY (job_register_id) REFERENCES JobRegister(id),
+    FOREIGN KEY (job_id) REFERENCES Job(id),
+    FOREIGN KEY (user_id) REFERENCES User(id),
+    FOREIGN KEY (review_id) REFERENCES Review(id)
+);
+
