@@ -182,22 +182,9 @@ def update_content_active():
 @content_bp.route('/', methods=['POST'])
 def create_content():
     _, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active, test = extract_content_request(request)
-    
-    ig_id = 'test'
-    ig_content_id = 'test'
 
-    # if test and test is not None:
-    #     ig_id, ig_content_id = get_status(user_id, link)
-        
-    #     if ig_id is None and ig_content_id is None:
-    #         result = {
-    #             'success': False,
-    #             'content_id': None,
-    #             'message': 'Account not found'
-    #         }
-            
-    #         return jsonify(result)
-    
+
+    ig_id, ig_content_id = get_status(user_id, link)
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
     created: bool = False
