@@ -180,10 +180,10 @@ class ContentUpdater():
 
 class IGProcessor():
     def __init__(self):
-        # self.access_token = IG_TOKEN
+        self.access_token = IG_TOKEN
         self.base_url = IG_URL_PREFIX
-        # self.url_suffix = f'access_token={self.access_token}'
-        # self.user_id = IG_ID
+        self.url_suffix = f'access_token={self.access_token}'
+        self.user_id = IG_ID
         self.permissions = IG_PERMISSIONS
     
     def __permission_list(self):
@@ -223,7 +223,7 @@ class IGProcessor():
 
     def get_ig_media_list(self, url=None):
         if url is None:
-            url = f'https://graph.facebook.com/v20.0/{IG_ID}?fields=media.limit(100){{shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares,ig_reels_aggregated_all_plays_count,clips_replays_count){{name,values}}}}&access_token={IG_TOKEN}'
+            url = f'https://graph.facebook.com/v20.0/{IG_ID}?fields=media.limit(100){{shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares,ig_reels_aggregated_all_plays_count,clips_replays_count){{name,values}}}}&access_token={token}'
 
         response = requests.get(url)
         return response.json()
@@ -256,8 +256,9 @@ class IGProcessor():
             if token is None:
                 #TODO: Do something
                 continue
-                
-            url = f'{IG_URL_PREFIX}/{key}?fields=shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares,ig_reels_aggregated_all_plays_count,clips_replays_count){{name,values}}&access_token={token}'
+            
+            self.access_token = token
+            url = f'{IG_URL_PREFIX}/{key}?fields=shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares,ig_reels_aggregated_all_plays_count,clips_replays_count){{name,values}}&access_token={self.access_token}'
 
             new_data = {}
             response = requests.get(url)

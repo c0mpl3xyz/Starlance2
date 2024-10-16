@@ -52,7 +52,7 @@ def is_our_company(intearaction) -> bool:
     
 def is_influencer(roles):
     # return Enums.ROLES.value in roles
-    return False
+    return True
 
 def is_admin(roles):
     # return Enums.ADMIN.value in roles
