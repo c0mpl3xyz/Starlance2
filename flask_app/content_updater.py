@@ -180,10 +180,10 @@ class ContentUpdater():
 
 class IGProcessor():
     def __init__(self):
-        self.access_token = IG_TOKEN
+        # self.access_token = IG_TOKEN
         self.base_url = IG_URL_PREFIX
-        self.url_suffix = f'access_token={self.access_token}'
-        self.user_id = IG_ID
+        # self.url_suffix = f'access_token={self.access_token}'
+        # self.user_id = IG_ID
         self.permissions = IG_PERMISSIONS
     
     def __permission_list(self):

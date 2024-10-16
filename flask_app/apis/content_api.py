@@ -21,6 +21,8 @@ def get_status(user_id, link):
                 return get_ig_ids(IG_TOKEN, link)
 
         return None, None
+    except Exception:
+        return None, None
     finally:
         connection.close()
 

@@ -45,17 +45,18 @@ def send_message():
 
 def is_main_server(intearaction) -> bool:
     return intearaction.guild.id == Enums.GUILD_ID.value
+    # return False
 
 def is_our_company(intearaction) -> bool:
     return intearaction.guild.id == Enums.OUR_COMPANY.value
     
 def is_influencer(roles):
-    return Enums.ROLES.value in roles
-    # return True
+    # return Enums.ROLES.value in roles
+    return False
 
 def is_admin(roles):
-    return Enums.ADMIN.value in roles
-    # return True
+    # return Enums.ADMIN.value in roles
+    return True
 
 def is_dm(interaction):
     try:
@@ -158,7 +159,7 @@ async def my_reviews(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
     roles = is_dm(interaction)
 
-    if not is_influencer(roles):
+    if is_influencer(roles):
         review_views = GetUserReviewView().execute(interaction.user.id, client)
         if review_views is None or len(review_views) == 0:
             await interaction.followup.send(ErrorMessageEnum.NO_REVIEWS.value + f'<@{interaction.user.id}>', ephemeral=True)
