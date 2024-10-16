@@ -185,6 +185,8 @@ def create_content():
 
 
     ig_id, ig_content_id = get_status(user_id, link)
+    
+    return jsonify({'ig': ig_id, 'content': ig_content_id})
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
     created: bool = False
