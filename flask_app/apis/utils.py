@@ -47,9 +47,10 @@ def get_ig_ids(token, link):
     result = requests.get(url).json()
     ig_ids = [
         account["connected_instagram_account"]['id']
-        for account in result["accounts"]["data"]
+        for account in result.get("accounts", {}).get("data", [])
         if 'connected_instagram_account' in account
     ]
+
     for ig_id in ig_ids:
         url = None
         while True:
