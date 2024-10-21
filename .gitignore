@@ -172,3 +172,5 @@ https:
 
 # Certifications
 flask_app/key/
+cert.pem
+key.pem
