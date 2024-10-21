@@ -96,8 +96,8 @@ def ig_login():
 if __name__ == '__main__':
     app.run(    
         host='0.0.0.0', 
-        port=8000, 
-        # ssl_context=('key/cert.pem', 'key/key.pem'), 
+        port=80,
+        ssl_context=('key/cert.pem', 'key/key.pem'), 
         # ssl_context='adhoc',
         threaded=True
     )
