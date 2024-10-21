@@ -69,7 +69,7 @@ if test:
 else:
     scheduler = BackgroundScheduler()
 
-scheduler.add_job(ContentUpdater().content_updater, 'interval', minutes=1)
+scheduler.add_job(ContentUpdater().content_updater, 'interval', minutes=5)
 app = create_app()
 first = True
 
