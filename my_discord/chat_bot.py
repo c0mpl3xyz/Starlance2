@@ -48,7 +48,8 @@ def is_main_server(intearaction) -> bool:
     # return False
 
 def is_our_company(intearaction) -> bool:
-    return intearaction.guild.id == Enums.OUR_COMPANY.value
+    # return intearaction.guild.id == Enums.OUR_COMPANY.value
+    return True
     
 def is_influencer(roles):
     # return Enums.ROLES.value in roles
