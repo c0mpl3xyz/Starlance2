@@ -117,7 +117,9 @@ def content_mapping(data: list):
         'points': data[17],
         'engagement': data[18],
         'engagement_rate': data[19],
-        'active': data[20]
+        'shortcode': data[20],
+        'product_type': data[21],
+        'active': data[22]
     }
 
     return content_dict
