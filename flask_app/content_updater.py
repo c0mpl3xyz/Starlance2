@@ -14,6 +14,9 @@ SQL_DICT = {
 
 load_dotenv()
 URL = os.getenv('URL')      
+
+print(f'{URL=}')
+
 API_VERSION = os.getenv('API_VERSION')
 APP_ID = os.getenv('APP_ID')
 API_PREFIX = os.getenv('API_PREFIX')
@@ -232,11 +235,6 @@ class IGProcessor():
         return [shortcode for shortcode in shortcodes if len(shortcode) == 11]
         
     def ig_filter_by_ig_content_id(self, ig_content_id_dict: dict):
-        # connection = ConnectSQL().get_connection()
-        # try:
-        # user = User(connection.cursor())
-        # user.get_access_token()
-        # connection.close()
         result = {}
         ig_content_ids = list(ig_content_id_dict.keys())
         if not len(ig_content_ids):
@@ -258,7 +256,7 @@ class IGProcessor():
                 continue
             
             self.access_token = token
-            url = f'{IG_URL_PREFIX}/{key}?fields=shortcode,comments_count,media_product_type,like_count,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares,ig_reels_aggregated_all_plays_count,clips_replays_count){{name,values}}&access_token={self.access_token}'
+            url = f'{IG_URL_PREFIX}/{key}?fields=shortcode,media_product_type,insights.metric(plays,likes,comments,reach,total_interactions,saved,shares,ig_reels_aggregated_all_plays_count,clips_replays_count){{name,values}}&access_token={self.access_token}'
 
             new_data = {}
             response = requests.get(url)
@@ -293,10 +291,13 @@ class IGProcessor():
                     if insight['name'] == 'clips_replays_count':
                         new_data['prime_replays'] = insight['values'][0]['value']
 
-                new_data['replays'] = self.calculate_replays(new_data['initial_plays'], new_data['prime_replays'])
+                # new_data['replays'] = self.calculate_replays(new_data['initial_plays'], new_data['prime_replays'])
+                new_data['replays'] = new_data['prime_replays']
                 new_data['points'] = new_data['initial_plays'] + new_data['replays']
                 new_data['engagement'] = new_data['total_interactions']
                 new_data['engagement_rate'] = new_data['total_interactions'] / (new_data['account_reach'] + EPSILON) * 100.0
+                new_data['shortcode'] = JSON['shortcode']
+                new_data['product_type'] = JSON['media_product_type']
             else:
                 #TODO: add a last info
                     new_data['initial_plays'] = value[8]
@@ -311,6 +312,8 @@ class IGProcessor():
                     new_data['points'] = value[17]
                     new_data['engagement'] = value[18]
                     new_data['engagement_rate'] = value[19]
+                    new_data['shortcode'] = JSON['shortcode']
+                    new_data['product_type'] = JSON['media_product_type']
 
             result[value[0]] = new_data
         # except:
@@ -363,7 +366,7 @@ class IGProcessor():
 
         return int(initial_plays * 0.7)
 
-    def get_ig_media_dict(self, url=None):
+    def get_ig_media_dict(self, JSON, url=None):
         media = self.get_ig_media_list(url)
         if url is None:
             media = media['media']
@@ -405,8 +408,8 @@ class IGProcessor():
                 new_data['points'] = new_data['initial_plays'] + new_data['replays']
                 new_data['engagement'] = new_data['total_interactions']
                 new_data['engagement_rate'] = new_data['total_interactions'] / (new_data['account_reach'] + EPSILON) * 100.0
-                new_data['shortcode'] = data['shortcode']
-                new_data['product_type'] = data['product_type']
+                new_data['shortcode'] = JSON['shortcode']
+                new_data['product_type'] = JSON['media_product_type']
         next_url = None
         if 'next' in media['paging']:
             next_url = media['paging']['next']

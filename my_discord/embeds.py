@@ -131,20 +131,23 @@ class ContentEmbed(Embed):
         
         removed_replays = content_data['total_plays'] - content_data['initial_plays'] - content_data['replays']
         self.add_field(name='Job Name', value=review_data['job_name'], inline=False)
-        self.add_field(name='User', value=f'<@{content_data["user_id"]}>')
-        self.add_field(name='Content Link', value=content_data['link'], inline=False)
-        self.add_field(name='Shortcode\n(shortcode)', value=content_data['shortcode'], inline=False) # TODO: for test
-        self.add_field(name='Media type\n(product_type)', value=content_data['product_type']) # TODO: for test
-        self.add_field(name='Total Views\n(ig_reels_aggregated_all_plays_count)', value=format(content_data['total_plays'], ','))
-        self.add_field(name='Initial Plays\n(plays)', value=format(content_data['initial_plays'], ','))
-        self.add_field(name='Replays\n(clips_replays_count)', value=format(content_data['replays'], ','))
+        self.add_field(name='User', value=f'<@{content_data["user_id"]}>', inline=False)
+        self.add_field(name='Content Link', value=content_data['link'])
+        self.add_field(name='Shortcode\nshortcode', value=content_data['shortcode']) # TODO: for test
+        self.add_field(name='Media type\nproduct_type', value=content_data['product_type']) # TODO: for test
+        
+        self.add_field(name="\u200B", value="__\u200B__", inline=False)
+
+        self.add_field(name='Total Views\nig_reels_aggregated_all_plays_count', value=format(content_data['total_plays'], ','))
+        self.add_field(name='Initial Plays\nplays', value=format(content_data['initial_plays'], ','))
+        self.add_field(name='Replays\nclips_replays_count', value=format(content_data['replays'], ','))
         # self.add_field(name='Removed Replays', value=format(removed_replays, ','))
         self.add_field(name='Likes', value=format(content_data['likes'], ','))
         self.add_field(name='Saves', value=format(content_data['saves'], ','))
         self.add_field(name='Shares', value=format(content_data['shares'], ','))
         self.add_field(name='Comments', value=format(content_data['comments'], ','))
-        self.add_field(name='Account Reached\n(reach)', value=format(content_data['account_reach'], ','))
-        self.add_field(name='Total Interaction\n(total_interactions)', value=format(content_data['total_interactions'], ','))
+        self.add_field(name='Account Reached\nreach', value=format(content_data['account_reach'], ','))
+        self.add_field(name='Total Interaction\ntotal_interactions', value=format(content_data['total_interactions'], ','))
         self.add_field(name='Engagement Rate', value=content_data['engagement_rate'])
         self.add_field(name='Active', value=content_data['active'])
         self.add_field(name='Total Points', value=format(content_data['points'], ','))
