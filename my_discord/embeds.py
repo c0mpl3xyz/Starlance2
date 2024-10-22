@@ -134,7 +134,7 @@ class ContentEmbed(Embed):
         self.add_field(name='User', value=f'<@{content_data["user_id"]}>', inline=False)
         self.add_field(name='Content Link', value=content_data['link'])
         self.add_field(name='Shortcode\nshortcode', value=content_data['shortcode']) # TODO: for test
-        self.add_field(name='Media type\nproduct_type', value=content_data['product_type']) # TODO: for test
+        self.add_field(name='Media type\nmedia_product_type', value=content_data['product_type']) # TODO: for test
         
         self.add_field(name="\u200B", value="__\u200B__", inline=False)
 
