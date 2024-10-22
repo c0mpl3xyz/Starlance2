@@ -400,11 +400,13 @@ class IGProcessor():
                     if insight['name'] == 'clips_replays_count':
                         new_data['prime_replays'] = insight['values'][0]['value']
 
-                new_data['replays'] = self.calculate_replays(new_data['initial_plays'], new_data['prime_replays'])
+                # new_data['replays'] = self.calculate_replays(new_data['initial_plays'], new_data['prime_replays'])
+                new_data['replays'] = new_data['prime_replays']
                 new_data['points'] = new_data['initial_plays'] + new_data['replays']
                 new_data['engagement'] = new_data['total_interactions']
                 new_data['engagement_rate'] = new_data['total_interactions'] / (new_data['account_reach'] + EPSILON) * 100.0
-                my_data[data['shortcode']] = new_data
+                new_data['shortcode'] = data['shortcode']
+                new_data['product_type'] = data['product_type']
         next_url = None
         if 'next' in media['paging']:
             next_url = media['paging']['next']

@@ -38,9 +38,11 @@ def extract_content_status(request):
     points = request.json.get('points')
     engagement = request.json.get('engagement')
     engagement_rate = request.json.get('engagement_rate')
+    shortcode = request.json.get('shortcode')
+    product_type = request.json.get('product_type')
     active = request.json.get('active')
 
-    return content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, engagement_rate, active
+    return content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, engagement_rate, shortcode, product_type, active
 
 def extract_content_request(request):
     content_id = request.json.get('id')
@@ -59,6 +61,7 @@ def extract_content_request(request):
 
 @content_bp.route('/link_by_review', methods=['PUT'])
 def upate_content_link():
+    # TODO: When editing link make it metrics all to zero
     content_id, job_register_id, job_id, user_id, review_id, server_id, content_type, link, point, active = extract_content_request(request)
 
     connection = ConnectSQL().get_connection()
@@ -122,7 +125,7 @@ def upate_content():
 
 @content_bp.route('/status', methods=['PUT'])
 def update_content_status():
-    content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, engagement_rate, active = extract_content_status(request)
+    content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, engagement_rate, shortcode, product_type, active = extract_content_status(request)
 
     connection = ConnectSQL().get_connection()
     cursor = connection.cursor()
@@ -131,7 +134,7 @@ def update_content_status():
 
     try:
         content = Content(cursor)
-        updated = content.update_status(content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, engagement_rate, active)
+        updated = content.update_status(content_id, initial_plays, total_plays, likes, replays, saves, shares, comments, account_reach, total_interactions, points, engagement, engagement_rate, shortcode, product_type, active)
         if updated:
             connection.commit()
             content_id = cursor.lastrowid
